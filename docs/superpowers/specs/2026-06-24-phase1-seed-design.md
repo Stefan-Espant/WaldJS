@@ -230,6 +230,30 @@ dist
 
 ---
 
+## Runtime Update
+
+Phase 1 vereist een kleine aanpassing aan `@waldjs/runtime`. `Tree.render()` moet props accepteren zodat route-params doorgegeven kunnen worden aan pagina's.
+
+**Huidige signatuur:**
+```ts
+export type Tree = { render: () => Promise<string> }
+export function createTree(fn: RenderFn): Tree {
+  return { render: () => fn({}, {}) }
+}
+```
+
+**Nieuwe signatuur (backward-compatible):**
+```ts
+export type Tree = { render: (props?: Record<string, unknown>) => Promise<string> }
+export function createTree(fn: RenderFn): Tree {
+  return { render: (props = {}) => fn({}, props) }
+}
+```
+
+De dev server roept dan `Tree.render({ slug: 'hello-world' })` aan. Bestaande pagina's zonder props blijven werken — `props` is optioneel.
+
+---
+
 ## Acceptatiecriteria Phase 1
 
 - `wald plant my-forest` genereert een werkend project
