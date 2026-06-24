@@ -15,6 +15,19 @@ importers:
         specifier: ^5.5.0
         version: 5.9.3
 
+  examples/basic:
+    dependencies:
+      '@waldjs/compiler':
+        specifier: workspace:*
+        version: link:../../packages/compiler
+      '@waldjs/runtime':
+        specifier: workspace:*
+        version: link:../../packages/runtime
+    devDependencies:
+      vitest:
+        specifier: ^2.0.0
+        version: 2.1.9
+
   packages/compiler:
     dependencies:
       '@waldjs/runtime':

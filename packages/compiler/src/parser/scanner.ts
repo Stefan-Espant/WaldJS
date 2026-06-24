@@ -85,7 +85,7 @@ class Scanner {
     if (this.current === '<' && this.peek(1) === '/') {
       this.advance() // <
       this.advance() // /
-      while (this.pos < this.source.length && this.current !== '>') this.advance()
+      while (this.pos < this.source.length && (this.current as string) !== '>') this.advance()
       this.advance() // >
     }
 
@@ -131,17 +131,17 @@ class Scanner {
 
     this.advance() // consume =
 
-    if (this.current === '"') {
+    if ((this.current as string) === '"') {
       this.advance() // consume opening "
       let value = ''
-      while (this.pos < this.source.length && this.current !== '"') {
+      while (this.pos < this.source.length && (this.current as string) !== '"') {
         value += this.advance()
       }
       this.advance() // consume closing "
       return { type: 'attribute', name, value }
     }
 
-    if (this.current === '{') {
+    if ((this.current as string) === '{') {
       const expr = this.scanExpression()
       return { type: 'attribute', name, value: expr as import('../ast/types.js').ExpressionNode }
     }
