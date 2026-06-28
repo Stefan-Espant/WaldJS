@@ -50,4 +50,12 @@ describe('createTree', () => {
     const result = await tree.render()
     expect(result).toBe('<h1>Hello</h1>')
   })
+
+  it('render() passes props to the template function', async () => {
+    const tree = createTree(async (_result, props) => {
+      return renderTemplate`<h1>${props['name']}</h1>`
+    })
+    const html = await tree.render({ name: 'Wald' })
+    expect(html).toBe('<h1>Wald</h1>')
+  })
 })

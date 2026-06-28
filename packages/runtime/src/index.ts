@@ -6,12 +6,12 @@ type RenderFn = (
 type BuildContext = Record<string, never>
 
 export type Tree = {
-  render: () => Promise<string>
+  render: (props?: Record<string, unknown>) => Promise<string>
 }
 
 export function createTree(fn: RenderFn): Tree {
   return {
-    render: () => fn({}, {}),
+    render: (props = {}) => fn({}, props),
   }
 }
 
