@@ -47,9 +47,9 @@ export async function buildPages(
   const contentModuleUrl = contentDir ? buildContentModuleUrl(contentDir) : null
 
   function patchModule(jsModule: string): string {
-    let patched = jsModule.replace("'@waldjs/runtime'", JSON.stringify(runtimeUrl))
+    let patched = jsModule.replace(/(['"])@waldjs\/runtime\1/g, JSON.stringify(runtimeUrl))
     if (contentModuleUrl) {
-      patched = patched.replace("'wald:content'", JSON.stringify(contentModuleUrl))
+      patched = patched.replace(/(['"])wald:content\1/g, JSON.stringify(contentModuleUrl))
     }
     return patched
   }
