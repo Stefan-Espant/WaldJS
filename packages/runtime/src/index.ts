@@ -15,6 +15,10 @@ export function createTree(fn: RenderFn): Tree {
   }
 }
 
+export class SafeHtml {
+  constructor(public readonly value: string) {}
+}
+
 const escapeMap: Record<string, string> = {
   '&': '&amp;',
   '<': '&lt;',
@@ -34,7 +38,8 @@ export function renderTemplate(
 ): string {
   let result = strings[0]
   for (let i = 0; i < values.length; i++) {
-    result += escapeHtml(values[i]) + strings[i + 1]
+    const value = values[i]
+    result += (value instanceof SafeHtml ? value.value : escapeHtml(value)) + strings[i + 1]
   }
   return result
 }
