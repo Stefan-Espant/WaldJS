@@ -7,23 +7,74 @@ export async function scaffold(targetDir: string): Promise<void> {
   const name = basename(targetDir)
 
   mkdirSync(join(targetDir, 'src', 'pages', 'blog'), { recursive: true })
+  mkdirSync(join(targetDir, 'src', 'layouts'), { recursive: true })
+  mkdirSync(join(targetDir, 'src', 'components'), { recursive: true })
   mkdirSync(join(targetDir, 'content', 'blog'), { recursive: true })
   mkdirSync(join(targetDir, 'public'), { recursive: true })
 
   writeFileSync(
+    join(targetDir, 'src', 'layouts', 'Layout.wald'),
+    [
+      '---',
+      'const { title, pond } = $$props',
+      '---',
+      '<!DOCTYPE html>',
+      '<html lang="en">',
+      '  <head>',
+      '    <meta charset="UTF-8" />',
+      '    <meta name="viewport" content="width=device-width" />',
+      '    <title>{title}</title>',
+      '  </head>',
+      '  <body>',
+      '    {pond}',
+      '  </body>',
+      '</html>',
+      '',
+    ].join('\n')
+  )
+
+  writeFileSync(
+    join(targetDir, 'src', 'components', 'Card.wald'),
+    [
+      '---',
+      'const { title, body } = $$props',
+      '---',
+      '<article>',
+      '  <h2>{title}</h2>',
+      '  <p>{body}</p>',
+      '</article>',
+      '',
+    ].join('\n')
+  )
+
+  writeFileSync(
     join(targetDir, 'src', 'pages', 'index.wald'),
-    `---\nconst title = "Hello Wald"\n---\n<h1>{title}</h1>\n<p>Welcome to your forest.</p>\n`
+    [
+      '---',
+      "import Layout from '../layouts/Layout.wald'",
+      "import Card from '../components/Card.wald'",
+      "const title = 'Hello Wald'",
+      '---',
+      '<Layout title={title}>',
+      '  <Card title="Welkom" body="Je eerste WaldJS project." />',
+      '</Layout>',
+      '',
+    ].join('\n')
   )
 
   writeFileSync(
     join(targetDir, 'src', 'pages', 'blog', 'index.wald'),
     [
       '---',
+      "import Layout from '../../layouts/Layout.wald'",
       "import { getCollection } from 'wald:content'",
       "const posts = await getCollection('blog')",
+      "const count = posts.length",
       '---',
-      '<h1>Blog</h1>',
-      "<ul>{posts.map(p => `<li><a href=\"/blog/${p.slug}\">${p.data.title}</a></li>`).join('')}</ul>",
+      "<Layout title='Blog'>",
+      '  <h1>Blog</h1>',
+      '  <p>Found {count} posts</p>',
+      '</Layout>',
       '',
     ].join('\n')
   )
@@ -32,6 +83,7 @@ export async function scaffold(targetDir: string): Promise<void> {
     join(targetDir, 'src', 'pages', 'blog', '[slug].wald'),
     [
       '---',
+      "import Layout from '../../layouts/Layout.wald'",
       "import { getCollection, getEntry } from 'wald:content'",
       'export async function getStaticPaths() {',
       "  const posts = await getCollection('blog')",
@@ -39,8 +91,10 @@ export async function scaffold(targetDir: string): Promise<void> {
       '}',
       "const post = await getEntry('blog', $$props.slug)",
       '---',
-      '<h1>{post.data.title}</h1>',
-      '<div>{post.body}</div>',
+      '<Layout title={post.data.title}>',
+      '  <h1>{post.data.title}</h1>',
+      '  {post.body}',
+      '</Layout>',
       '',
     ].join('\n')
   )

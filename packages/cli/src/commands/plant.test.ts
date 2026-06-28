@@ -18,7 +18,7 @@ describe('scaffold', () => {
     await scaffold(dir)
     const content = readFileSync(join(dir, 'src', 'pages', 'index.wald'), 'utf8')
     expect(content).toContain('const title')
-    expect(content).toContain('<h1>')
+    expect(content).toContain('<Layout')
   })
 
   it('creates package.json with wald scripts', async () => {
@@ -49,5 +49,22 @@ describe('scaffold', () => {
     const content = readFileSync(join(dir, 'content', 'blog', 'hello-world.md'), 'utf8')
     expect(content).toContain('title:')
     expect(content).toContain('date:')
+  })
+
+  it('creates src/layouts/Layout.wald with pond and full HTML shell', async () => {
+    const base = mkdtempSync(join(tmpdir(), 'wald-plant-'))
+    const dir = join(base, 'my-forest')
+    await scaffold(dir)
+    const content = readFileSync(join(dir, 'src', 'layouts', 'Layout.wald'), 'utf8')
+    expect(content).toContain('pond')
+    expect(content).toContain('<!DOCTYPE html>')
+  })
+
+  it('creates src/components/Card.wald with $$props', async () => {
+    const base = mkdtempSync(join(tmpdir(), 'wald-plant-'))
+    const dir = join(base, 'my-forest')
+    await scaffold(dir)
+    const content = readFileSync(join(dir, 'src', 'components', 'Card.wald'), 'utf8')
+    expect(content).toContain('$$props')
   })
 })
