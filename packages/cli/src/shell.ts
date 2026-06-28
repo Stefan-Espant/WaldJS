@@ -11,3 +11,10 @@ ${content}
 </body>
 </html>`
 }
+
+export function maybeWrap(html: string): string {
+  const t = html.trimStart()
+  return t.startsWith('<!DOCTYPE') || t.startsWith('<html')
+    ? html
+    : wrapHtml(html)
+}

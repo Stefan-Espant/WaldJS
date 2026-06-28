@@ -1,12 +1,25 @@
 import { describe, it, expect } from 'vitest'
-import { wrapHtml } from './shell.js'
+import { maybeWrap } from './shell.js'
 
-describe('wrapHtml', () => {
-  it('wraps content in a full HTML document', () => {
-    const html = wrapHtml('<h1>Hello</h1>')
-    expect(html).toContain('<!DOCTYPE html>')
-    expect(html).toContain('<html lang="en">')
-    expect(html).toContain('<h1>Hello</h1>')
-    expect(html).toContain('</html>')
+describe('maybeWrap', () => {
+  it('wraps content that has no doctype', () => {
+    const result = maybeWrap('<h1>Hello</h1>')
+    expect(result).toContain('<!DOCTYPE html>')
+    expect(result).toContain('<h1>Hello</h1>')
+  })
+
+  it('passes through content that starts with <!DOCTYPE', () => {
+    const full = '<!DOCTYPE html><html><body>Hi</body></html>'
+    expect(maybeWrap(full)).toBe(full)
+  })
+
+  it('passes through content that starts with <html', () => {
+    const full = '<html><body>Hi</body></html>'
+    expect(maybeWrap(full)).toBe(full)
+  })
+
+  it('handles leading whitespace before <!DOCTYPE', () => {
+    const full = '\n<!DOCTYPE html><html><body>Hi</body></html>'
+    expect(maybeWrap(full)).toBe(full)
   })
 })

@@ -4,7 +4,7 @@ import { defineCommand } from 'citty'
 import ora from 'ora'
 import { waldPlugin } from '@waldjs/compiler'
 import { matchRoute, scanRoutes, type Route } from '../router/index.js'
-import { wrapHtml } from '../shell.js'
+import { maybeWrap } from '../shell.js'
 import { join } from 'node:path'
 
 type ViteLike = {
@@ -21,7 +21,7 @@ export async function handleRequest(
 
   const mod = await vite!.ssrLoadModule(match.route.file)
   const html = await mod.default.render(match.params)
-  return { status: 200, body: wrapHtml(html) }
+  return { status: 200, body: maybeWrap(html) }
 }
 
 export const growCommand = defineCommand({
@@ -55,7 +55,7 @@ export const growCommand = defineCommand({
       try {
         const mod = await vite.ssrLoadModule(match.route.file)
         const html = await mod.default.render(match.params)
-        const full = wrapHtml(html)
+        const full = maybeWrap(html)
         res.writeHead(200, { 'Content-Type': 'text/html' })
         res.end(full)
       } catch (e) {
