@@ -6,7 +6,7 @@ import ora from 'ora'
 
 export function startPreview(distDir: string, port: number): Promise<ReturnType<typeof createServer>> {
   return new Promise((resolve) => {
-    const serve = sirv(distDir, { single: true })
+    const serve = sirv(distDir, { extensions: ['html'] })
     const server = createServer(serve)
     server.listen(port, () => resolve(server))
   })

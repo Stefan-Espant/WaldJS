@@ -4,6 +4,7 @@ import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 import { buildPages } from './build.js'
 
+
 let tmpDir: string
 
 beforeEach(() => {
@@ -45,5 +46,19 @@ describe('buildPages', () => {
     await buildPages(pagesDir, distDir)
 
     expect(existsSync(join(distDir, 'blog', '[slug]', 'index.html'))).toBe(false)
+  })
+
+  it('copies public/ to dist/ when it exists', async () => {
+    const pagesDir = join(tmpDir, 'src', 'pages')
+    const distDir = join(tmpDir, 'dist')
+    const publicDir = join(tmpDir, 'public')
+    mkdirSync(pagesDir, { recursive: true })
+    mkdirSync(publicDir, { recursive: true })
+    writeFileSync(join(pagesDir, 'index.wald'), '<p>home</p>')
+    writeFileSync(join(publicDir, 'logo.svg'), '<svg/>')
+
+    await buildPages(pagesDir, distDir, publicDir)
+
+    expect(existsSync(join(distDir, 'logo.svg'))).toBe(true)
   })
 })
