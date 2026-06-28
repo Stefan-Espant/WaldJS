@@ -64,9 +64,6 @@ importers:
 
   packages/compiler:
     dependencies:
-      '@waldjs/content':
-        specifier: workspace:*
-        version: link:../content
       '@waldjs/runtime':
         specifier: workspace:*
         version: link:../runtime
