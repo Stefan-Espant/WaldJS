@@ -7,19 +7,67 @@ const VOID_ELEMENTS = new Set([
 
 export function transform(ast: WaldDocument): string {
   const templateCode = renderNodes(ast.template)
-  const frontmatter = ast.frontmatter.code
-    ? ast.frontmatter.code.split('\n').map(line => `  ${line}`).join('\n')
+  const code = ast.frontmatter.code ?? ''
+  const { hoisted, body } = extractExports(code)
+
+  const bodyIndented = body
+    ? body.split('\n').map(line => `  ${line}`).join('\n')
     : ''
 
-  return [
+  const parts = [
     `import { createTree, renderTemplate } from '@waldjs/runtime'`,
     ``,
+  ]
+
+  if (hoisted) {
+    parts.push(hoisted)
+    parts.push(``)
+  }
+
+  parts.push(
     `export default createTree(async ($$result, $$props) => {`,
-    frontmatter,
+    bodyIndented,
     ``,
     `  return renderTemplate\`${templateCode}\``,
     `})`,
-  ].join('\n')
+  )
+
+  return parts.join('\n')
+}
+
+function extractExports(code: string): { hoisted: string; body: string } {
+  const lines = code.split('\n')
+  const hoistedBlocks: string[] = []
+  const bodyLines: string[] = []
+  let i = 0
+
+  while (i < lines.length) {
+    const trimmed = lines[i].trimStart()
+    if (trimmed.startsWith('import ')) {
+      // import statements are always single-line in frontmatter
+      hoistedBlocks.push(lines[i])
+      i++
+    } else if (trimmed.startsWith('export ')) {
+      // export blocks may span multiple lines — collect until balanced braces
+      const block: string[] = []
+      let depth = 0
+      do {
+        const line = lines[i]
+        block.push(line)
+        depth += (line.match(/\{/g) ?? []).length - (line.match(/\}/g) ?? []).length
+        i++
+      } while (depth > 0 && i < lines.length)
+      hoistedBlocks.push(block.join('\n'))
+    } else {
+      bodyLines.push(lines[i])
+      i++
+    }
+  }
+
+  return {
+    hoisted: hoistedBlocks.join('\n'),
+    body: bodyLines.join('\n').trim(),
+  }
 }
 
 function renderNodes(nodes: TemplateNode[]): string {
