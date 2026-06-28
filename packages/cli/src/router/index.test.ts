@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { writeFileSync, mkdirSync } from 'node:fs'
+import { writeFileSync, mkdirSync, mkdtempSync } from 'node:fs'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 import { scanRoutes, matchRoute } from './index.js'
@@ -7,8 +7,7 @@ import { scanRoutes, matchRoute } from './index.js'
 let pagesDir: string
 
 beforeEach(() => {
-  pagesDir = join(tmpdir(), `wald-router-${Date.now()}`)
-  mkdirSync(pagesDir, { recursive: true })
+  pagesDir = mkdtempSync(join(tmpdir(), 'wald-router-'))
 })
 
 describe('scanRoutes', () => {
