@@ -17,7 +17,7 @@ describe('transform', () => {
 
     const output = transform(ast)
 
-    expect(output).toContain("import { createTree, renderTemplate } from '@waldjs/runtime'")
+    expect(output).toContain("import { createTree, renderTemplate, SafeHtml } from '@waldjs/runtime'")
     expect(output).toContain('export default createTree')
     expect(output).toContain('const title = "Hello Wald"')
     expect(output).toContain('renderTemplate`<h1>${title}</h1>`')
@@ -77,7 +77,7 @@ describe('transform', () => {
     expect(output).toContain('class="${styles}"')
   })
 
-  it('skips ComponentNode in Phase 0', () => {
+  it('renders a ComponentNode via SafeHtml', () => {
     const ast: WaldDocument = {
       type: 'document',
       frontmatter: { type: 'frontmatter', code: '' },
@@ -85,7 +85,8 @@ describe('transform', () => {
     }
 
     const output = transform(ast)
-    expect(output).toContain('renderTemplate``')
+    expect(output).toContain('SafeHtml')
+    expect(output).toContain('await Button.render(')
   })
 
   it('hoists export function to module level before export default', () => {
@@ -136,5 +137,31 @@ describe('transform', () => {
     // the await call stays inside the callback
     const postsPos = output.indexOf("const posts = await getCollection('blog')")
     expect(postsPos).toBeGreaterThan(exportDefaultPos)
+  })
+})
+
+import { compile } from '../index.js'
+
+describe('component rendering', () => {
+  it('renders a self-closing component with string props', () => {
+    const source = `---\nimport Card from './Card.wald'\n---\n<Card title="Hoi" />`
+    const result = compile(source, 'test.wald')
+    expect(result).toContain('SafeHtml')
+    expect(result).toContain('await Card.render(')
+    expect(result).toContain('title: "Hoi"')
+  })
+
+  it('renders a component with expression props', () => {
+    const source = `---\nimport Card from './Card.wald'\nconst t = 'test'\n---\n<Card title={t} />`
+    const result = compile(source, 'test.wald')
+    expect(result).toContain('title: (t)')
+  })
+
+  it('renders a layout component with children as pond', () => {
+    const source = `---\nimport Layout from './Layout.wald'\n---\n<Layout title="Home"><h1>Content</h1></Layout>`
+    const result = compile(source, 'test.wald')
+    expect(result).toContain('pond:')
+    expect(result).toContain('await Layout.render(')
+    expect(result).toContain('<h1>Content</h1>')
   })
 })
