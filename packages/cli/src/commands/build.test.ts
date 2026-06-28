@@ -61,4 +61,36 @@ describe('buildPages', () => {
 
     expect(existsSync(join(distDir, 'logo.svg'))).toBe(true)
   })
+
+  it('generates HTML for each path returned by getStaticPaths()', async () => {
+    const pagesDir = join(tmpDir, 'src', 'pages')
+    const distDir = join(tmpDir, 'dist')
+    const contentDir = join(tmpDir, 'content')
+
+    mkdirSync(join(pagesDir, 'blog'), { recursive: true })
+    mkdirSync(join(contentDir, 'blog'), { recursive: true })
+
+    writeFileSync(join(contentDir, 'blog', 'hello.md'), '---\ntitle: Hello\n---\nContent')
+    writeFileSync(join(contentDir, 'blog', 'world.md'), '---\ntitle: World\n---\nContent')
+
+    writeFileSync(
+      join(pagesDir, 'blog', '[slug].wald'),
+      [
+        '---',
+        "import { getCollection, getEntry } from 'wald:content'",
+        'export async function getStaticPaths() {',
+        "  const posts = await getCollection('blog')",
+        '  return posts.map(p => ({ params: { slug: p.slug } }))',
+        '}',
+        "const post = await getEntry('blog', $$props.slug)",
+        '---',
+        '<h1>{post.data.title}</h1>',
+      ].join('\n')
+    )
+
+    await buildPages(pagesDir, distDir, undefined, contentDir)
+
+    expect(readFileSync(join(distDir, 'blog', 'hello', 'index.html'), 'utf8')).toContain('<h1>Hello</h1>')
+    expect(readFileSync(join(distDir, 'blog', 'world', 'index.html'), 'utf8')).toContain('<h1>World</h1>')
+  })
 })
