@@ -90,6 +90,49 @@ describe('buildPages', () => {
     expect(html).toContain('<p>Found 2 posts</p>')
   })
 
+  it('renders layout HTML shell when page uses a layout component', async () => {
+    const pagesDir = join(tmpDir, 'src', 'pages')
+    const layoutsDir = join(tmpDir, 'src', 'layouts')
+    const distDir = join(tmpDir, 'dist')
+
+    mkdirSync(pagesDir, { recursive: true })
+    mkdirSync(layoutsDir, { recursive: true })
+
+    writeFileSync(
+      join(layoutsDir, 'Layout.wald'),
+      [
+        '---',
+        'const { title, pond } = $$props',
+        '---',
+        '<!DOCTYPE html>',
+        '<html>',
+        '<head><title>{title}</title></head>',
+        '<body>{pond}</body>',
+        '</html>',
+      ].join('\n')
+    )
+
+    writeFileSync(
+      join(pagesDir, 'index.wald'),
+      [
+        '---',
+        `import Layout from '../layouts/Layout.wald'`,
+        'const title = "Home"',
+        '---',
+        '<Layout title={title}>',
+        '<h1>Hello</h1>',
+        '</Layout>',
+      ].join('\n')
+    )
+
+    await buildPages(pagesDir, distDir)
+
+    const html = readFileSync(join(distDir, 'index.html'), 'utf8')
+    expect(html).toContain('<title>Home</title>')
+    expect(html).toContain('<h1>Hello</h1>')
+    expect(html).not.toContain('<!DOCTYPE html><!DOCTYPE html>')
+  })
+
   it('generates HTML for each path returned by getStaticPaths()', async () => {
     const pagesDir = join(tmpDir, 'src', 'pages')
     const distDir = join(tmpDir, 'dist')
