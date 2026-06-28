@@ -71,7 +71,7 @@ export async function scaffold(targetDir: string): Promise<void> {
       "const posts = await getCollection('blog')",
       "const count = posts.length",
       '---',
-      "<Layout title='Blog'>",
+      '<Layout title="Blog">',
       '  <h1>Blog</h1>',
       '  <p>Found {count} posts</p>',
       '</Layout>',
