@@ -16,7 +16,12 @@ export function extractFrontmatter(source: string): FrontmatterResult {
   const end = afterFirst.indexOf('\n' + DELIMITER)
 
   if (end === -1) {
-    throw new Error('Unclosed frontmatter block — missing closing ---')
+    const line = (afterFirst.match(/\n/g) ?? []).length + 1
+    const err = Object.assign(
+      new Error('Unclosed frontmatter block — missing closing ---'),
+      { line }
+    )
+    throw err
   }
 
   const code = afterFirst.slice(0, end).trim()
