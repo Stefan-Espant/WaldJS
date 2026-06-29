@@ -48,15 +48,40 @@ export async function scaffold(targetDir: string): Promise<void> {
   )
 
   writeFileSync(
+    join(targetDir, 'src', 'components', 'Counter.wald'),
+    [
+      '---',
+      'const { initial = 0 } = $$props',
+      '---',
+      '<div class="counter" data-count="{initial}">',
+      '  <span class="counter-value">{initial}</span>',
+      '  <button class="counter-btn">+</button>',
+      '</div>',
+      '<script>',
+      "  document.querySelectorAll('.counter').forEach(function(el) {",
+      "    var count = parseInt(el.dataset.count, 10)",
+      "    el.querySelector('.counter-btn').addEventListener('click', function() {",
+      '      count++',
+      "      el.querySelector('.counter-value').textContent = count",
+      '    })',
+      '  })',
+      '</script>',
+      '',
+    ].join('\n')
+  )
+
+  writeFileSync(
     join(targetDir, 'src', 'pages', 'index.wald'),
     [
       '---',
       "import Layout from '../layouts/Layout.wald'",
       "import Card from '../components/Card.wald'",
+      "import Counter from '../components/Counter.wald'",
       "const title = 'Hello Wald'",
       '---',
       '<Layout title={title}>',
       '  <Card title="Welkom" body="Je eerste WaldJS project." />',
+      '  <Counter initial={3} />',
       '</Layout>',
       '',
     ].join('\n')

@@ -67,4 +67,14 @@ describe('scaffold', () => {
     const content = readFileSync(join(dir, 'src', 'components', 'Card.wald'), 'utf8')
     expect(content).toContain('$$props')
   })
+
+  it('creates src/components/Counter.wald with a <script> block', async () => {
+    const base = mkdtempSync(join(tmpdir(), 'wald-plant-'))
+    const dir = join(base, 'my-forest')
+    await scaffold(dir)
+    const content = readFileSync(join(dir, 'src', 'components', 'Counter.wald'), 'utf8')
+    expect(content).toContain('<script>')
+    expect(content).toContain('addEventListener')
+    expect(content).toContain('</script>')
+  })
 })
