@@ -18,3 +18,17 @@ export function maybeWrap(html: string): string {
     ? html
     : wrapHtml(html)
 }
+
+export function hoistScripts(html: string): string {
+  const seen = new Set<string>()
+  const collected: string[] = []
+  const stripped = html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, (match) => {
+    if (!seen.has(match)) {
+      seen.add(match)
+      collected.push(match)
+    }
+    return ''
+  })
+  if (collected.length === 0) return html
+  return stripped.replace('</body>', collected.join('\n') + '\n</body>')
+}

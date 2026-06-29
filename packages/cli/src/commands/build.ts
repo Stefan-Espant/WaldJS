@@ -4,7 +4,7 @@ import { defineCommand } from 'citty'
 import ora from 'ora'
 import { compile } from '@waldjs/compiler'
 import { scanRoutes } from '../router/index.js'
-import { maybeWrap } from '../shell.js'
+import { maybeWrap, hoistScripts } from '../shell.js'
 
 function resolveRuntimeUrl(): string {
   return new URL('../../node_modules/@waldjs/runtime/dist/index.js', import.meta.url).href
@@ -88,7 +88,7 @@ export async function buildPages(
     const mod = await import(dataUrl) as {
       default: { render: (props?: Record<string, unknown>) => Promise<string> }
     }
-    const html = maybeWrap(await mod.default.render())
+    const html = hoistScripts(maybeWrap(await mod.default.render()))
     const outPath = route.pattern === '/'
       ? join(distDir, 'index.html')
       : join(distDir, route.pattern.slice(1), 'index.html')
@@ -110,7 +110,7 @@ export async function buildPages(
 
     const paths = await mod.getStaticPaths()
     for (const { params } of paths) {
-      const html = maybeWrap(await mod.default.render(params))
+      const html = hoistScripts(maybeWrap(await mod.default.render(params)))
       const outPath = computeOutPath(distDir, route.pattern, params)
       mkdirSync(join(outPath, '..'), { recursive: true })
       writeFileSync(outPath, html)
