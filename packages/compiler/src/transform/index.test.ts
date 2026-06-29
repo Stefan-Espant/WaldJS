@@ -142,6 +142,22 @@ describe('transform', () => {
 
 import { compile } from '../index.js'
 
+describe('script rendering', () => {
+  it('renders a <script> block as SafeHtml in the template output', () => {
+    const source = `---\n---\n<script>alert(1)</script>`
+    const output = compile(source, 'test.wald')
+    expect(output).toContain('new SafeHtml')
+    expect(output).toContain('<script>alert(1)</script>')
+  })
+
+  it('preserves < and { literally in script content', () => {
+    const source = `---\n---\n<script>const ok = 1 < 2; const obj = { a: 1 }</script>`
+    const output = compile(source, 'test.wald')
+    expect(output).toContain('const ok = 1 < 2')
+    expect(output).toContain('{ a: 1 }')
+  })
+})
+
 describe('component rendering', () => {
   it('renders a self-closing component with string props', () => {
     const source = `---\nimport Card from './Card.wald'\n---\n<Card title="Hoi" />`

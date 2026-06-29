@@ -80,6 +80,7 @@ function renderNode(node: TemplateNode): string {
     case 'text': return escapeTemplateLiteral(node.value)
     case 'expression': return `\${${node.code}}`
     case 'component': return renderComponent(node)
+    case 'script': return `\${new SafeHtml(${JSON.stringify(node.content)})}`
   }
 }
 
