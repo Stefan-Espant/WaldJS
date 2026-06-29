@@ -1,4 +1,4 @@
-import type { TemplateNode, ElementNode, ComponentNode, AttributeNode } from '../ast/types.js'
+import type { TemplateNode, ElementNode, ComponentNode, AttributeNode, ScriptNode } from '../ast/types.js'
 
 export function scanTemplate(source: string): TemplateNode[] {
   const scanner = new Scanner(source)
@@ -34,12 +34,27 @@ class Scanner {
 
   private scanNode(): TemplateNode | null {
     if (this.current === '<' && this.peek(1) !== '/') {
+      if (this.isScriptTag()) return this.scanScript()
       return this.scanElement()
     }
     if (this.current === '{') {
       return this.scanExpression()
     }
     return this.scanText()
+  }
+
+  private isScriptTag(): boolean {
+    const ahead = this.source.slice(this.pos + 1, this.pos + 8).toLowerCase()
+    return ahead.startsWith('script') && /[\s>/]/.test(ahead[6] ?? '>')
+  }
+
+  private scanScript(): ScriptNode {
+    const closeTag = '</script>'
+    const closeIndex = this.source.toLowerCase().indexOf(closeTag, this.pos)
+    const end = closeIndex === -1 ? this.source.length : closeIndex + closeTag.length
+    const content = this.source.slice(this.pos, end)
+    this.pos = end
+    return { type: 'script', content }
   }
 
   private scanText(): TemplateNode | null {
