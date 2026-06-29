@@ -1,10 +1,17 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { waldPlugin } from './vite-plugin.js'
 import type { Plugin } from 'vite'
 
 function callHook(pluginName: string, hookName: keyof Plugin, ...args: unknown[]) {
   const plugin = waldPlugin().find(p => p.name === pluginName)!
   return (plugin[hookName] as Function).call({}, ...args)
+}
+
+function callTransformWithMock(code: string, id: string) {
+  const plugin = waldPlugin().find(p => p.name === 'vite-plugin-wald')!
+  const mockError = vi.fn()
+  ;(plugin.transform as Function).call({ error: mockError }, code, id)
+  return mockError
 }
 
 describe('vite-plugin-wald', () => {
@@ -26,6 +33,20 @@ describe('vite-plugin-wald', () => {
   it('returns undefined for non-.wald files in transform', () => {
     const result = callHook('vite-plugin-wald', 'transform', 'export default {}', 'test.ts')
     expect(result).toBeUndefined()
+  })
+
+  it('calls this.error with [waldjs] prefix when compiler throws', () => {
+    const mockError = callTransformWithMock('---\nno closing', 'bad.wald')
+    expect(mockError).toHaveBeenCalledWith(
+      expect.objectContaining({ message: expect.stringContaining('[waldjs]') })
+    )
+  })
+
+  it('passes line number to this.error when compiler provides it', () => {
+    const mockError = callTransformWithMock('---\nno closing', 'bad.wald')
+    expect(mockError).toHaveBeenCalledWith(
+      expect.objectContaining({ loc: expect.objectContaining({ line: expect.any(Number) }) })
+    )
   })
 })
 

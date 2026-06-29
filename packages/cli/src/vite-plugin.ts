@@ -15,7 +15,15 @@ export function waldPlugin(): Plugin[] {
 
       transform(code, id) {
         if (!id.endsWith('.wald')) return
-        return { code: compile(code, id), map: null }
+        try {
+          return { code: compile(code, id), map: null }
+        } catch (e) {
+          const message = `[waldjs] ${e instanceof Error ? e.message : String(e)}`
+          const loc = typeof e === 'object' && e !== null && 'line' in e
+            ? { line: (e as { line: number }).line, column: 0 }
+            : undefined
+          this.error({ message, loc })
+        }
       },
     },
     {
