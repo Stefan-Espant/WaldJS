@@ -2,7 +2,7 @@
 
 A content-first web framework for building fast, static-first websites. Write `.wald` files — part Markdown frontmatter, part HTML template — and WaldJS compiles them into a static site.
 
-> **Status:** Early development. Phase 1 (CLI + routing) and Phase 2a (content collections) are complete. Phase 2b (components + layouts) is in progress.
+> **Status:** Early development. Phases 0–2b and 4a–4b are complete. Phase 3 (client-side hydration) is next.
 
 ---
 
@@ -124,12 +124,32 @@ const post = await getEntry('blog', $$props.slug)
 
 ---
 
+## Config file
+
+Create a `wald.config.ts` in your project root to configure the build:
+
+```ts
+import { defineConfig } from '@waldjs/cli'
+
+export default defineConfig({
+  outDir: 'dist',  // default
+  base: '/',       // default — set to '/my-subpath/' for sub-directory deploys
+  vite: {          // passed through to Vite (plugins, resolve, etc.)
+    plugins: [],
+  },
+})
+```
+
+All options are optional. Without a config file WaldJS uses the defaults above.
+
+---
+
 ## CLI commands
 
 ```bash
 wald plant <name>   # Create a new project
 wald grow           # Start the dev server (http://localhost:7233)
-wald build          # Build to dist/
+wald build          # Build to dist/ (Vite SSR + static pre-render)
 wald preview        # Preview the build (http://localhost:4321)
 ```
 
@@ -143,12 +163,17 @@ my-forest/
 │   └── blog/
 │       └── hello-world.md
 ├── src/
+│   ├── layouts/
+│   │   └── Layout.wald
+│   ├── components/
+│   │   └── Card.wald
 │   └── pages/
 │       ├── index.wald
 │       └── blog/
 │           ├── index.wald
 │           └── [slug].wald
 ├── public/              # Copied to dist/ as-is
+├── wald.config.ts       # Optional config
 └── package.json
 ```
 
@@ -163,7 +188,7 @@ WaldJS uses a forest metaphor throughout:
 | **Wald** | The forest — your whole website |
 | **Roots** | The compiler that transforms `.wald` files |
 | **Trees** | Pages — `.wald` files in `src/pages/` |
-| **Branches** | Components — reusable `.wald` files *(coming in Phase 2b)* |
+| **Branches** | Components — reusable `.wald` files |
 | **Canopies** | Client-side hydration *(coming in Phase 3)* |
 
 ---
@@ -194,6 +219,8 @@ Phases:
 - **Phase 0 — Roots:** Compiler (parser + transform) ✅
 - **Phase 1 — Seed:** CLI (`plant`, `grow`, `build`, `preview`) ✅
 - **Phase 2a — Sapling:** Content collections + `getStaticPaths()` ✅
-- **Phase 2b — Branches:** Components + layouts 🚧
-- **Phase 3 — Canopy:** Client-side hydration
-- **Phase 4 — Forest:** Config file, deployment adapters
+- **Phase 2b — Branches:** Components + layouts ✅
+- **Phase 3 — Canopy:** Client-side hydration 🚧
+- **Phase 4a — Forest:** Vite plugin (`vite-plugin-wald`) ✅
+- **Phase 4b — Forest:** `wald.config.ts` + Vite SSR build pipeline ✅
+- **Phase 4c — Forest:** Deployment adapters
