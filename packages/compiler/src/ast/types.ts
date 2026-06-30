@@ -14,6 +14,7 @@ export type TemplateNode =
   | TextNode
   | ExpressionNode
   | ComponentNode
+  | ScriptNode
 
 export type ElementNode = {
   type: 'element'
@@ -43,4 +44,9 @@ export type ComponentNode = {
   name: string
   attrs: AttributeNode[]
   children: TemplateNode[]
+}
+
+export type ScriptNode = {
+  type: 'script'
+  content: string
 }

@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { scanTemplate } from './scanner.js'
+import type { ScriptNode } from '../ast/types.js'
 
 describe('scanTemplate — text', () => {
   it('returns a TextNode for plain text', () => {
@@ -117,5 +118,27 @@ describe('scanTemplate — elements', () => {
       attrs: [],
       children: [],
     }])
+  })
+})
+
+describe('scanTemplate — script', () => {
+  it('returns a ScriptNode for a <script> element', () => {
+    const nodes = scanTemplate('<script>console.log("hi")</script>')
+    expect(nodes).toEqual([{ type: 'script', content: '<script>console.log("hi")</script>' } satisfies ScriptNode])
+  })
+
+  it('treats { as raw text inside script, not an expression', () => {
+    const nodes = scanTemplate('<script>const x = { a: 1 }</script>')
+    expect(nodes).toEqual([{ type: 'script', content: '<script>const x = { a: 1 }</script>' }])
+  })
+
+  it('treats < as raw text inside script, not a tag', () => {
+    const nodes = scanTemplate('<script>const ok = 1 < 2</script>')
+    expect(nodes).toEqual([{ type: 'script', content: '<script>const ok = 1 < 2</script>' }])
+  })
+
+  it('handles script with type attribute', () => {
+    const nodes = scanTemplate('<script type="module">export const x = 1</script>')
+    expect(nodes).toEqual([{ type: 'script', content: '<script type="module">export const x = 1</script>' }])
   })
 })

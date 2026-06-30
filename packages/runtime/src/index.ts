@@ -6,13 +6,17 @@ type RenderFn = (
 type BuildContext = Record<string, never>
 
 export type Tree = {
-  render: () => Promise<string>
+  render: (props?: Record<string, unknown>) => Promise<string>
 }
 
 export function createTree(fn: RenderFn): Tree {
   return {
-    render: () => fn({}, {}),
+    render: (props = {}) => fn({}, props),
   }
+}
+
+export class SafeHtml {
+  constructor(public readonly value: string) {}
 }
 
 const escapeMap: Record<string, string> = {
@@ -34,7 +38,8 @@ export function renderTemplate(
 ): string {
   let result = strings[0]
   for (let i = 0; i < values.length; i++) {
-    result += escapeHtml(values[i]) + strings[i + 1]
+    const value = values[i]
+    result += (value instanceof SafeHtml ? value.value : escapeHtml(value)) + strings[i + 1]
   }
   return result
 }

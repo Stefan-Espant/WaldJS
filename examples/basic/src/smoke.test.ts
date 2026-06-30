@@ -10,7 +10,7 @@ const title = "Hello Wald"
 
     const output = compile(source, 'index.wald')
 
-    expect(output).toContain("import { createTree, renderTemplate } from '@waldjs/runtime'")
+    expect(output).toContain("import { createTree, renderTemplate, SafeHtml } from '@waldjs/runtime'")
     expect(output).toContain('export default createTree')
   })
 
