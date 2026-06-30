@@ -40,6 +40,19 @@ const title = "Hello"
     expect(() => extractFrontmatter(source)).toThrow('Unclosed frontmatter block')
   })
 
+  it('includes a line property on the thrown error for unclosed frontmatter', () => {
+    const source = `---\nconst title = "Hello"\n<h1>{title}</h1>`
+    let caught: unknown
+    try {
+      extractFrontmatter(source)
+    } catch (e) {
+      caught = e
+    }
+    expect(caught).toBeInstanceOf(Error)
+    expect(caught).toHaveProperty('line')
+    expect(typeof (caught as { line: unknown }).line).toBe('number')
+  })
+
   it('handles frontmatter with TypeScript', () => {
     const source = `---
 const items: string[] = ['a', 'b']
