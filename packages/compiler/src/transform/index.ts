@@ -1,4 +1,4 @@
-import type { WaldDocument, TemplateNode, ElementNode, AttributeNode } from '../ast/types.js'
+import type { WaldDocument, TemplateNode, ElementNode, ComponentNode, AttributeNode } from '../ast/types.js'
 
 const VOID_ELEMENTS = new Set([
   'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input',
@@ -15,7 +15,7 @@ export function transform(ast: WaldDocument): string {
     : ''
 
   const parts = [
-    `import { createTree, renderTemplate } from '@waldjs/runtime'`,
+    `import { createTree, renderTemplate, SafeHtml } from '@waldjs/runtime'`,
     ``,
   ]
 
@@ -79,8 +79,29 @@ function renderNode(node: TemplateNode): string {
     case 'element': return renderElement(node)
     case 'text': return escapeTemplateLiteral(node.value)
     case 'expression': return `\${${node.code}}`
-    case 'component': return ''
+    case 'component': return renderComponent(node)
+    case 'script': return `\${new SafeHtml(${JSON.stringify(node.content)})}`
   }
+}
+
+function renderComponent(node: ComponentNode): string {
+  const props = node.attrs
+    .map(attr =>
+      typeof attr.value === 'string'
+        ? `${attr.name}: ${JSON.stringify(attr.value)}`
+        : `${attr.name}: (${attr.value.code})`
+    )
+    .join(', ')
+
+  if (node.children.length > 0) {
+    const childrenHtml = renderNodes(node.children)
+    const propsWithPond = props
+      ? `${props}, pond: new SafeHtml(renderTemplate\`${childrenHtml}\`)`
+      : `pond: new SafeHtml(renderTemplate\`${childrenHtml}\`)`
+    return `\${new SafeHtml(await ${node.name}.render({ ${propsWithPond} }))}`
+  }
+
+  return `\${new SafeHtml(await ${node.name}.render({ ${props} }))}`
 }
 
 function escapeTemplateLiteral(text: string): string {

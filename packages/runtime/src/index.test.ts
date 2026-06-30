@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { createTree, renderTemplate } from './index.js'
+import { createTree, renderTemplate, SafeHtml } from './index.js'
 
 describe('renderTemplate', () => {
   it('interpolates a string value', () => {
@@ -57,5 +57,17 @@ describe('createTree', () => {
     })
     const html = await tree.render({ name: 'Wald' })
     expect(html).toBe('<h1>Wald</h1>')
+  })
+})
+
+describe('SafeHtml', () => {
+  it('renderTemplate inserts SafeHtml without escaping', () => {
+    const result = renderTemplate`<div>${new SafeHtml('<b>bold</b>')}</div>`
+    expect(result).toBe('<div><b>bold</b></div>')
+  })
+
+  it('renderTemplate still escapes plain strings alongside SafeHtml', () => {
+    const result = renderTemplate`${new SafeHtml('<b>safe</b>')} ${'<bad>'}`
+    expect(result).toBe('<b>safe</b> &lt;bad&gt;')
   })
 })
