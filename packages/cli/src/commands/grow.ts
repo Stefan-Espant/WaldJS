@@ -1,8 +1,9 @@
-import { createServer } from 'vite'
+import { createServer, mergeConfig } from 'vite'
 import { createServer as createHttpServer } from 'node:http'
 import { defineCommand } from 'citty'
 import ora from 'ora'
-import { waldPlugin } from '@waldjs/compiler'
+import { waldPlugin } from '../vite-plugin.js'
+import { loadWaldConfig } from '../config.js'
 import { matchRoute, scanRoutes, type Route } from '../router/index.js'
 import { maybeWrap, hoistScripts } from '../shell.js'
 import { join } from 'node:path'
@@ -27,17 +28,24 @@ export async function handleRequest(
 export const growCommand = defineCommand({
   meta: { description: 'Start the WaldJS dev server' },
   async run() {
+    const cwd = process.cwd()
     const port = 7233
-    const pagesDir = join(process.cwd(), 'src', 'pages')
+    const pagesDir = join(cwd, 'src', 'pages')
     const routes = scanRoutes(pagesDir)
 
+    const config = await loadWaldConfig(cwd)
     const spinner = ora('Starting dev server...').start()
 
-    const vite = await createServer({
-      server: { middlewareMode: true },
-      appType: 'custom',
-      plugins: [waldPlugin()],
-    })
+    // config.vite goes first so WaldJS critical settings in second arg always win
+    const vite = await createServer(mergeConfig(
+      config.vite ?? {},
+      {
+        base: config.base,
+        server: { middlewareMode: true },
+        appType: 'custom',
+        plugins: [waldPlugin()],
+      },
+    ))
 
     const server = createHttpServer(async (req, res) => {
       const url = req.url ?? '/'
