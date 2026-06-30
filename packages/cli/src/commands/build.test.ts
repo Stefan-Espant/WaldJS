@@ -61,4 +61,64 @@ describe('buildPages', () => {
 
     expect(existsSync(join(distDir, 'logo.svg'))).toBe(true)
   })
+
+  it('renders a static route that uses getCollection from wald:content', async () => {
+    const pagesDir = join(tmpDir, 'src', 'pages')
+    const distDir = join(tmpDir, 'dist')
+    const contentDir = join(tmpDir, 'content')
+
+    mkdirSync(join(pagesDir, 'blog'), { recursive: true })
+    mkdirSync(join(contentDir, 'blog'), { recursive: true })
+    writeFileSync(join(contentDir, 'blog', 'one.md'), '---\ntitle: One\n---\nBody')
+    writeFileSync(join(contentDir, 'blog', 'two.md'), '---\ntitle: Two\n---\nBody')
+
+    writeFileSync(
+      join(pagesDir, 'blog', 'index.wald'),
+      [
+        '---',
+        "import { getCollection } from 'wald:content'",
+        "const posts = await getCollection('blog')",
+        "const count = posts.length",
+        '---',
+        '<p>Found {count} posts</p>',
+      ].join('\n')
+    )
+
+    await buildPages(pagesDir, distDir, undefined, contentDir)
+
+    const html = readFileSync(join(distDir, 'blog', 'index.html'), 'utf8')
+    expect(html).toContain('<p>Found 2 posts</p>')
+  })
+
+  it('generates HTML for each path returned by getStaticPaths()', async () => {
+    const pagesDir = join(tmpDir, 'src', 'pages')
+    const distDir = join(tmpDir, 'dist')
+    const contentDir = join(tmpDir, 'content')
+
+    mkdirSync(join(pagesDir, 'blog'), { recursive: true })
+    mkdirSync(join(contentDir, 'blog'), { recursive: true })
+
+    writeFileSync(join(contentDir, 'blog', 'hello.md'), '---\ntitle: Hello\n---\nContent')
+    writeFileSync(join(contentDir, 'blog', 'world.md'), '---\ntitle: World\n---\nContent')
+
+    writeFileSync(
+      join(pagesDir, 'blog', '[slug].wald'),
+      [
+        '---',
+        "import { getCollection, getEntry } from 'wald:content'",
+        'export async function getStaticPaths() {',
+        "  const posts = await getCollection('blog')",
+        '  return posts.map(p => ({ params: { slug: p.slug } }))',
+        '}',
+        "const post = await getEntry('blog', $$props.slug)",
+        '---',
+        '<h1>{post.data.title}</h1>',
+      ].join('\n')
+    )
+
+    await buildPages(pagesDir, distDir, undefined, contentDir)
+
+    expect(readFileSync(join(distDir, 'blog', 'hello', 'index.html'), 'utf8')).toContain('<h1>Hello</h1>')
+    expect(readFileSync(join(distDir, 'blog', 'world', 'index.html'), 'utf8')).toContain('<h1>World</h1>')
+  })
 })

@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@waldjs/compiler": "workspace:*",
+    "@waldjs/content": "workspace:*",
     "@waldjs/runtime": "workspace:*",
     "citty": "^0.1.6",
     "ora": "^8.0.0",

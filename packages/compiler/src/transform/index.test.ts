@@ -87,4 +87,54 @@ describe('transform', () => {
     const output = transform(ast)
     expect(output).toContain('renderTemplate``')
   })
+
+  it('hoists export function to module level before export default', () => {
+    const ast: WaldDocument = {
+      type: 'document',
+      frontmatter: {
+        type: 'frontmatter',
+        code: 'export async function getStaticPaths() {\n  return [{ params: { slug: "hello" } }]\n}\nconst x = 1',
+      },
+      template: [],
+    }
+    const output = transform(ast)
+    const exportFnPos = output.indexOf('export async function getStaticPaths')
+    const exportDefaultPos = output.indexOf('export default createTree')
+    expect(exportFnPos).toBeGreaterThanOrEqual(0)
+    expect(exportFnPos).toBeLessThan(exportDefaultPos)
+  })
+
+  it('keeps non-export statements inside the createTree callback', () => {
+    const ast: WaldDocument = {
+      type: 'document',
+      frontmatter: {
+        type: 'frontmatter',
+        code: 'export async function getStaticPaths() {\n  return []\n}\nconst x = 1',
+      },
+      template: [],
+    }
+    const output = transform(ast)
+    const exportDefaultPos = output.indexOf('export default createTree')
+    const constXPos = output.indexOf('const x = 1')
+    expect(constXPos).toBeGreaterThan(exportDefaultPos)
+  })
+
+  it('hoists import statements to module level before export default', () => {
+    const ast: WaldDocument = {
+      type: 'document',
+      frontmatter: {
+        type: 'frontmatter',
+        code: "import { getCollection } from 'wald:content'\nconst posts = await getCollection('blog')",
+      },
+      template: [],
+    }
+    const output = transform(ast)
+    const importPos = output.indexOf("import { getCollection } from 'wald:content'")
+    const exportDefaultPos = output.indexOf('export default createTree')
+    expect(importPos).toBeGreaterThanOrEqual(0)
+    expect(importPos).toBeLessThan(exportDefaultPos)
+    // the await call stays inside the callback
+    const postsPos = output.indexOf("const posts = await getCollection('blog')")
+    expect(postsPos).toBeGreaterThan(exportDefaultPos)
+  })
 })

@@ -41,4 +41,13 @@ describe('scaffold', () => {
     expect(content).toContain('.env')
     expect(content).toContain('.DS_Store')
   })
+
+  it('creates content/blog/hello-world.md with frontmatter', async () => {
+    const base = mkdtempSync(join(tmpdir(), 'wald-plant-'))
+    const dir = join(base, 'my-forest')
+    await scaffold(dir)
+    const content = readFileSync(join(dir, 'content', 'blog', 'hello-world.md'), 'utf8')
+    expect(content).toContain('title:')
+    expect(content).toContain('date:')
+  })
 })
