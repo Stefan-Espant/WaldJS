@@ -1,11 +1,89 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, existsSync } from 'node:fs'
-import { join } from 'node:path'
+import { join, resolve, dirname } from 'node:path'
 import { tmpdir } from 'node:os'
+import type { WaldConfig } from '../config.js'
+
+// Mock vite.build() — simulates what Vite SSR would do by compiling .wald files
+// with the same data: URL technique as the old pipeline, writing wrapper modules
+// to the SSR output dir so the pre-render step can import them.
+vi.mock('vite', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('vite')>()
+  return {
+    ...actual,
+    build: vi.fn(async (cfg: any) => {
+      const { compile } = await import('@waldjs/compiler')
+      const { readFileSync: fsRead, writeFileSync: fsWrite, mkdirSync: fsMkdir } = await import('node:fs')
+      const { join: pJoin, dirname: pDirname, resolve: pResolve } = await import('node:path')
+
+      const ssrDir: string = cfg.build.outDir
+      const inputs: Record<string, string> = cfg.build.rollupOptions.input
+      const contentDir: string | undefined = cfg._waldContentDir
+
+      const runtimeUrl = new URL(
+        '../../node_modules/@waldjs/runtime/dist/index.js',
+        import.meta.url,
+      ).href
+      const contentPkgUrl = new URL(
+        '../../node_modules/@waldjs/content/dist/index.js',
+        import.meta.url,
+      ).href
+
+      function makeContentModuleUrl(cDir: string): string {
+        const code = [
+          `import { readCollection as _rc, readEntry as _re } from ${JSON.stringify(contentPkgUrl)}`,
+          `const contentDir = ${JSON.stringify(cDir)}`,
+          `export const getCollection = (name) => _rc(name, contentDir)`,
+          `export const getEntry = (collection, slug) => _re(collection, slug, contentDir)`,
+        ].join('\n')
+        return `data:text/javascript,${encodeURIComponent(code)}`
+      }
+
+      const cache = new Map<string, string>()
+      const contentModuleUrl = contentDir ? makeContentModuleUrl(contentDir) : null
+
+      async function compileFile(filePath: string): Promise<string> {
+        if (cache.has(filePath)) return cache.get(filePath)!
+        const source = fsRead(filePath, 'utf8')
+        let compiled = compile(source, filePath)
+        compiled = compiled.replace(/(['"])@waldjs\/runtime\1/g, JSON.stringify(runtimeUrl))
+        if (contentModuleUrl) {
+          compiled = compiled.replace(/(['"])wald:content\1/g, JSON.stringify(contentModuleUrl))
+        }
+        const waldRe = /from\s+(['"])(\.\.?\/[^'"]+\.wald)\1/g
+        let m: RegExpExecArray | null
+        const patches: Array<[string, string]> = []
+        while ((m = waldRe.exec(compiled)) !== null) {
+          const [, quote, relPath] = m
+          const absPath = pResolve(pDirname(filePath), relPath)
+          const depUrl = await compileFile(absPath)
+          patches.push([`from ${quote}${relPath}${quote}`, `from ${JSON.stringify(depUrl)}`])
+        }
+        for (const [from, to] of patches) compiled = compiled.replace(from, to)
+        const dataUrl = `data:text/javascript,${encodeURIComponent(compiled)}`
+        cache.set(filePath, dataUrl)
+        return dataUrl
+      }
+
+      for (const [key, filePath] of Object.entries(inputs)) {
+        const dataUrl = await compileFile(filePath as string)
+        // Wrapper module re-exports from the data: URL so Node can import it by file path
+        const wrapper = `export * from ${JSON.stringify(dataUrl)}\nexport { default } from ${JSON.stringify(dataUrl)}\n`
+        const outFile = pJoin(ssrDir, key + '.js')
+        fsMkdir(pDirname(outFile), { recursive: true })
+        fsWrite(outFile, wrapper)
+      }
+    }),
+  }
+})
+
 import { buildPages } from './build.js'
 
-
 let tmpDir: string
+
+function makeConfig(distDir: string): Required<WaldConfig> {
+  return { outDir: distDir, base: '/', vite: {} }
+}
 
 beforeEach(() => {
   tmpDir = mkdtempSync(join(tmpdir(), 'wald-build-'))
@@ -18,7 +96,7 @@ describe('buildPages', () => {
     mkdirSync(pagesDir, { recursive: true })
     writeFileSync(join(pagesDir, 'index.wald'), `---\nconst t = "Hi"\n---\n<h1>{t}</h1>`)
 
-    await buildPages(pagesDir, distDir)
+    await buildPages(pagesDir, makeConfig(distDir))
 
     const html = readFileSync(join(distDir, 'index.html'), 'utf8')
     expect(html).toContain('<h1>Hi</h1>')
@@ -31,7 +109,7 @@ describe('buildPages', () => {
     mkdirSync(pagesDir, { recursive: true })
     writeFileSync(join(pagesDir, 'about.wald'), '<p>About page</p>')
 
-    await buildPages(pagesDir, distDir)
+    await buildPages(pagesDir, makeConfig(distDir))
 
     const html = readFileSync(join(distDir, 'about', 'index.html'), 'utf8')
     expect(html).toContain('<p>About page</p>')
@@ -43,7 +121,7 @@ describe('buildPages', () => {
     mkdirSync(join(pagesDir, 'blog'), { recursive: true })
     writeFileSync(join(pagesDir, 'blog', '[slug].wald'), '<h1>Post</h1>')
 
-    await buildPages(pagesDir, distDir)
+    await buildPages(pagesDir, makeConfig(distDir))
 
     expect(existsSync(join(distDir, 'blog', '[slug]', 'index.html'))).toBe(false)
   })
@@ -57,7 +135,7 @@ describe('buildPages', () => {
     writeFileSync(join(pagesDir, 'index.wald'), '<p>home</p>')
     writeFileSync(join(publicDir, 'logo.svg'), '<svg/>')
 
-    await buildPages(pagesDir, distDir, publicDir)
+    await buildPages(pagesDir, makeConfig(distDir), publicDir)
 
     expect(existsSync(join(distDir, 'logo.svg'))).toBe(true)
   })
@@ -84,7 +162,7 @@ describe('buildPages', () => {
       ].join('\n')
     )
 
-    await buildPages(pagesDir, distDir, undefined, contentDir)
+    await buildPages(pagesDir, makeConfig(distDir), undefined, contentDir)
 
     const html = readFileSync(join(distDir, 'blog', 'index.html'), 'utf8')
     expect(html).toContain('<p>Found 2 posts</p>')
@@ -125,7 +203,7 @@ describe('buildPages', () => {
       ].join('\n')
     )
 
-    await buildPages(pagesDir, distDir)
+    await buildPages(pagesDir, makeConfig(distDir))
 
     const html = readFileSync(join(distDir, 'index.html'), 'utf8')
     expect(html).toContain('<title>Home</title>')
@@ -159,7 +237,7 @@ describe('buildPages', () => {
       ].join('\n')
     )
 
-    await buildPages(pagesDir, distDir, undefined, contentDir)
+    await buildPages(pagesDir, makeConfig(distDir), undefined, contentDir)
 
     expect(readFileSync(join(distDir, 'blog', 'hello', 'index.html'), 'utf8')).toContain('<h1>Hello</h1>')
     expect(readFileSync(join(distDir, 'blog', 'world', 'index.html'), 'utf8')).toContain('<h1>World</h1>')
@@ -181,7 +259,7 @@ describe('buildPages', () => {
       ].join('\n')
     )
 
-    await buildPages(pagesDir, distDir)
+    await buildPages(pagesDir, makeConfig(distDir))
 
     const html = readFileSync(join(distDir, 'index.html'), 'utf8')
     const scriptPos = html.indexOf('<script>')
@@ -221,9 +299,20 @@ describe('buildPages', () => {
       ].join('\n')
     )
 
-    await buildPages(pagesDir, distDir)
+    await buildPages(pagesDir, makeConfig(distDir))
 
     const html = readFileSync(join(distDir, 'index.html'), 'utf8')
     expect((html.match(/<script>/g) ?? []).length).toBe(1)
+  })
+
+  it('removes .wald-ssr temp dir after build', async () => {
+    const pagesDir = join(tmpDir, 'src', 'pages')
+    const distDir = join(tmpDir, 'dist')
+    mkdirSync(pagesDir, { recursive: true })
+    writeFileSync(join(pagesDir, 'index.wald'), '<p>hi</p>')
+
+    await buildPages(pagesDir, makeConfig(distDir))
+
+    expect(existsSync(join(tmpDir, '.wald-ssr'))).toBe(false)
   })
 })
