@@ -4,7 +4,8 @@
   "scripts": {
     "build": "turbo build",
     "test": "turbo test",
-    "dev": "turbo dev"
+    "dev": "turbo dev",
+    "bench": "pnpm --filter @waldjs/benchmarks bench"
   },
   "packageManager": "pnpm@11.5.2",
   "devDependencies": {

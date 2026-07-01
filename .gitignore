@@ -4,3 +4,10 @@ node_modules/
 dist/
 .env
 .DS_Store
+benchmarks/results/
+benchmarks/wald/node_modules/
+benchmarks/astro/node_modules/
+benchmarks/eleventy/node_modules/
+benchmarks/wald/dist/
+benchmarks/astro/dist/
+benchmarks/eleventy/dist/
