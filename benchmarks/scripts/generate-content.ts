@@ -14,7 +14,7 @@ const para = [
 
 for (let i = 1; i <= 50; i++) {
   const n = String(i).padStart(3, '0')
-  const date = new Date(Date.UTC(2026, 0, i)).toISOString().split('T')[0]
+  const date = `2026-${String(Math.ceil(i / 31)).padStart(2, '0')}-${String(((i - 1) % 28) + 1).padStart(2, '0')}`
   writeFileSync(
     join(contentDir, `post-${n}.md`),
     `---\ntitle: "Benchmark Post ${n}"\ndate: ${date}\nauthor: Benchmark\n---\n\n${para}\n\n${para}\n\n${para}\n`,
