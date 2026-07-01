@@ -1,0 +1,11 @@
+{
+  "name": "@waldjs/benchmark-astro",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "astro build"
+  },
+  "dependencies": {
+    "astro": "^4.0.0"
+  }
+}

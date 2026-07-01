@@ -1,0 +1,21 @@
+---
+import { getCollection } from 'astro:content'
+import Counter from '../../components/Counter.astro'
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog')
+  return posts.map(p => ({ params: { slug: p.slug }, props: { post: p } }))
+}
+
+const { post } = Astro.props
+const { Content } = await post.render()
+---
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>{post.data.title}</title></head>
+<body>
+<h1>{post.data.title}</h1>
+<Content />
+<Counter initialCount={0} />
+</body>
+</html>

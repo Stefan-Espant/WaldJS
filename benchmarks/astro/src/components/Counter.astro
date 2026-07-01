@@ -1,0 +1,12 @@
+---
+const { initialCount = 0 } = Astro.props
+---
+<button class="counter" data-count={initialCount} style="padding:8px 16px;font-size:1rem">
+  {initialCount}
+</button>
+<script>
+  document.querySelectorAll<HTMLButtonElement>('.counter').forEach(btn => {
+    let n = parseInt(btn.dataset.count ?? '0')
+    btn.onclick = () => { btn.textContent = String(++n) }
+  })
+</script>

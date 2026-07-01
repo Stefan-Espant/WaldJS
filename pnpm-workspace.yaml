@@ -2,5 +2,8 @@ packages:
   - 'packages/*'
   - 'examples/*'
   - 'benchmarks'
+  - 'benchmarks/astro'
+  - 'benchmarks/wald'
 allowBuilds:
   esbuild: true
+  sharp: true
