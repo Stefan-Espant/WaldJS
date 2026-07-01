@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { scanTemplate } from './scanner.js'
 import type { ScriptNode } from '../ast/types.js'
+import { WaldError } from '../errors.js'
 
 describe('scanTemplate — text', () => {
   it('returns a TextNode for plain text', () => {
@@ -140,5 +141,27 @@ describe('scanTemplate — script', () => {
   it('handles script with type attribute', () => {
     const nodes = scanTemplate('<script type="module">export const x = 1</script>')
     expect(nodes).toEqual([{ type: 'script', content: '<script type="module">export const x = 1</script>' }])
+  })
+})
+
+describe('scanTemplate — errors', () => {
+  it('throws WaldError for unclosed expression {', () => {
+    expect(() => scanTemplate('{title')).toThrow(WaldError)
+  })
+
+  it('unclosed expression error points to the opening {', () => {
+    let caught: WaldError | undefined
+    try { scanTemplate('{title') } catch (e) { caught = e as WaldError }
+    expect(caught?.message).toContain("Unclosed expression")
+    expect(caught?.message).toContain("'}'")
+    expect(caught?.line).toBe(1)
+    expect(caught?.column).toBe(1)
+  })
+
+  it('unclosed expression on line 2 reports correct line', () => {
+    let caught: WaldError | undefined
+    try { scanTemplate('<p>ok</p>\n<h1>{oops') } catch (e) { caught = e as WaldError }
+    expect(caught?.line).toBe(2)
+    expect(caught?.column).toBe(5)
   })
 })

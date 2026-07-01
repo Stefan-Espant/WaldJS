@@ -1,4 +1,5 @@
 import type { TemplateNode, ElementNode, ComponentNode, AttributeNode, ScriptNode } from '../ast/types.js'
+import { WaldError, offsetToLineCol } from '../errors.js'
 
 export function scanTemplate(source: string): TemplateNode[] {
   const scanner = new Scanner(source)
@@ -67,6 +68,7 @@ class Scanner {
   }
 
   scanExpression(): TemplateNode {
+    const openPos = this.pos
     this.advance() // consume {
     let code = ''
     let depth = 1
@@ -75,6 +77,10 @@ class Scanner {
       if (ch === '{') depth++
       else if (ch === '}') depth--
       if (depth > 0) code += ch
+    }
+    if (depth > 0) {
+      const { line, column } = offsetToLineCol(this.source, openPos)
+      throw new WaldError(`Unclosed expression: expected '}'`, line, column)
     }
     return { type: 'expression', code: code.trim() }
   }
