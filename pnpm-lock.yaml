@@ -33,18 +33,6 @@ importers:
         specifier: ^5.5.0
         version: 5.9.3
 
-  benchmarks/wald:
-    devDependencies:
-      '@waldjs/cli':
-        specifier: file:../../packages/cli
-        version: file:packages/cli(@types/node@20.19.43)
-      '@waldjs/content':
-        specifier: workspace:*
-        version: link:../../packages/content
-      '@waldjs/runtime':
-        specifier: workspace:*
-        version: link:../../packages/runtime
-
   examples/basic:
     dependencies:
       '@waldjs/compiler':
@@ -907,10 +895,6 @@ packages:
 
   '@vitest/utils@2.1.9':
     resolution: {integrity: sha512-v0psaMSkNJ3A2NMrUEHFRzJtDPFn+/VWZ5WxImB21T9fjucJRmS7xCS3ppEnARb9y11OAzaD+P2Ps+b+BGX5iQ==}
-
-  '@waldjs/cli@file:packages/cli':
-    resolution: {directory: packages/cli, type: directory}
-    hasBin: true
 
   acorn-import-attributes@1.9.5:
     resolution: {integrity: sha512-n02Vykv5uA3eHGM/Z2dQrcD56kL8TyDb2p1+0P83PClMnC/nc+anbQRhIOWnSq4Ke/KvDPrY3C9hDtC/A3eHnQ==}
@@ -2486,25 +2470,6 @@ snapshots:
       '@vitest/pretty-format': 2.1.9
       loupe: 3.2.1
       tinyrainbow: 1.2.0
-
-  '@waldjs/cli@file:packages/cli(@types/node@20.19.43)':
-    dependencies:
-      '@waldjs/compiler': link:packages/compiler
-      '@waldjs/content': link:packages/content
-      '@waldjs/runtime': link:packages/runtime
-      citty: 0.1.6
-      ora: 8.2.0
-      sirv: 3.0.2
-      vite: 5.4.21(@types/node@20.19.43)
-    transitivePeerDependencies:
-      - '@types/node'
-      - less
-      - lightningcss
-      - sass
-      - sass-embedded
-      - stylus
-      - sugarss
-      - terser
 
   acorn-import-attributes@1.9.5(acorn@8.17.0):
     dependencies:

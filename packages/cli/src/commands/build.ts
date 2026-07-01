@@ -31,8 +31,13 @@ export async function buildPages(
 
   const ssrDir = join(dirname(distDir), '.wald-ssr')
 
+  const sanitizeKey = (k: string) => k.replace(/[\[\]]/g, '_')
+
   const input = Object.fromEntries(
-    routes.map(r => [relative(pagesDir, r.file).replace(/\.wald$/, ''), r.file]),
+    routes.map(r => [
+      sanitizeKey(relative(pagesDir, r.file).replace(/\.wald$/, '')),
+      r.file,
+    ]),
   )
 
   // Pass 1 — Bundle all .wald pages into an SSR build.
@@ -55,15 +60,11 @@ export async function buildPages(
     } as any,
   ))
 
-  // Vite sanitizes bracket characters in SSR output filenames (e.g. [slug] → _slug_)
-  function ssrKey(file: string): string {
-    return relative(pagesDir, file).replace(/\.wald$/, '').replace(/[\[\]]/g, '_')
-  }
-
   try {
     // Pass 2 — Pre-render each static route to an HTML file.
     for (const route of staticRoutes) {
-      const mod = await import(join(ssrDir, ssrKey(route.file) + '.js')) as {
+      const key = sanitizeKey(relative(pagesDir, route.file).replace(/\.wald$/, ''))
+      const mod = await import(join(ssrDir, key + '.js')) as {
         default: { render: (props?: Record<string, unknown>) => Promise<string> }
       }
       const html = hoistScripts(maybeWrap(await mod.default.render()))
@@ -73,7 +74,8 @@ export async function buildPages(
     }
 
     for (const route of dynamicRoutes) {
-      const mod = await import(join(ssrDir, ssrKey(route.file) + '.js')) as {
+      const key = sanitizeKey(relative(pagesDir, route.file).replace(/\.wald$/, ''))
+      const mod = await import(join(ssrDir, key + '.js')) as {
         default: { render: (props?: Record<string, unknown>) => Promise<string> }
         getStaticPaths?: () => Promise<Array<{ params: Record<string, string> }>>
       }
