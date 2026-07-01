@@ -48,6 +48,18 @@ describe('vite-plugin-wald', () => {
       expect.objectContaining({ loc: expect.objectContaining({ line: expect.any(Number) }) })
     )
   })
+
+  it('passes column to this.error when compiler throws WaldError', () => {
+    const mockError = callTransformWithMock('---\n---\n{unclosed', 'bad.wald')
+    expect(mockError).toHaveBeenCalledWith(
+      expect.objectContaining({
+        loc: expect.objectContaining({
+          line: expect.any(Number),
+          column: expect.any(Number),
+        }),
+      })
+    )
+  })
 })
 
 describe('vite-plugin-wald-content', () => {

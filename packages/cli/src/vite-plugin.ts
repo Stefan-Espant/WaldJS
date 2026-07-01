@@ -20,7 +20,10 @@ export function waldPlugin(): Plugin[] {
         } catch (e) {
           const message = `[waldjs] ${e instanceof Error ? e.message : String(e)}`
           const loc = typeof e === 'object' && e !== null && 'line' in e
-            ? { line: (e as { line: number }).line, column: 0 }
+            ? {
+                line: (e as { line: number }).line,
+                column: 'column' in e ? (e as { column: number }).column - 1 : 0,
+              }
             : undefined
           this.error({ message, loc })
         }
