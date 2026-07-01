@@ -1,5 +1,5 @@
 import { mkdirSync, writeFileSync, existsSync, cpSync, rmSync } from 'node:fs'
-import { join, relative, dirname } from 'node:path'
+import { join, relative, dirname, resolve } from 'node:path'
 import { defineCommand } from 'citty'
 import ora from 'ora'
 import { build, mergeConfig } from 'vite'
@@ -55,11 +55,15 @@ export async function buildPages(
     } as any,
   ))
 
+  // Vite sanitizes bracket characters in SSR output filenames (e.g. [slug] → _slug_)
+  function ssrKey(file: string): string {
+    return relative(pagesDir, file).replace(/\.wald$/, '').replace(/[\[\]]/g, '_')
+  }
+
   try {
     // Pass 2 — Pre-render each static route to an HTML file.
     for (const route of staticRoutes) {
-      const key = relative(pagesDir, route.file).replace(/\.wald$/, '')
-      const mod = await import(join(ssrDir, key + '.js')) as {
+      const mod = await import(join(ssrDir, ssrKey(route.file) + '.js')) as {
         default: { render: (props?: Record<string, unknown>) => Promise<string> }
       }
       const html = hoistScripts(maybeWrap(await mod.default.render()))
@@ -69,8 +73,7 @@ export async function buildPages(
     }
 
     for (const route of dynamicRoutes) {
-      const key = relative(pagesDir, route.file).replace(/\.wald$/, '')
-      const mod = await import(join(ssrDir, key + '.js')) as {
+      const mod = await import(join(ssrDir, ssrKey(route.file) + '.js')) as {
         default: { render: (props?: Record<string, unknown>) => Promise<string> }
         getStaticPaths?: () => Promise<Array<{ params: Record<string, string> }>>
       }
@@ -102,6 +105,8 @@ export const buildCommand = defineCommand({
   async run() {
     const cwd = process.cwd()
     const config = await loadWaldConfig(cwd)
+    // Resolve outDir to absolute so ssrDir import() works with Node ESM
+    config.outDir = resolve(cwd, config.outDir)
     const pagesDir = join(cwd, 'src', 'pages')
     const publicDir = join(cwd, 'public')
     const contentDir = join(cwd, 'content')
