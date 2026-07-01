@@ -4,6 +4,7 @@ node_modules/
 dist/
 .env
 .DS_Store
+.turbo/
 benchmarks/results/
 benchmarks/wald/node_modules/
 benchmarks/astro/node_modules/
