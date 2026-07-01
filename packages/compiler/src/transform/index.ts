@@ -8,7 +8,7 @@ const VOID_ELEMENTS = new Set([
 export function transform(ast: WaldDocument): string {
   const templateCode = renderNodes(ast.template)
   const code = ast.frontmatter.code ?? ''
-  const { hoisted, body } = extractExports(code)
+  const { hoisted, body, hasProps } = extractExports(code)
 
   const bodyIndented = body
     ? body.split('\n').map(line => `  ${line}`).join('\n')
@@ -24,9 +24,17 @@ export function transform(ast: WaldDocument): string {
     parts.push(``)
   }
 
+  const fnSignature = hasProps
+    ? `export default createTree<Props>(async ($$result, $$props: Props) => {`
+    : `export default createTree(async ($$result, $$props) => {`
+
+  const bodyContent = hasProps
+    ? [`  const $props = $$props`, bodyIndented].filter(Boolean).join('\n')
+    : bodyIndented
+
   parts.push(
-    `export default createTree(async ($$result, $$props) => {`,
-    bodyIndented,
+    fnSignature,
+    bodyContent,
     ``,
     `  return renderTemplate\`${templateCode}\``,
     `})`,
@@ -35,10 +43,11 @@ export function transform(ast: WaldDocument): string {
   return parts.join('\n')
 }
 
-function extractExports(code: string): { hoisted: string; body: string } {
+function extractExports(code: string): { hoisted: string; body: string; hasProps: boolean } {
   const lines = code.split('\n')
   const hoistedBlocks: string[] = []
   const bodyLines: string[] = []
+  let hasProps = false
   let i = 0
 
   while (i < lines.length) {
@@ -47,6 +56,18 @@ function extractExports(code: string): { hoisted: string; body: string } {
       // import statements are always single-line in frontmatter
       hoistedBlocks.push(lines[i])
       i++
+    } else if (trimmed.startsWith('type Props')) {
+      // type Props may span multiple lines — collect until balanced braces
+      const block: string[] = []
+      let depth = 0
+      do {
+        const line = lines[i]
+        block.push(line)
+        depth += (line.match(/\{/g) ?? []).length - (line.match(/\}/g) ?? []).length
+        i++
+      } while (depth > 0 && i < lines.length)
+      hoistedBlocks.push(block.join('\n'))
+      hasProps = true
     } else if (trimmed.startsWith('export ')) {
       // export blocks may span multiple lines — collect until balanced braces
       const block: string[] = []
@@ -67,6 +88,7 @@ function extractExports(code: string): { hoisted: string; body: string } {
   return {
     hoisted: hoistedBlocks.join('\n'),
     body: bodyLines.join('\n').trim(),
+    hasProps,
   }
 }
 
