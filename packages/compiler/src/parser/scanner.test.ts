@@ -177,4 +177,24 @@ describe('scanTemplate — errors', () => {
     expect(caught?.line).toBe(1)
     expect(caught?.column).toBe(12)
   })
+
+  it('throws WaldError for unclosed element tag', () => {
+    expect(() => scanTemplate('<div')).toThrow(WaldError)
+  })
+
+  it('unclosed tag error includes the tag name and points to <', () => {
+    let caught: WaldError | undefined
+    try { scanTemplate('<div') } catch (e) { caught = e as WaldError }
+    expect(caught?.message).toContain("<div>")
+    expect(caught?.message).toContain("'>'")
+    expect(caught?.line).toBe(1)
+    expect(caught?.column).toBe(1)
+  })
+
+  it('unclosed tag on line 3 reports correct position', () => {
+    let caught: WaldError | undefined
+    try { scanTemplate('<p>ok</p>\n<span>ok</span>\n<section') } catch (e) { caught = e as WaldError }
+    expect(caught?.line).toBe(3)
+    expect(caught?.column).toBe(1)
+  })
 })

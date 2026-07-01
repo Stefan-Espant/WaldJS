@@ -86,9 +86,15 @@ class Scanner {
   }
 
   private scanElement(): ElementNode | ComponentNode {
+    const openPos = this.pos
     this.advance() // consume <
     const tag = this.scanIdentifier()
     const attrs = this.scanAttributes()
+
+    if (this.pos >= this.source.length) {
+      const { line, column } = offsetToLineCol(this.source, openPos)
+      throw new WaldError(`Unclosed tag '<${tag}>': expected '>' or '/>'`, line, column)
+    }
 
     if (this.current === '/' && this.peek(1) === '>') {
       this.advance() // /
