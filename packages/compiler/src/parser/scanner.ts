@@ -153,10 +153,15 @@ class Scanner {
     this.advance() // consume =
 
     if ((this.current as string) === '"') {
+      const quotePos = this.pos
       this.advance() // consume opening "
       let value = ''
       while (this.pos < this.source.length && (this.current as string) !== '"') {
         value += this.advance()
+      }
+      if (this.pos >= this.source.length) {
+        const { line, column } = offsetToLineCol(this.source, quotePos)
+        throw new WaldError(`Unclosed string attribute: expected '"'`, line, column)
       }
       this.advance() // consume closing "
       return { type: 'attribute', name, value }

@@ -164,4 +164,17 @@ describe('scanTemplate — errors', () => {
     expect(caught?.line).toBe(2)
     expect(caught?.column).toBe(5)
   })
+
+  it('throws WaldError for unclosed string attribute', () => {
+    expect(() => scanTemplate('<div class="oops')).toThrow(WaldError)
+  })
+
+  it('unclosed string attribute error points to the opening quote', () => {
+    let caught: WaldError | undefined
+    try { scanTemplate('<div class="oops') } catch (e) { caught = e as WaldError }
+    expect(caught?.message).toContain("Unclosed string attribute")
+    expect(caught?.message).toContain("'\"'")
+    expect(caught?.line).toBe(1)
+    expect(caught?.column).toBe(12)
+  })
 })
