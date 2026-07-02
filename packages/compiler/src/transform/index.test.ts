@@ -226,6 +226,17 @@ describe('transform — type Props support', () => {
       `import { createTree, renderTemplate, SafeHtml } from '@waldjs/runtime'\n\ntype Props = { title: string }\n\nexport default createTree<Props>(async ($$result, $$props: Props) => {\n  const $props = $$props\n\n  return renderTemplate\`\`\n})`
     )
   })
+
+  it('does not treat type PropsExtra as type Props', () => {
+    const ast: WaldDocument = {
+      type: 'document',
+      frontmatter: { type: 'frontmatter', code: 'type PropsExtra = { extra: string }' },
+      template: [],
+    }
+    const output = transform(ast)
+    expect(output).not.toContain('createTree<Props>')
+    expect(output).not.toContain('$$props: Props')
+  })
 })
 
 import { compile } from '../index.js'
