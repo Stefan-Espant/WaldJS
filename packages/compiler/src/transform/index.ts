@@ -56,8 +56,8 @@ function extractExports(code: string): { hoisted: string; body: string; hasProps
       // import statements are always single-line in frontmatter
       hoistedBlocks.push(lines[i])
       i++
-    } else if (trimmed.startsWith('type Props')) {
-      // type Props may span multiple lines — collect until balanced braces
+    } else if (/^type Props\s*=/.test(trimmed)) {
+      // collect until balanced braces, or just the first line if no braces present
       const block: string[] = []
       let depth = 0
       do {
