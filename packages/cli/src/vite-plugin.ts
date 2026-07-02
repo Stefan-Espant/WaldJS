@@ -18,8 +18,8 @@ export function waldPlugin(): Plugin[] {
         if (!id.endsWith('.wald')) return
         try {
           const compiled = compile(code, id)
-          const { code: stripped } = await transformWithEsbuild(compiled, `${id}.ts`, { loader: 'ts' })
-          return { code: stripped }
+          const { code: stripped, map } = await transformWithEsbuild(compiled, `${id}.ts`, { loader: 'ts' })
+          return { code: stripped, map }
         } catch (e) {
           const message = `[waldjs] ${e instanceof Error ? e.message : String(e)}`
           const loc = typeof e === 'object' && e !== null && 'line' in e

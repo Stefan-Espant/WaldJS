@@ -1,11 +1,11 @@
 $ vitest run
 
- RUN  v2.1.9 /Users/stefan/Desktop/semantique-agency/repositories/waldjs/.worktrees/phase0-roots/examples/basic
+ RUN  v2.1.9 /Users/stefan/Desktop/semantique-agency/repositories/waldjs/.worktrees/ts-props-inference/examples/basic
 
  ✓ src/smoke.test.ts (3 tests) 5ms
 
  Test Files  1 passed (1)
       Tests  3 passed (3)
-   Start at  23:23:07
-   Duration  369ms (transform 78ms, setup 0ms, collect 81ms, tests 5ms, environment 0ms, prepare 67ms)
+   Start at  22:54:28
+   Duration  478ms (transform 85ms, setup 0ms, collect 87ms, tests 5ms, environment 0ms, prepare 131ms)
 

@@ -30,6 +30,14 @@ describe('vite-plugin-wald', () => {
     expect(result.code).toContain('createTree')
   })
 
+  it('strips TypeScript syntax from typed .wald source', async () => {
+    const source = `---\ntype Props = { title: string }\n---\n<h1>hi</h1>`
+    const result = await callHook('vite-plugin-wald', 'transform', source, 'test.wald')
+    expect(result.code).not.toContain('type Props')
+    expect(result.code).not.toContain(': Props')
+    expect(result.code).toContain('createTree')
+  })
+
   it('returns undefined for non-.wald files in transform', async () => {
     const result = await callHook('vite-plugin-wald', 'transform', 'export default {}', 'test.ts')
     expect(result).toBeUndefined()

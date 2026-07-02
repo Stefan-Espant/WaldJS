@@ -1,0 +1,11 @@
+$ vitest run
+
+ RUN  v2.1.9 /Users/stefan/Desktop/semantique-agency/repositories/waldjs/.worktrees/phase-benchmark/packages/content
+
+ ✓ src/index.test.ts (5 tests) 60ms
+
+ Test Files  1 passed (1)
+      Tests  5 passed (5)
+   Start at  19:45:09
+   Duration  1.89s (transform 76ms, setup 0ms, collect 206ms, tests 60ms, environment 0ms, prepare 167ms)
+
