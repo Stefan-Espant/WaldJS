@@ -7,6 +7,7 @@ export type WaldDocument = {
 export type FrontmatterNode = {
   type: 'frontmatter'
   code: string
+  line?: number
 }
 
 export type TemplateNode =
