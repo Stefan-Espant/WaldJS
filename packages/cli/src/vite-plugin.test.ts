@@ -36,6 +36,7 @@ describe('vite-plugin-wald', () => {
     expect(result.code).not.toContain('type Props')
     expect(result.code).not.toContain(': Props')
     expect(result.code).toContain('createTree')
+    expect(result.map).toBeDefined()
   })
 
   it('returns undefined for non-.wald files in transform', async () => {
