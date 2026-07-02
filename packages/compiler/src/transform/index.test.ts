@@ -227,6 +227,18 @@ describe('transform — type Props support', () => {
     )
   })
 
+  it('detects export type Props and injects generic', () => {
+    const ast: WaldDocument = {
+      type: 'document',
+      frontmatter: { type: 'frontmatter', code: 'export type Props = { title: string }' },
+      template: [],
+    }
+    const output = transform(ast)
+    expect(output).toContain('createTree<Props>')
+    expect(output).toContain('$$props: Props')
+    expect(output).toContain('const $props = $$props')
+  })
+
   it('does not treat type PropsExtra as type Props', () => {
     const ast: WaldDocument = {
       type: 'document',
