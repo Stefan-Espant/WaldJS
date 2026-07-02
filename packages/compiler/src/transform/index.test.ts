@@ -140,6 +140,117 @@ describe('transform', () => {
   })
 })
 
+describe('transform — type Props support', () => {
+  it('hoists type Props to module level before export default', () => {
+    const ast: WaldDocument = {
+      type: 'document',
+      frontmatter: { type: 'frontmatter', code: 'type Props = { title: string }' },
+      template: [],
+    }
+    const output = transform(ast)
+    const propsPos = output.indexOf('type Props = { title: string }')
+    const exportDefaultPos = output.indexOf('export default createTree')
+    expect(propsPos).toBeGreaterThanOrEqual(0)
+    expect(propsPos).toBeLessThan(exportDefaultPos)
+  })
+
+  it('injects Props generic when type Props is present', () => {
+    const ast: WaldDocument = {
+      type: 'document',
+      frontmatter: { type: 'frontmatter', code: 'type Props = { title: string }' },
+      template: [],
+    }
+    const output = transform(ast)
+    expect(output).toContain('export default createTree<Props>(async ($$result, $$props: Props) => {')
+  })
+
+  it('injects const $props = $$props alias inside the callback when Props present', () => {
+    const ast: WaldDocument = {
+      type: 'document',
+      frontmatter: { type: 'frontmatter', code: 'type Props = { title: string }' },
+      template: [],
+    }
+    const output = transform(ast)
+    const exportDefaultPos = output.indexOf('export default createTree<Props>')
+    const aliasPos = output.indexOf('const $props = $$props')
+    expect(aliasPos).toBeGreaterThan(exportDefaultPos)
+  })
+
+  it('does not inject Props generic when no type Props in frontmatter', () => {
+    const ast: WaldDocument = {
+      type: 'document',
+      frontmatter: { type: 'frontmatter', code: 'const x = 1' },
+      template: [],
+    }
+    const output = transform(ast)
+    expect(output).toContain('export default createTree(async ($$result, $$props) => {')
+    expect(output).not.toContain('createTree<Props>')
+    expect(output).not.toContain('const $props = $$props')
+  })
+
+  it('hoists multi-line type Props', () => {
+    const code = 'type Props = {\n  title: string\n  count?: number\n}'
+    const ast: WaldDocument = {
+      type: 'document',
+      frontmatter: { type: 'frontmatter', code },
+      template: [],
+    }
+    const output = transform(ast)
+    const propsPos = output.indexOf('type Props = {')
+    const exportDefaultPos = output.indexOf('export default createTree<Props>')
+    expect(propsPos).toBeGreaterThanOrEqual(0)
+    expect(propsPos).toBeLessThan(exportDefaultPos)
+  })
+
+  it('keeps non-Props body lines inside the callback when Props present', () => {
+    const code = 'type Props = { title: string }\nconst x = 1'
+    const ast: WaldDocument = {
+      type: 'document',
+      frontmatter: { type: 'frontmatter', code },
+      template: [],
+    }
+    const output = transform(ast)
+    const exportDefaultPos = output.indexOf('export default createTree<Props>')
+    const constXPos = output.indexOf('const x = 1')
+    expect(constXPos).toBeGreaterThan(exportDefaultPos)
+  })
+
+  it('produces correct full output for a single-line Props type', () => {
+    const ast: WaldDocument = {
+      type: 'document',
+      frontmatter: { type: 'frontmatter', code: 'type Props = { title: string }' },
+      template: [],
+    }
+    const output = transform(ast)
+    expect(output).toBe(
+      `import { createTree, renderTemplate, SafeHtml } from '@waldjs/runtime'\n\ntype Props = { title: string }\n\nexport default createTree<Props>(async ($$result, $$props: Props) => {\n  const $props = $$props\n\n  return renderTemplate\`\`\n})`
+    )
+  })
+
+  it('detects export type Props and injects generic', () => {
+    const ast: WaldDocument = {
+      type: 'document',
+      frontmatter: { type: 'frontmatter', code: 'export type Props = { title: string }' },
+      template: [],
+    }
+    const output = transform(ast)
+    expect(output).toContain('createTree<Props>')
+    expect(output).toContain('$$props: Props')
+    expect(output).toContain('const $props = $$props')
+  })
+
+  it('does not treat type PropsExtra as type Props', () => {
+    const ast: WaldDocument = {
+      type: 'document',
+      frontmatter: { type: 'frontmatter', code: 'type PropsExtra = { extra: string }' },
+      template: [],
+    }
+    const output = transform(ast)
+    expect(output).not.toContain('createTree<Props>')
+    expect(output).not.toContain('$$props: Props')
+  })
+})
+
 import { compile } from '../index.js'
 
 describe('script rendering', () => {

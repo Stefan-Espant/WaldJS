@@ -49,3 +49,52 @@ describe('compile — error propagation', () => {
     expect(caught?.column).toBeGreaterThan(0)
   })
 })
+
+describe('compile — type Props inference', () => {
+  it('compiles a .wald file with type Props to typed createTree output', () => {
+    const source = `---
+type Props = { title: string }
+const { title } = $props
+---
+<h1>{title}</h1>`
+
+    const output = compile(source, '/src/page.wald')
+
+    expect(output).toContain('type Props = { title: string }')
+    expect(output).toContain('createTree<Props>')
+    expect(output).toContain('$$props: Props')
+    expect(output).toContain('const $props = $$props')
+    expect(output).toContain('const { title } = $props')
+    expect(output.indexOf('const $props = $$props'))
+      .toBeLessThan(output.indexOf('const { title } = $props'))
+  })
+
+  it('compiles a .wald file with multi-line type Props', () => {
+    const source = `---
+type Props = {
+  title: string
+  count?: number
+}
+---
+<h1>{title}</h1>`
+
+    const output = compile(source, '/src/page.wald')
+
+    expect(output).toContain('type Props = {')
+    expect(output).toContain('createTree<Props>')
+    expect(output).toContain('$$props: Props')
+  })
+
+  it('does not change output for .wald files without type Props', () => {
+    const source = `---
+const title = "Hello"
+---
+<h1>{title}</h1>`
+
+    const output = compile(source, '/src/page.wald')
+
+    expect(output).toContain('createTree(async ($$result, $$props)')
+    expect(output).not.toContain('createTree<Props>')
+    expect(output).not.toContain('const $props = $$props')
+  })
+})

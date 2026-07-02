@@ -67,9 +67,6 @@ importers:
       '@waldjs/runtime':
         specifier: workspace:*
         version: link:../runtime
-      vite:
-        specifier: ^5.0.0
-        version: 5.4.21(@types/node@20.19.43)
     devDependencies:
       typescript:
         specifier: ^5.5.0

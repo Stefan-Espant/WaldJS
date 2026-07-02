@@ -1,6 +1,7 @@
 import { compile } from '@waldjs/compiler'
 import { join } from 'node:path'
 import type { Plugin } from 'vite'
+import { transformWithEsbuild } from 'vite'
 
 const VIRTUAL_CONTENT_ID = '\0wald:content'
 
@@ -13,10 +14,12 @@ export function waldPlugin(): Plugin[] {
         if (id.endsWith('.wald')) return id
       },
 
-      transform(code, id) {
+      async transform(code, id) {
         if (!id.endsWith('.wald')) return
         try {
-          return { code: compile(code, id), map: null }
+          const compiled = compile(code, id)
+          const { code: stripped, map } = await transformWithEsbuild(compiled, `${id}.ts`, { loader: 'ts' })
+          return { code: stripped, map }
         } catch (e) {
           const message = `[waldjs] ${e instanceof Error ? e.message : String(e)}`
           const loc = typeof e === 'object' && e !== null && 'line' in e
