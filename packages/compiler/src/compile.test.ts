@@ -65,6 +65,8 @@ const { title } = $props
     expect(output).toContain('$$props: Props')
     expect(output).toContain('const $props = $$props')
     expect(output).toContain('const { title } = $props')
+    expect(output.indexOf('const $props = $$props'))
+      .toBeLessThan(output.indexOf('const { title } = $props'))
   })
 
   it('compiles a .wald file with multi-line type Props', () => {
