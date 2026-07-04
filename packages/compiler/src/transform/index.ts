@@ -11,7 +11,12 @@ export function transform(ast: WaldDocument): string {
   return transformWithMap(ast).code
 }
 
-export function transformWithMap(ast: WaldDocument): { code: string; lineMap: (number | null)[] } {
+/** lineMap[i] is the 1-based .wald source line for output line i + 1, or null for generated lines. */
+export type LineMap = (number | null)[]
+
+export type TransformResult = { code: string; lineMap: LineMap }
+
+export function transformWithMap(ast: WaldDocument): TransformResult {
   const templateCode = renderNodes(ast.template)
   const code = ast.frontmatter.code ?? ''
   const fmStart = ast.frontmatter.line ?? 2
