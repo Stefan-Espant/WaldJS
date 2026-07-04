@@ -5,48 +5,63 @@ const VOID_ELEMENTS = new Set([
   'link', 'meta', 'param', 'source', 'track', 'wbr',
 ])
 
+type MappedLine = { text: string; srcLine: number }
+
 export function transform(ast: WaldDocument): string {
-  const templateCode = renderNodes(ast.template)
-  const code = ast.frontmatter.code ?? ''
-  const { hoisted, body, hasProps } = extractExports(code)
-
-  const bodyIndented = body
-    ? body.split('\n').map(line => `  ${line}`).join('\n')
-    : ''
-
-  const parts = [
-    `import { createTree, renderTemplate, SafeHtml } from '@waldjs/runtime'`,
-    ``,
-  ]
-
-  if (hoisted) {
-    parts.push(hoisted)
-    parts.push(``)
-  }
-
-  const fnSignature = hasProps
-    ? `export default createTree<Props>(async ($$result, $$props: Props) => {`
-    : `export default createTree(async ($$result, $$props) => {`
-
-  const bodyContent = hasProps
-    ? [`  const $props = $$props`, bodyIndented].filter(Boolean).join('\n')
-    : bodyIndented
-
-  parts.push(
-    fnSignature,
-    bodyContent,
-    ``,
-    `  return renderTemplate\`${templateCode}\``,
-    `})`,
-  )
-
-  return parts.join('\n')
+  return transformWithMap(ast).code
 }
 
-function extractExports(code: string): { hoisted: string; body: string; hasProps: boolean } {
+export function transformWithMap(ast: WaldDocument): { code: string; lineMap: (number | null)[] } {
+  const templateCode = renderNodes(ast.template)
+  const code = ast.frontmatter.code ?? ''
+  const fmStart = ast.frontmatter.line ?? 2
+  const { hoisted, body, hasProps } = splitFrontmatter(code)
+
+  const out: string[] = []
+  const map: (number | null)[] = []
+  const push = (text: string, src: number | null) => {
+    out.push(text)
+    map.push(src)
+  }
+  const pushGenerated = (text: string) => {
+    for (const line of text.split('\n')) push(line, null)
+  }
+
+  push(`import { createTree, renderTemplate, SafeHtml } from '@waldjs/runtime'`, null)
+  push(``, null)
+
+  if (hoisted.length > 0) {
+    for (const l of hoisted) push(l.text, l.srcLine + fmStart - 1)
+    push(``, null)
+  }
+
+  push(
+    hasProps
+      ? `export default createTree<Props>(async ($$result, $$props: Props) => {`
+      : `export default createTree(async ($$result, $$props) => {`,
+    null,
+  )
+
+  if (hasProps) {
+    push(`  const $props = $$props`, null)
+    for (const l of body) push(`  ${l.text}`, l.srcLine + fmStart - 1)
+  } else if (body.length > 0) {
+    for (const l of body) push(`  ${l.text}`, l.srcLine + fmStart - 1)
+  } else {
+    push(``, null)
+  }
+
+  push(``, null)
+  pushGenerated(`  return renderTemplate\`${templateCode}\``)
+  push(`})`, null)
+
+  return { code: out.join('\n'), lineMap: map }
+}
+
+function splitFrontmatter(code: string): { hoisted: MappedLine[]; body: MappedLine[]; hasProps: boolean } {
   const lines = code.split('\n')
-  const hoistedBlocks: string[] = []
-  const bodyLines: string[] = []
+  const hoisted: MappedLine[] = []
+  const body: MappedLine[] = []
   let hasProps = false
   let i = 0
 
@@ -54,42 +69,45 @@ function extractExports(code: string): { hoisted: string; body: string; hasProps
     const trimmed = lines[i].trimStart()
     if (trimmed.startsWith('import ')) {
       // import statements are always single-line in frontmatter
-      hoistedBlocks.push(lines[i])
+      hoisted.push({ text: lines[i], srcLine: i + 1 })
       i++
     } else if (/^(?:export\s+)?type Props\s*=/.test(trimmed)) {
       // collect until balanced braces, or just the first line if no braces present
-      const block: string[] = []
       let depth = 0
       do {
         const line = lines[i]
-        block.push(line)
+        hoisted.push({ text: line, srcLine: i + 1 })
         depth += (line.match(/\{/g) ?? []).length - (line.match(/\}/g) ?? []).length
         i++
       } while (depth > 0 && i < lines.length)
-      hoistedBlocks.push(block.join('\n'))
       hasProps = true
     } else if (trimmed.startsWith('export ')) {
       // export blocks may span multiple lines — collect until balanced braces
-      const block: string[] = []
       let depth = 0
       do {
         const line = lines[i]
-        block.push(line)
+        hoisted.push({ text: line, srcLine: i + 1 })
         depth += (line.match(/\{/g) ?? []).length - (line.match(/\}/g) ?? []).length
         i++
       } while (depth > 0 && i < lines.length)
-      hoistedBlocks.push(block.join('\n'))
     } else {
-      bodyLines.push(lines[i])
+      body.push({ text: lines[i], srcLine: i + 1 })
       i++
     }
   }
 
-  return {
-    hoisted: hoistedBlocks.join('\n'),
-    body: bodyLines.join('\n').trim(),
-    hasProps,
+  // Reproduce the old body.join('\n').trim() behavior line-by-line:
+  // drop whitespace-only lines at both ends, strip edge whitespace of the
+  // first and last kept line.
+  while (body.length > 0 && body[0].text.trim() === '') body.shift()
+  while (body.length > 0 && body[body.length - 1].text.trim() === '') body.pop()
+  if (body.length > 0) {
+    body[0] = { ...body[0], text: body[0].text.trimStart() }
+    const last = body.length - 1
+    body[last] = { ...body[last], text: body[last].text.trimEnd() }
   }
+
+  return { hoisted, body, hasProps }
 }
 
 function renderNodes(nodes: TemplateNode[]): string {

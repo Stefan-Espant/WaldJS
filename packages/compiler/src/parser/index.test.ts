@@ -13,6 +13,7 @@ const title = "Hello Wald"
     expect(doc.type).toBe('document')
     expect(doc.frontmatter.type).toBe('frontmatter')
     expect(doc.frontmatter.code).toBe('const title = "Hello Wald"')
+    expect(doc.frontmatter.line).toBe(2)
     expect(doc.template).toEqual([{
       type: 'element',
       tag: 'h1',

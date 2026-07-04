@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { transform } from './index.js'
+import { transform, transformWithMap } from './index.js'
 import type { WaldDocument } from '../ast/types.js'
 
 describe('transform', () => {
@@ -248,6 +248,87 @@ describe('transform — type Props support', () => {
     const output = transform(ast)
     expect(output).not.toContain('createTree<Props>')
     expect(output).not.toContain('$$props: Props')
+  })
+})
+
+describe('transformWithMap', () => {
+  const doc = (code: string, line = 2): WaldDocument => ({
+    type: 'document',
+    frontmatter: { type: 'frontmatter', code, line },
+    template: [],
+  })
+
+  it('returns the same code as transform', () => {
+    const ast = doc('type Props = { title: string }\nconst { title } = $props')
+    expect(transformWithMap(ast).code).toBe(transform(ast))
+  })
+
+  it('maps hoisted type Props to its original line', () => {
+    const ast = doc('type Props = { title: string }\nconst { title } = $props')
+    const { code, lineMap } = transformWithMap(ast)
+    const lines = code.split('\n')
+    const propsIdx = lines.findIndex(l => l.startsWith('type Props'))
+    expect(lineMap[propsIdx]).toBe(2)
+  })
+
+  it('maps body lines to their original lines, after the injected alias', () => {
+    const ast = doc('type Props = { title: string }\nconst { title } = $props')
+    const { code, lineMap } = transformWithMap(ast)
+    const lines = code.split('\n')
+    const bodyIdx = lines.findIndex(l => l.includes('const { title } = $props'))
+    expect(lineMap[bodyIdx]).toBe(3)
+  })
+
+  it('maps generated lines (import, signature, alias, return) to null', () => {
+    const ast = doc('type Props = { title: string }\nconst { title } = $props')
+    const { code, lineMap } = transformWithMap(ast)
+    const lines = code.split('\n')
+    expect(lineMap[0]).toBe(null) // runtime import
+    expect(lineMap[lines.findIndex(l => l.startsWith('export default createTree'))]).toBe(null)
+    expect(lineMap[lines.findIndex(l => l.includes('const $props = $$props'))]).toBe(null)
+    expect(lineMap[lines.findIndex(l => l.includes('return renderTemplate'))]).toBe(null)
+  })
+
+  it('maps multi-line type Props line by line', () => {
+    const ast = doc('type Props = {\n  title: string\n}\nconst x = 1')
+    const { code, lineMap } = transformWithMap(ast)
+    const lines = code.split('\n')
+    const start = lines.findIndex(l => l.startsWith('type Props'))
+    expect(lineMap[start]).toBe(2)
+    expect(lineMap[start + 1]).toBe(3)
+    expect(lineMap[start + 2]).toBe(4)
+  })
+
+  it('respects a custom frontmatter start line', () => {
+    const ast = doc('const x = 1', 5)
+    const { code, lineMap } = transformWithMap(ast)
+    const lines = code.split('\n')
+    const idx = lines.findIndex(l => l.includes('const x = 1'))
+    expect(lineMap[idx]).toBe(5)
+  })
+
+  it('lineMap has exactly one entry per output line', () => {
+    const ast = doc('type Props = { title: string }\nconst { title } = $props')
+    const { code, lineMap } = transformWithMap(ast)
+    expect(lineMap.length).toBe(code.split('\n').length)
+  })
+})
+
+describe('transformWithMap — output identity with transform', () => {
+  it.each([
+    ['empty frontmatter', ''],
+    ['plain body', 'const title = "Hello"'],
+    ['import + body', "import Card from './Card.wald'\nconst t = 'x'"],
+    ['export + body', 'export async function getStaticPaths() {\n  return []\n}\nconst x = 1'],
+    ['props + body', 'type Props = { title: string }\nconst { title } = $props'],
+    ['props only', 'type Props = { title: string }'],
+  ])('%s', (_name, code) => {
+    const ast: WaldDocument = {
+      type: 'document',
+      frontmatter: { type: 'frontmatter', code },
+      template: [{ type: 'element', tag: 'h1', attrs: [], children: [{ type: 'expression', code: 'title' }] }],
+    }
+    expect(transformWithMap(ast).code).toBe(transform(ast))
   })
 })
 
