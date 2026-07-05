@@ -1,0 +1,1761 @@
+<!DOCTYPE html>
+<html lang="nl" data-lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WaldJS — Plant je site. Laat hem groeien.</title>
+<meta name="description" content="WaldJS is een content-first webframework voor razendsnelle, statische websites. Schrijf .wald-bestanden en WaldJS compileert ze tot een statische site.">
+<meta property="og:title" content="WaldJS — Plant je site. Laat hem groeien.">
+<meta property="og:description" content="Een content-first webframework voor razendsnelle, statische websites. Deel frontmatter, deel HTML-template — 0 KB JavaScript standaard.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="WaldJS">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#023B2D">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%23023B2D'/><path d='M32 6 L45 27 H39 L50 45 H14 L25 27 H19 Z' fill='white'/><rect x='28.5' y='45' width='7' height='11' rx='2.5' fill='%23FF3347'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+:root{
+  /* ============================================================
+     Byzantium design tokens — thema: "WaldJS forest"
+     https://byzantium.steefan.nl/tokens
+     ============================================================ */
+  /* brand-schaal (thema-override: WaldJS-rood) */
+  --byz-brand-100:#FFD6DB;
+  --byz-brand-200:#FFA8B1;
+  --byz-brand-300:#FF6B7A;
+  --byz-brand-400:#FF3347;
+  --byz-brand-500:#E01D32;
+  --byz-brand-600:#B01225;
+  /* spacing */
+  --byz-space-1:.25rem;--byz-space-2:.5rem;--byz-space-3:.75rem;--byz-space-4:1rem;
+  --byz-space-5:1.25rem;--byz-space-6:1.5rem;--byz-space-8:2rem;--byz-space-10:2.5rem;
+  --byz-space-12:3rem;--byz-space-16:4rem;--byz-space-20:5rem;--byz-space-24:6rem;
+  /* typografie */
+  --byz-text-xs:.75rem;--byz-text-sm:.875rem;--byz-text-base:1rem;--byz-text-lg:1.125rem;
+  --byz-text-xl:1.25rem;--byz-text-2xl:1.5rem;--byz-text-3xl:1.875rem;--byz-text-4xl:2.25rem;
+  --byz-font-sans:'Puffin Display Soft','Baloo 2',system-ui,sans-serif; /* thema-override */
+  --byz-font-mono:'JetBrains Mono',ui-monospace,monospace;
+  /* motion */
+  --byz-duration-fast:100ms;--byz-duration-normal:200ms;--byz-duration-slow:300ms;--byz-duration-slower:500ms;
+  --byz-ease-default:cubic-bezier(.4,0,.2,1);
+  --byz-ease-out:cubic-bezier(0,0,.2,1);
+  --byz-ease-bounce:cubic-bezier(.34,1.56,.64,1);
+  /* schaduwen */
+  --byz-shadow-sm:0 1px 2px rgba(0,0,0,.25);
+  --byz-shadow-md:0 4px 12px rgba(0,0,0,.3);
+  --byz-shadow-lg:0 12px 32px rgba(0,0,0,.4);
+  --byz-shadow-xl:0 24px 64px rgba(0,0,0,.5);
+  /* z-index */
+  --byz-z-base:0;--byz-z-raised:10;--byz-z-sticky:1020;--byz-z-overlay:1030;
+  --byz-z-modal:1100;--byz-z-toast:1200;--byz-z-tooltip:1453;
+
+  /* == thema-aliassen (WaldJS) == */
+  --wit:#FFFFFF;
+  --rood:var(--byz-brand-400);
+  --groen:#023B2D;
+  --groen-donker:#01271D;
+  --groen-diep:#013024;
+  --groen-licht:#0A5240;
+  --kaart:rgba(255,255,255,0.055);
+  --rand:rgba(255,255,255,0.12);
+  --wit-zacht:rgba(255,255,255,0.72);
+  --font:var(--byz-font-sans);
+  --mono:var(--byz-font-mono);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background-color:var(--groen);color:var(--wit);line-height:1.6;overflow-x:hidden}
+::selection{background:var(--rood);color:var(--wit)}
+
+/* ---------- taal ---------- */
+[data-lang="nl"] .en{display:none !important}
+[data-lang="en"] .nl{display:none !important}
+
+/* ---------- nav ---------- */
+nav{position:fixed;top:0;left:0;right:0;z-index:var(--byz-z-sticky);display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:var(--byz-space-5);padding:var(--byz-space-3) 6vw;background:transparent;border-bottom:none;transition:background var(--byz-duration-slower) var(--byz-ease-default)}
+/* overdag: donkere glasbalk zodat witte links & logo leesbaar blijven */
+body.dag nav{background:rgba(2,59,45,.78);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+nav .brand{display:flex;align-items:center;gap:10px;text-decoration:none;justify-self:center}
+nav .brand svg{width:100px;height:100px}
+nav ul{display:flex;gap:var(--byz-space-6);list-style:none;align-items:center}
+nav ul.links-kant{justify-content:flex-start}
+nav ul.rechts-kant{justify-content:flex-end}
+nav ul a{color:var(--wit-zacht);text-decoration:none;font-weight:600;font-size:var(--byz-text-sm);transition:color var(--byz-duration-normal) var(--byz-ease-default)}
+nav ul a:hover{color:var(--wit)}
+.lang-switch{display:flex;border:1.5px solid var(--rand);border-radius:999px;overflow:hidden}
+.lang-switch button{background:none;border:none;color:var(--wit-zacht);font-family:var(--font);font-weight:700;font-size:.8rem;padding:5px 12px;cursor:pointer}
+.lang-switch button.actief{background:var(--rood);color:var(--wit)}
+.btn{display:inline-block;background:var(--rood);color:var(--wit);text-decoration:none;font-weight:700;padding:var(--byz-space-2) var(--byz-space-5);border-radius:999px;transition:transform var(--byz-duration-fast) var(--byz-ease-out), box-shadow var(--byz-duration-fast) var(--byz-ease-out);box-shadow:0 4px 18px rgba(255,51,71,.35)}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 26px rgba(255,51,71,.45)}
+.btn.ghost{background:transparent;border:2px solid var(--wit);box-shadow:none}
+.btn.ghost:hover{background:rgba(255,255,255,.08)}
+
+/* ---------- vaste 3D-achtergrond ---------- */
+#bos3d{position:fixed;inset:0;width:100vw;height:100vh;display:block;z-index:0}
+#scrim{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse at 50% 40%, rgba(1,30,23,.62), rgba(1,25,19,.9));opacity:0;transition:opacity .25s linear}
+
+/* ---------- hero ---------- */
+header{position:relative;text-align:center;padding:var(--byz-space-24) 6vw;height:100vh;min-height:600px;display:flex;flex-direction:column;justify-content:center;align-items:center}
+header>*{position:relative;z-index:2}
+header .logo svg{width:min(300px,60vw);height:auto;filter:drop-shadow(0 12px 40px rgba(0,0,0,.35))}
+header h1{font-size:clamp(2.2rem,5vw,3.6rem);font-weight:800;line-height:1.15;margin:28px auto 16px;max-width:800px;text-transform:uppercase;letter-spacing:.02em}
+header h1 em{font-style:normal;color:var(--rood)}
+header p.sub{font-size:clamp(1.05rem,2vw,1.3rem);color:var(--wit-zacht);max-width:640px;margin:0 auto 34px}
+header .cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+
+/* ---------- secties ---------- */
+section{padding:var(--byz-space-24) 6vw;max-width:1150px;margin:0 auto;position:relative}
+section.vol{max-width:none;padding-left:0;padding-right:0}
+.sectiekop{text-align:center;margin-bottom:var(--byz-space-16)}
+.sectiekop .tag{color:var(--rood);font-weight:800;text-transform:uppercase;letter-spacing:.12em;font-size:var(--byz-text-xs)}
+.sectiekop h2{font-size:clamp(1.7rem,3.4vw,2.5rem);font-weight:800;margin-top:8px;text-transform:uppercase;letter-spacing:.03em}
+.sectiekop p{color:var(--wit-zacht);max-width:600px;margin:12px auto 0}
+.sectiekop::after{content:"";display:block;width:140px;height:24px;margin:20px auto 0;opacity:.9;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 140 24'><path d='M8 12 H132' stroke='%23FF3347' stroke-width='1.6' stroke-linecap='round' fill='none'/><g fill='%237FD8BE'><ellipse cx='34' cy='7' rx='8' ry='3.2' transform='rotate(-28 34 7)'/><ellipse cx='54' cy='17' rx='8' ry='3.2' transform='rotate(28 54 17)'/><ellipse cx='72' cy='6' rx='8' ry='3.2' transform='rotate(-28 72 6)'/><ellipse cx='90' cy='18' rx='8' ry='3.2' transform='rotate(28 90 18)'/><ellipse cx='108' cy='7' rx='8' ry='3.2' transform='rotate(-28 108 7)'/></g></svg>") no-repeat center/contain}
+
+/* ---------- varens (botanische decoratie) ---------- */
+svg.varen{position:absolute;width:210px;height:300px;opacity:.15;pointer-events:none;z-index:1;overflow:visible}
+svg.varen.links{left:1.5vw;bottom:-10px}
+svg.varen.rechts{right:1.5vw;bottom:-10px;transform:scaleX(-1)}
+@media(max-width:900px){svg.varen{display:none}}
+
+/* ---------- code ---------- */
+.codeblok{background:var(--groen-donker);border:1px solid var(--rand);border-radius:16px;overflow:hidden;text-align:left}
+.codeblok .titel{display:flex;align-items:center;gap:var(--byz-space-2);padding:var(--byz-space-2) var(--byz-space-4);border-bottom:1px solid var(--rand);font-family:var(--mono);font-size:var(--byz-text-xs);color:var(--wit-zacht)}
+.codeblok .titel .dot{width:10px;height:10px;border-radius:50%;background:var(--rood);opacity:.9}
+.codeblok pre{padding:var(--byz-space-4) var(--byz-space-5);overflow-x:auto;font-family:var(--mono);font-size:var(--byz-text-sm);line-height:1.7}
+.c-k{color:#7FD8BE}      /* keywords */
+.c-s{color:#FFB3BC}      /* strings */
+.c-c{color:rgba(255,255,255,.45);font-style:italic} /* comments */
+.c-t{color:#FF7A89}      /* tags */
+.c-p{color:#A8E6CF}      /* props/attrs */
+
+/* ---------- quick start ---------- */
+.qs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:var(--byz-space-6)}
+
+/* ---------- kaarten ---------- */
+/* Byzantium 12-koloms grid: 3 kaarten boven (span 4), 2 onder (span 6) */
+.kaarten{display:grid;grid-template-columns:repeat(12,1fr);gap:var(--byz-space-5)}
+.kaarten .kaart{grid-column:span 4}
+.kaarten .kaart:nth-child(4),.kaarten .kaart:nth-child(5){grid-column:span 6}
+@media(max-width:900px){
+  .kaarten .kaart{grid-column:span 6}
+  .kaarten .kaart:nth-child(5){grid-column:span 12}
+}
+@media(max-width:560px){.kaarten .kaart{grid-column:span 12 !important}}
+.kaart{background:var(--kaart);border:1px solid var(--rand);border-radius:18px;padding:var(--byz-space-6);transition:transform var(--byz-duration-normal) var(--byz-ease-bounce),border-color var(--byz-duration-normal) var(--byz-ease-default)}
+.kaart:hover{transform:translateY(-4px);border-color:var(--rood)}
+.kaart .icoon{font-size:1.9rem;margin-bottom:12px;display:block}
+.kaart h3{font-size:1.15rem;margin-bottom:6px}
+.kaart h3 span.term{color:var(--rood)}
+.kaart p{color:var(--wit-zacht);font-size:.92rem}
+
+/* ---------- split ---------- */
+/* Byzantium 12-koloms grid: twee helften van span 6 */
+.split{display:grid;grid-template-columns:repeat(12,1fr);gap:var(--byz-space-12);align-items:center}
+.split>*{grid-column:span 6}
+.split .tekst h2{font-size:clamp(1.5rem,2.8vw,2.1rem);font-weight:800;margin-bottom:14px;text-transform:uppercase;letter-spacing:.03em}
+.split .tekst h2 .tag{display:block;color:var(--rood);font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
+.split .tekst p{color:var(--wit-zacht);margin-bottom:12px}
+@media(max-width:820px){.split>*{grid-column:span 12}}
+
+/* ---------- tabellen ---------- */
+table{width:100%;border-collapse:collapse;background:var(--kaart);border-radius:16px;overflow:hidden}
+th,td{padding:var(--byz-space-3) var(--byz-space-4);text-align:left;border-bottom:1px solid var(--rand);font-size:var(--byz-text-sm)}
+th{background:var(--groen-donker);font-weight:700}
+tr:last-child td{border-bottom:none}
+td code{font-family:var(--mono);font-size:.82rem;color:#FFB3BC;background:rgba(0,0,0,.25);padding:2px 8px;border-radius:6px}
+
+/* ---------- benchmarks ---------- */
+.bench{background:rgba(1,48,36,.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--rand);border-radius:24px;padding:var(--byz-space-16) 6vw;max-width:1150px;margin:0 auto;box-shadow:var(--byz-shadow-lg)}
+.bench-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--byz-space-8);margin-top:var(--byz-space-10)}
+.staafgroep h3{font-size:1rem;margin-bottom:4px}
+.staafgroep .metric{color:var(--wit-zacht);font-size:.82rem;margin-bottom:16px;display:block}
+.staaf{margin-bottom:14px}
+.staaf .label{display:flex;justify-content:space-between;font-size:.85rem;margin-bottom:5px}
+.staaf .label b{font-weight:700}
+.staaf .label .waarde{font-family:var(--mono);color:var(--wit-zacht)}
+.balk{height:12px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden}
+.balk i{display:block;height:100%;border-radius:999px;background:rgba(255,255,255,.35)}
+.staaf.wald .balk i{background:var(--rood)}
+.staaf.wald .label b{color:var(--rood)}
+.bench .disclaimer{margin-top:32px;font-size:.78rem;color:rgba(255,255,255,.45);text-align:center}
+
+/* ---------- roadmap ---------- */
+.roadmap{list-style:none;position:relative;max-width:640px;margin:0 auto}
+.roadmap::before{content:"";position:absolute;left:15px;top:8px;bottom:8px;width:2px;background:var(--rand)}
+.roadmap li{position:relative;padding:0 0 26px 52px}
+.roadmap li::before{content:"";position:absolute;left:7px;top:5px;width:18px;height:18px;border-radius:50%;background:var(--groen-licht);border:3px solid var(--groen)}
+.roadmap li.done::before{background:var(--rood)}
+.roadmap li.bezig::before{background:var(--wit);box-shadow:0 0 0 4px rgba(255,51,71,.4)}
+.roadmap li b{display:block;font-size:1.02rem}
+.roadmap li span.oms{color:var(--wit-zacht);font-size:.9rem}
+.badge{display:inline-block;font-size:.68rem;font-weight:800;letter-spacing:.05em;padding:2px 10px;border-radius:999px;margin-left:8px;vertical-align:middle}
+.badge.klaar{background:rgba(255,255,255,.12);color:var(--wit)}
+.badge.nu{background:var(--rood);color:var(--wit)}
+
+/* ---------- CLI ---------- */
+/* Byzantium 12-koloms grid: 2×2 — elk commando span 6 */
+.cli-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:var(--byz-space-4);max-width:820px;margin:0 auto}
+.cli-kaart{grid-column:span 6;background:var(--groen-donker);border:1px solid var(--rand);border-radius:16px;padding:var(--byz-space-5);box-shadow:var(--byz-shadow-sm)}
+@media(max-width:560px){.cli-kaart{grid-column:span 12}}
+.cli-kaart code{font-family:var(--mono);color:var(--rood);font-weight:600;font-size:.95rem}
+.cli-kaart p{color:var(--wit-zacht);font-size:.88rem;margin-top:8px}
+
+/* ---------- packages ---------- */
+.pkg{display:flex;flex-wrap:wrap;gap:14px;justify-content:center}
+.pkg span{background:var(--kaart);border:1px solid var(--rand);border-radius:999px;padding:9px 20px;font-family:var(--mono);font-size:.85rem}
+.pkg span b{color:var(--rood);font-weight:600}
+
+/* ---------- hamburger & mobiel menu ---------- */
+.hamburger{display:none;background:none;border:none;color:var(--wit);font-size:1.7rem;cursor:pointer;padding:4px 10px;justify-self:start}
+#mobielmenu{position:fixed;inset:0;background:rgba(1,32,25,.97);z-index:var(--byz-z-modal);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--byz-space-8);opacity:0;pointer-events:none;transition:opacity var(--byz-duration-slow) var(--byz-ease-default)}
+#mobielmenu.open{opacity:1;pointer-events:auto}
+#mobielmenu a{color:var(--wit);text-decoration:none;font-size:1.35rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+#mobielmenu .sluit{position:absolute;top:20px;right:24px;background:none;border:none;color:var(--wit);font-size:2rem;cursor:pointer}
+@media(max-width:760px){.hamburger{display:block}}
+
+/* ---------- GitHub-stats ---------- */
+.gh-stats{display:none;gap:var(--byz-space-5);justify-content:center;flex-wrap:wrap;margin-top:var(--byz-space-6);color:var(--wit-zacht);font-size:var(--byz-text-sm)}
+.gh-stats.zichtbaar{display:flex}
+.gh-stats b{color:var(--wit)}
+
+/* ---------- FAQ ---------- */
+.faq{max-width:760px;margin:0 auto}
+.faq details{background:var(--kaart);border:1px solid var(--rand);border-radius:14px;margin-bottom:12px;padding:18px 22px;transition:border-color .2s}
+.faq details:hover{border-color:var(--rood)}
+.faq summary{cursor:pointer;font-weight:700;font-size:1rem;list-style:none;display:flex;align-items:center;gap:12px}
+.faq summary::before{content:"🌱";transition:transform .25s}
+.faq details[open] summary::before{transform:rotate(90deg) scale(1.15)}
+.faq details p{color:var(--wit-zacht);margin-top:var(--byz-space-3);font-size:var(--byz-text-sm)}
+
+/* ---------- kopieerknop ---------- */
+.codeblok .titel .kopieer{margin-left:auto;background:none;border:1px solid var(--rand);color:var(--wit-zacht);font-family:var(--font);font-size:.72rem;font-weight:700;padding:3px 12px;border-radius:999px;cursor:pointer;transition:all .2s}
+.codeblok .titel .kopieer:hover{border-color:var(--rood);color:var(--wit)}
+.codeblok .titel .kopieer.ok{background:var(--rood);border-color:var(--rood);color:var(--wit)}
+
+/* ---------- terminal in hero ---------- */
+.terminal{width:min(480px,88vw);margin:var(--byz-space-20) auto 0;box-shadow:var(--byz-shadow-xl);text-align:left}
+.terminal pre{min-height:118px}
+.term-cursor::after{content:"▊";animation:knipper 1s steps(1) infinite;color:var(--rood)}
+@keyframes knipper{50%{opacity:0}}
+.term-uit{color:var(--wit-zacht)}
+.plant-hint{margin-top:18px;font-size:.8rem;color:rgba(255,255,255,.45)}
+
+/* ---------- groeibalk (scroll-voortgang) ---------- */
+#groeibalk{position:fixed;top:0;left:0;height:4px;width:0%;z-index:var(--byz-z-toast);background:linear-gradient(90deg,var(--groen-licht),#7FD8BE);border-radius:0 99px 99px 0}
+#groeiblad{position:fixed;top:-2px;left:0;z-index:calc(var(--byz-z-toast) + 1);font-size:13px;transform:translateX(-50%) rotate(24deg);pointer-events:none;opacity:0}
+
+/* ---------- cursor-vuurvliegje ---------- */
+#cursorvlieg{position:fixed;left:0;top:0;width:12px;height:12px;border-radius:50%;pointer-events:none;z-index:var(--byz-z-tooltip);opacity:0;transition:opacity var(--byz-duration-slower) var(--byz-ease-default);background:radial-gradient(circle,#FFE9C0 0%,rgba(255,205,135,.55) 45%,rgba(255,205,135,0) 70%);box-shadow:0 0 14px 5px rgba(255,215,150,.45)}
+
+/* ---------- dag/nacht-knop ---------- */
+.dagnacht{background:none;border:1.5px solid var(--rand);border-radius:50%;width:36px;height:36px;cursor:pointer;font-size:1.05rem;line-height:1;transition:border-color .2s}
+.dagnacht:hover{border-color:var(--rood)}
+
+/* ---------- playground ---------- */
+.pg-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:stretch}
+.pg-editor{width:100%;min-height:340px;background:var(--groen-donker);border:none;color:var(--wit);font-family:var(--mono);font-size:.86rem;line-height:1.7;padding:18px 20px;resize:vertical;outline:none;display:block;box-sizing:border-box}
+.pg-preview{background:#FAFAF5;color:var(--groen);border-radius:16px;padding:30px;overflow:auto;font-family:var(--font)}
+.pg-preview h1{margin-bottom:10px}
+.pg-preview ul{margin:10px 0 0 22px}
+@media(max-width:820px){.pg-grid{grid-template-columns:1fr}}
+
+/* ---------- vergelijking ---------- */
+.vergelijk td:nth-child(n+2),.vergelijk th:nth-child(n+2){text-align:center}
+.vergelijk .ja{color:#7FD8BE;font-weight:800}
+.vergelijk .nee{color:rgba(255,255,255,.35)}
+.vergelijk .deels{color:var(--rood);font-weight:700;font-size:.8rem}
+
+/* ---------- changelog / groeidagboek ---------- */
+.changelog{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+.log-kaart{background:var(--kaart);border:1px solid var(--rand);border-radius:18px;padding:24px 28px;transition:border-color .2s}
+.log-kaart:hover{border-color:var(--rood)}
+.log-kop{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.log-kop .versie{background:var(--rood);color:var(--wit);font-weight:700;font-size:.78rem;padding:3px 12px;border-radius:999px;font-family:var(--mono)}
+.log-kop .versie.aankomend{background:transparent;border:1.5px dashed var(--rood);color:var(--rood)}
+.log-kop h3{font-size:1.02rem;text-transform:uppercase;letter-spacing:.03em}
+.log-kop .datum{margin-left:auto;color:rgba(255,255,255,.4);font-size:.8rem}
+.log-kaart ul{list-style:none;color:var(--wit-zacht);font-size:var(--byz-text-sm)}
+.log-kaart li{padding-left:22px;position:relative;margin-bottom:6px}
+.log-kaart li::before{content:"🌱";position:absolute;left:0;font-size:.72rem;top:3px}
+
+/* ---------- footer ---------- */
+.footer-bos{line-height:0;margin-top:90px}
+.footer-bos svg{width:100%;height:72px;display:block}
+footer{background:var(--groen-donker);padding:var(--byz-space-16) 6vw var(--byz-space-8);position:relative;overflow:hidden}
+.footer-grid{max-width:1150px;margin:0 auto;display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:var(--byz-space-12);position:relative;z-index:2}
+.footer-merk svg{height:70px;width:auto;margin-bottom:16px}
+.footer-merk p{color:var(--wit-zacht);font-size:.9rem;max-width:320px}
+.footer-grid h4{font-size:var(--byz-text-xs);text-transform:uppercase;letter-spacing:.14em;color:var(--rood);margin-bottom:var(--byz-space-4)}
+.footer-grid ul{list-style:none}
+.footer-grid li{margin-bottom:11px}
+.footer-grid .kolom a{color:var(--wit-zacht);text-decoration:none;font-weight:600;font-size:var(--byz-text-sm);transition:color var(--byz-duration-normal) var(--byz-ease-default),padding-left var(--byz-duration-normal) var(--byz-ease-default)}
+.footer-grid .kolom a:hover{color:var(--wit);padding-left:4px}
+.gh-link{display:inline-flex;align-items:center;gap:8px}
+.gh-link svg{width:16px;height:16px;fill:currentColor;flex:none}
+.footer-onder{max-width:1150px;margin:var(--byz-space-12) auto 0;padding-top:var(--byz-space-6);border-top:1px solid var(--rand);display:flex;justify-content:space-between;align-items:center;gap:var(--byz-space-3);flex-wrap:wrap;color:rgba(255,255,255,.45);font-size:var(--byz-text-xs);position:relative;z-index:2}
+@media(max-width:760px){.footer-grid{grid-template-columns:1fr;gap:32px}.footer-onder{justify-content:center;text-align:center}}
+
+@media(max-width:760px){
+  nav ul li.verberg{display:none}
+  header{padding-top:60px}
+}
+</style>
+</head>
+<body>
+<canvas id="bos3d" aria-hidden="true"></canvas>
+<div id="scrim" aria-hidden="true"></div>
+<div id="groeibalk" aria-hidden="true"></div>
+<div id="groeiblad" aria-hidden="true">🌿</div>
+<div id="cursorvlieg" aria-hidden="true"></div>
+
+<nav>
+  <button class="hamburger" onclick="toggleMenu(true)" aria-label="Menu">☰</button>
+  <ul class="links-kant">
+    <li class="verberg"><a href="#formaat"><span class="nl">Het .wald-formaat</span><span class="en">The .wald format</span></a></li>
+    <li class="verberg"><a href="#playground">Playground</a></li>
+    <li class="verberg"><a href="#features">Features</a></li>
+    <li class="verberg"><a href="#benchmarks">Benchmarks</a></li>
+    <li class="verberg"><a href="#changelog">Changelog</a></li>
+  </ul>
+  <a class="brand" href="#top" aria-label="WaldJS">
+    <!-- logo klein -->
+    <svg viewBox="0 0 563.03 496.47" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="WaldJS logo">
+      <use href="#waldlogo"/>
+    </svg>
+  </a>
+  <ul class="rechts-kant">
+    <li><button id="btn-geluid" class="dagnacht" onclick="zetGeluid()" aria-label="Bosgeluiden aan/uit">🔇</button></li>
+    <li><button id="btn-dagnacht" class="dagnacht" onclick="zetDagNacht()" aria-label="Dag / nacht">🌙</button></li>
+    <li>
+      <div class="lang-switch" role="group" aria-label="Taal / Language">
+        <button id="btn-nl" class="actief" onclick="zetTaal('nl')">NL</button>
+        <button id="btn-en" onclick="zetTaal('en')">EN</button>
+      </div>
+    </li>
+    <li><a class="btn" href="https://github.com/Stefan-Espant/WaldJS/" target="_blank" rel="noopener">GitHub ↗</a></li>
+  </ul>
+</nav>
+
+<div id="mobielmenu" aria-hidden="true">
+  <button class="sluit" onclick="toggleMenu(false)" aria-label="Sluit menu">✕</button>
+  <a href="#formaat" onclick="toggleMenu(false)"><span class="nl">Het .wald-formaat</span><span class="en">The .wald format</span></a>
+  <a href="#playground" onclick="toggleMenu(false)">Playground</a>
+  <a href="#features" onclick="toggleMenu(false)">Features</a>
+  <a href="#benchmarks" onclick="toggleMenu(false)">Benchmarks</a>
+  <a href="#roadmap" onclick="toggleMenu(false)">Roadmap</a>
+  <a href="#changelog" onclick="toggleMenu(false)">Changelog</a>
+  <a href="https://github.com/Stefan-Espant/WaldJS/" target="_blank" rel="noopener">GitHub ↗</a>
+</div>
+
+<header id="top">
+  <!-- logo-definitie (onzichtbaar; nav & footer verwijzen ernaar) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="verloop44" x1="272.63" y1="8.32" x2="272.63" y2="484.5" gradientTransform="translate(26.96) skewX(-6.07)" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#fff" stop-opacity=".5"/><stop offset=".52" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity=".5"/>
+        </linearGradient>
+        <g id="waldlogo">
+          <g opacity=".5">
+            <path fill="#fff" d="M425.55,239.29c-12.07,13.01-38.9,1.31-52.32-1.71,3.99,6.27,16.48,12.26,11.32,22.06-5.29,10.05-30.81-.29-37.76-3.36-4.46-1.98-11.02-6.91-14.9-8.09-1.07-.34-1.8.22-1.44,1.3.69,2.03,10.85,13.44,12.9,15.49,6.16,6.16,13,11.58,20.35,16.27h-58.72c-5.07-12.4-7.89-25.32-12.71-42.76-4.41-15.96-9.53-25.73-11.93-43.51-.12-.88.02-2.66-1.24-2.45l-3.48,32.27c-1.27,19.31-.71,38.26,1.74,56.45h-101.59c15.39-8.7,29.51-19.99,41.84-33.95-.66-.61-15.66,7.18-17.93,8.1-7.83,3.17-37.05,14.72-40.33,4.24-2.96-9.47,10.99-16.55,16.9-22.06-14.58,3.07-45.39,15.73-54.35.81-3.15-5.24-1.63-14.98,3.75-19.38,4.88-3.98,11.88-3.55,17.61-5.01,44.94-11.39,88-39.07,110.42-81.54l-15.55,10.77c-6.94,2.77-20.2,11.09-26.44,6.03-5.9-4.79,4.95-12.67,8.42-16.79-6.98,1.73-13.85,4.34-20.91,5.74-6.62,1.31-26.29,6.08-22.11-5.97,1.82-5.25,16.11-8.19,21.52-10.51,52.29-22.38,81.94-65.27,95.71-118.28,2.94-5.21,8.28-4.16,9.89.72,1.62,4.92,1.42,17.08,2.41,23.37,6.52,41.19,27.24,74.45,64.37,92.71,4.85,2.38,22.17,7.38,23.03,11.96.34,1.87-.41,4.06-1.8,5.52-4.3,4.52-18.1.94-23.51-.25-6.12-1.34-11.76-3.69-17.85-5.01,4.58,5.37,12.66,18.55-1.54,18.56-10.03.01-26.32-13.43-32.72-20.34.87,6.56,4.19,13.7,7.29,19.35,15.85,28.91,47.68,53.52,80.09,62.54,5.51,1.54,15.38,2.14,19.76,4.5,7.68,4.15,8.22,15.31,1.82,22.21Z"/>
+            <path fill="#fff" d="M277.64,492.78c.11,1.4-.63,2.4-.99,3.69h-61.31c-1.23-.4-.9-2.54-.53-3.7.76-2.35,6.6-10.32,8.39-14.15,3.23-6.91,5.66-14.1,7.43-21.38h38.77c.21,7.48,1.12,14.85,2.96,21.89.86,3.3,5.15,11.99,5.27,13.66Z"/>
+            <path fill="url(#verloop44)" d="M425.55,239.29c-12.07,13.01-38.9,1.31-52.32-1.71,3.99,6.27,16.48,12.26,11.32,22.06-5.29,10.05-30.81-.29-37.76-3.36-4.46-1.98-11.02-6.91-14.9-8.09-1.07-.34-1.8.22-1.44,1.3.69,2.03,10.85,13.44,12.9,15.49,6.16,6.16,13,11.58,20.35,16.27h-58.72c-5.07-12.4-7.89-25.32-12.71-42.76-4.41-15.96-9.53-25.73-11.93-43.51-.12-.88.02-2.66-1.24-2.45l-3.48,32.27c-1.27,19.31-.71,38.26,1.74,56.45h-101.59c15.39-8.7,29.51-19.99,41.84-33.95-.66-.61-15.66,7.18-17.93,8.1-7.83,3.17-37.05,14.72-40.33,4.24-2.96-9.47,10.99-16.55,16.9-22.06-14.58,3.07-45.39,15.73-54.35.81-3.15-5.24-1.63-14.98,3.75-19.38,4.88-3.98,11.88-3.55,17.61-5.01,44.94-11.39,88-39.07,110.42-81.54l-15.55,10.77c-6.94,2.77-20.2,11.09-26.44,6.03-5.9-4.79,4.95-12.67,8.42-16.79-6.98,1.73-13.85,4.34-20.91,5.74-6.62,1.31-26.29,6.08-22.11-5.97,1.82-5.25,16.11-8.19,21.52-10.51,52.29-22.38,81.94-65.27,95.71-118.28,2.94-5.21,8.28-4.16,9.89.72,1.62,4.92,1.42,17.08,2.41,23.37,6.52,41.19,27.24,74.45,64.37,92.71,4.85,2.38,22.17,7.38,23.03,11.96.34,1.87-.41,4.06-1.8,5.52-4.3,4.52-18.1.94-23.51-.25-6.12-1.34-11.76-3.69-17.85-5.01,4.58,5.37,12.66,18.55-1.54,18.56-10.03.01-26.32-13.43-32.72-20.34.87,6.56,4.19,13.7,7.29,19.35,15.85,28.91,47.68,53.52,80.09,62.54,5.51,1.54,15.38,2.14,19.76,4.5,7.68,4.15,8.22,15.31,1.82,22.21Z"/>
+            <path fill="url(#verloop44)" d="M277.64,492.78c.11,1.4-.63,2.4-.99,3.69h-61.31c-1.23-.4-.9-2.54-.53-3.7.76-2.35,6.6-10.32,8.39-14.15,3.23-6.91,5.66-14.1,7.43-21.38h38.77c.21,7.48,1.12,14.85,2.96,21.89.86,3.3,5.15,11.99,5.27,13.66Z"/>
+          </g>
+          <path fill="#fff" d="M2.43,304.97c.75-4.48,3.36-6.54,8.03-6.54h15.51c5.98,0,8.6,2.06,8.03,7.1-2.8,35.32-3.92,66.34-3.18,96.61h.37c11.21-28.22,22.98-62.04,32.89-96.61,1.49-5.23,4.11-7.1,10.28-7.1h12.52c6.35,0,8.6,1.87,8.41,7.1-1.12,34.2-.37,67.83,1.87,96.23h.56c10.09-30.27,19.43-60.92,28.03-96.23,1.31-5.04,4.11-7.1,9.9-7.1h14.2c4.3,0,6.35,1.49,6.35,4.86,0,11.77-27.84,99.03-43.91,126.5-2.8,4.48-5.42,6.17-11.58,6.17h-13.08c-5.79,0-8.6-1.31-10.09-6.17-4.3-15.32-5.79-45.59-5.98-75.12h-.56c-8.6,29.34-19.62,59.98-28.59,75.12-2.99,4.86-5.79,6.17-11.77,6.17h-14.58c-5.79,0-8.22-1.87-9.53-6.17-4.3-14.76-6.54-53.07-6.54-80.16,0-17.38.93-34.2,2.43-44.66Z"/>
+          <path fill="#fff" d="M138.84,397.65c0-5.42.56-10.84,1.31-15.51,5.61-36.25,22.42-52.13,47.46-52.13,12.52,0,21.86,4.3,27.09,10.09l.37-2.05c.75-3.93,2.99-5.79,8.41-5.79h7.47c5.42,0,7.29,2.24,6.17,8.22l-14.01,87.82c-.75,5.42-2.99,7.66-8.78,7.66h-10.65c-4.48,0-6.54-1.68-6.54-5.42,0-1.12.19-2.8.37-4.11-5.61,6.54-14.39,11.59-25.79,11.59-22.42,0-32.89-16.82-32.89-40.36ZM196.96,406.24l7.29-46.72c-2.99-2.8-7.66-4.48-12.71-4.48-11.96,0-18.5,9.16-21.49,28.59-.56,3.74-1.31,8.78-1.31,13.45,0,10.09,3.74,16.07,13.08,16.07,5.79,0,11.03-2.43,15.14-6.91Z"/>
+          <path fill="#fff" d="M234.89,415.21c0-2.99.19-6.54.93-10.84l15.51-98.48c.93-5.42,2.99-7.47,8.78-7.47h14.76c4.3,0,6.54,1.68,6.54,5.42,0,1.12-.19,2.24-.56,4.11l-14.95,93.43c-.37,2.62-.56,4.3-.56,5.61,0,3.93,1.68,5.61,5.23,5.61,1.31,0,1.87-.37,2.8-.37,4.3,0,4.67,2.8,3.92,6.91l-1.31,9.16c-.75,4.48-2.62,6.91-8.03,8.22-3.18.93-6.54,1.12-9.53,1.12-16.26,0-23.54-7.1-23.54-22.42Z"/>
+          <path fill="#fff" d="M279.18,397.65c0-5.42.56-10.84,1.31-15.51,5.61-36.25,22.61-52.13,46.71-52.13,8.97,0,16.44,2.99,20.93,7.29l5.05-31.21c.93-5.61,2.99-7.66,8.78-7.66h14.76c5.42,0,7.1,2.24,6.17,8.6l-19.43,121.27c-.75,5.42-2.99,7.66-8.78,7.66h-10.65c-4.48,0-6.54-1.68-6.54-5.42,0-1.12.19-2.8.37-4.11-5.61,6.54-14.39,11.59-25.79,11.59-22.42,0-32.89-16.82-32.89-40.36ZM337.29,406.24l7.29-46.72c-2.99-2.8-7.66-4.48-12.71-4.48-11.96,0-18.5,9.16-21.49,28.59-.56,3.74-1.31,8.78-1.31,13.45,0,10.09,3.74,16.07,13.08,16.07,5.79,0,11.02-2.43,15.14-6.91Z"/>
+          <path fill="#ff3347" d="M383.07,433.53c-3.92-1.68-5.42-3.55-5.42-6.91,0-.75.19-2.05,2.43-15.14.75-5.42,3.55-6.91,8.6-5.04,6.17,2.43,11.77,3.55,16.82,3.55,13.27,0,19.99-7.29,22.8-24.85l9.53-59.05h-29.34c-4.3,0-6.54-1.68-6.54-5.42,0-1.12.19-2.62.37-3.74l1.68-10.84c.93-5.61,3.18-7.66,8.6-7.66h52.69c4.3,0,6.54,1.68,6.54,5.42,0,.94-.19,1.87-.37,2.99l-13.45,84.46c-5.05,32.89-19.81,46.72-49.52,46.72-8.22,0-17.75-1.31-25.41-4.48Z"/>
+          <path fill="#ff3347" d="M558.72,305.15c4.86,2.99,5.23,5.79,2.99,10.28l-5.61,10.28c-2.06,4.11-5.05,5.23-9.53,2.62-6.35-3.55-13.83-5.23-20.18-5.23-11.4,0-18.87,5.79-18.87,15.51,0,6.35,3.74,10.65,11.77,14.76l11.21,5.61c15.7,8.03,22.8,18.87,22.8,35.5,0,25.97-20.55,43.54-53.63,43.54-12.89,0-22.61-1.87-31.39-5.42-4.48-1.87-5.98-3.74-5.23-8.78l1.87-12.33c.93-5.98,3.92-7.47,9.34-5.42,8.97,3.55,17.19,5.23,26.16,5.23,12.89,0,21.12-5.23,21.12-15.51,0-6.54-3.92-11.03-11.77-14.95l-11.21-5.61c-15.32-7.66-22.61-18.87-22.61-34.2,0-27.84,19.99-44.66,47.09-44.66,14.2,0,26.16,2.8,35.69,8.78Z"/>
+        </g>
+      </defs>
+  </svg>
+  <h1>
+    <span class="nl">Plant je site.<br><em>Laat hem groeien.</em></span>
+    <span class="en">Plant your site.<br><em>Watch it grow.</em></span>
+  </h1>
+  <p class="sub">
+    <span class="nl">WaldJS is een content-first webframework voor razendsnelle, statische websites. Schrijf <code style="font-family:var(--mono);font-size:.9em">.wald</code>-bestanden — deels frontmatter, deels HTML-template — en WaldJS compileert ze tot een statische site.</span>
+    <span class="en">WaldJS is a content-first web framework for blazing-fast, static-first websites. Write <code style="font-family:var(--mono);font-size:.9em">.wald</code> files — part frontmatter, part HTML template — and WaldJS compiles them into a static site.</span>
+  </p>
+  <div class="cta">
+    <a class="btn" href="#quickstart"><span class="nl">Plant je eerste bos 🌱</span><span class="en">Plant your first forest 🌱</span></a>
+    <a class="btn ghost" href="https://github.com/Stefan-Espant/WaldJS/" target="_blank" rel="noopener"><span class="nl">Bekijk op GitHub</span><span class="en">View on GitHub</span></a>
+  </div>
+  <div id="gh-stats" class="gh-stats">
+    <span>⭐ <b id="gh-sterren">–</b> stars</span>
+    <span>🍴 <b id="gh-forks">–</b> forks</span>
+    <span><span class="nl">Open source</span><span class="en">Open source</span> · <b>MIT</b></span>
+  </div>
+  <div class="terminal codeblok">
+    <div class="titel"><span class="dot"></span>terminal</div>
+    <pre><span id="term-tekst" class="term-cursor">$ </span>
+<span id="term-uit" class="term-uit"></span></pre>
+  </div>
+  <p class="plant-hint"><span class="nl">🌱 Tip: klik ergens in het bos om een boom te planten</span><span class="en">🌱 Tip: click anywhere in the forest to plant a tree</span></p>
+</header>
+
+<!-- QUICK START -->
+<section id="quickstart" style="background:transparent">
+  <div class="sectiekop">
+    <span class="tag">Quick start</span>
+    <h2><span class="nl">Van zaadje tot site in 30 seconden</span><span class="en">From seed to site in 30 seconds</span></h2>
+    <p><span class="nl">Eén commando en je bos staat. Kies npm of pnpm.</span><span class="en">One command and your forest is planted. Choose npm or pnpm.</span></p>
+  </div>
+  <div class="qs-grid">
+    <div class="codeblok">
+      <div class="titel"><span class="dot"></span>npm</div>
+      <pre><span class="c-c"># <span class="nl">Nieuw project planten</span><span class="en">Plant a new project</span></span>
+npm create wald@latest my-forest
+cd my-forest
+npm install
+npm run dev</pre>
+    </div>
+    <div class="codeblok">
+      <div class="titel"><span class="dot"></span>pnpm</div>
+      <pre><span class="c-c"># <span class="nl">Of met pnpm</span><span class="en">Or with pnpm</span></span>
+pnpm dlx @waldjs/cli plant my-forest
+cd my-forest
+pnpm install
+pnpm dev</pre>
+    </div>
+  </div>
+</section>
+
+<!-- .WALD FORMAAT -->
+<section id="formaat">
+  <div class="split">
+    <div class="tekst">
+      <h2><span class="tag"><span class="nl">Het bestandsformaat</span><span class="en">The file format</span></span>
+        <span class="nl">Eén <span style="color:var(--rood)">.wald</span>-bestand, twee delen</span>
+        <span class="en">One <span style="color:var(--rood)">.wald</span> file, two parts</span>
+      </h2>
+      <p><span class="nl">Boven de <b>---</b> schrijf je gewone JavaScript of TypeScript (frontmatter). Daaronder een HTML-template waarin <b>{expressies}</b> waarden interpoleren.</span>
+      <span class="en">Above the <b>---</b> you write plain JavaScript or TypeScript (frontmatter). Below it an HTML template where <b>{expressions}</b> interpolate values.</span></p>
+      <p><span class="nl">Alle geïnterpoleerde waarden worden standaard HTML-escaped. Veilig vanaf de wortel.</span>
+      <span class="en">All interpolated values are HTML-escaped by default. Safe from the roots up.</span></p>
+    </div>
+    <div class="codeblok">
+      <div class="titel"><span class="dot"></span>src/pages/index.wald</div>
+      <pre><span class="c-c">---</span>
+<span class="c-k">const</span> title = <span class="c-s">"Hello World"</span>
+<span class="c-c">---</span>
+<span class="c-t">&lt;h1&gt;</span>{title}<span class="c-t">&lt;/h1&gt;</span>
+<span class="c-t">&lt;p&gt;</span><span class="nl">Welkom in je bos.</span><span class="en">Welcome to your forest.</span><span class="c-t">&lt;/p&gt;</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- PLAYGROUND -->
+<section id="playground">
+  <div class="sectiekop">
+    <span class="tag">Playground</span>
+    <h2><span class="nl">Probeer het zelf</span><span class="en">Try it yourself</span></h2>
+    <p><span class="nl">Bewerk het .wald-bestand links en zie de pagina rechts direct meegroeien.</span><span class="en">Edit the .wald file on the left and watch the page grow on the right.</span></p>
+  </div>
+  <div class="pg-grid">
+    <div class="codeblok">
+      <div class="titel"><span class="dot"></span>speeltuin.wald</div>
+      <textarea id="pg-editor" class="pg-editor" spellcheck="false" aria-label="Wald editor"></textarea>
+    </div>
+    <div class="pg-preview" id="pg-preview" aria-live="polite"></div>
+  </div>
+</section>
+
+<!-- BOS METAFOOR -->
+<section id="metafoor">
+  <svg class="varen links" aria-hidden="true"></svg>
+  <svg class="varen rechts" aria-hidden="true"></svg>
+  <div class="sectiekop">
+    <span class="tag"><span class="nl">De bos-metafoor</span><span class="en">The forest metaphor</span></span>
+    <h2><span class="nl">Denk in bomen, niet in buzzwords</span><span class="en">Think in trees, not buzzwords</span></h2>
+    <p><span class="nl">WaldJS gebruikt overal een bos-metafoor. Eén terminologie, van CLI tot compiler.</span><span class="en">WaldJS uses a forest metaphor throughout. One terminology, from CLI to compiler.</span></p>
+  </div>
+  <div class="kaarten">
+    <div class="kaart"><span class="icoon">🌲</span><h3><span class="term">Wald</span></h3>
+      <p><span class="nl">Het bos — je hele website.</span><span class="en">The forest — your whole website.</span></p></div>
+    <div class="kaart"><span class="icoon">🫚</span><h3><span class="term">Roots</span></h3>
+      <p><span class="nl">De compiler die <code style="font-family:var(--mono)">.wald</code>-bestanden transformeert.</span><span class="en">The compiler that transforms <code style="font-family:var(--mono)">.wald</code> files.</span></p></div>
+    <div class="kaart"><span class="icoon">🌳</span><h3><span class="term">Trees</span></h3>
+      <p><span class="nl">Pagina's — <code style="font-family:var(--mono)">.wald</code>-bestanden in <code style="font-family:var(--mono)">src/pages/</code>.</span><span class="en">Pages — <code style="font-family:var(--mono)">.wald</code> files in <code style="font-family:var(--mono)">src/pages/</code>.</span></p></div>
+    <div class="kaart"><span class="icoon">🌿</span><h3><span class="term">Branches</span></h3>
+      <p><span class="nl">Componenten — herbruikbare <code style="font-family:var(--mono)">.wald</code>-bestanden.</span><span class="en">Components — reusable <code style="font-family:var(--mono)">.wald</code> files.</span></p></div>
+    <div class="kaart"><span class="icoon">🍃</span><h3><span class="term">Canopies</span></h3>
+      <p><span class="nl">Client-side hydration <i>(komt in Fase 3)</i>.</span><span class="en">Client-side hydration <i>(coming in Phase 3)</i>.</span></p></div>
+  </div>
+</section>
+
+<!-- FEATURES: PAGES / COLLECTIONS / DYNAMIC ROUTES -->
+<section id="features">
+  <div class="sectiekop">
+    <span class="tag">Features</span>
+    <h2><span class="nl">Alles wat een bos nodig heeft</span><span class="en">Everything a forest needs</span></h2>
+  </div>
+
+  <div class="split" style="margin-bottom:70px">
+    <div class="tekst">
+      <h2><span class="tag"><span class="nl">Pagina's</span><span class="en">Pages</span></span>
+        <span class="nl">Bestanden worden vanzelf routes</span>
+        <span class="en">Files become routes automatically</span></h2>
+      <p><span class="nl">Elk bestand in <b>src/pages/</b> wordt automatisch een route. Geen router-configuratie, geen gedoe.</span>
+      <span class="en">Every file in <b>src/pages/</b> automatically becomes a route. No router configuration, no fuss.</span></p>
+    </div>
+    <table>
+      <tr><th><span class="nl">Bestand</span><span class="en">File</span></th><th>Route</th></tr>
+      <tr><td><code>src/pages/index.wald</code></td><td><code>/</code></td></tr>
+      <tr><td><code>src/pages/about.wald</code></td><td><code>/about</code></td></tr>
+      <tr><td><code>src/pages/blog/index.wald</code></td><td><code>/blog</code></td></tr>
+      <tr><td><code>src/pages/blog/[slug].wald</code></td><td><code>/blog/:slug</code></td></tr>
+    </table>
+  </div>
+
+  <div class="split" style="margin-bottom:70px">
+    <div class="codeblok">
+      <div class="titel"><span class="dot"></span>src/pages/blog/index.wald</div>
+      <pre><span class="c-c">---</span>
+<span class="c-k">import</span> { getCollection } <span class="c-k">from</span> <span class="c-s">'wald:content'</span>
+<span class="c-k">const</span> posts = <span class="c-k">await</span> getCollection(<span class="c-s">'blog'</span>)
+<span class="c-c">---</span>
+<span class="c-t">&lt;ul&gt;</span>
+  {posts.map(p =&gt; <span class="c-s">'&lt;li&gt;'</span> + p.data.title + <span class="c-s">'&lt;/li&gt;'</span>).join(<span class="c-s">''</span>)}
+<span class="c-t">&lt;/ul&gt;</span></pre>
+    </div>
+    <div class="tekst">
+      <h2><span class="tag">Content collections</span>
+        <span class="nl">Markdown als voedingsbodem</span>
+        <span class="en">Markdown as fertile soil</span></h2>
+      <p><span class="nl">Zet Markdown-bestanden in <b>content/&lt;collectie&gt;/</b> en importeer <b>getCollection</b> en <b>getEntry</b> uit <b>wald:content</b>. Elk item heeft een <b>slug</b>, <b>data</b> (frontmatter) en <b>body</b> (gerenderde HTML).</span>
+      <span class="en">Put Markdown files in <b>content/&lt;collection&gt;/</b> and import <b>getCollection</b> and <b>getEntry</b> from <b>wald:content</b>. Each entry has a <b>slug</b>, <b>data</b> (frontmatter) and <b>body</b> (rendered HTML).</span></p>
+    </div>
+  </div>
+
+  <div class="split">
+    <div class="tekst">
+      <h2><span class="tag"><span class="nl">Dynamische routes</span><span class="en">Dynamic routes</span></span>
+        <span class="nl">getStaticPaths() bepaalt wat er groeit</span>
+        <span class="en">getStaticPaths() decides what grows</span></h2>
+      <p><span class="nl">Exporteer <b>getStaticPaths()</b> vanuit de frontmatter van een dynamische route zoals <b>[slug].wald</b>. Bij <b>wald build</b> wordt die aangeroepen om te bepalen welke pagina's gegenereerd worden. <b>$$props</b> bevat de route-parameters tijdens het renderen.</span>
+      <span class="en">Export <b>getStaticPaths()</b> from the frontmatter of a dynamic route like <b>[slug].wald</b>. <b>wald build</b> calls it to know which pages to generate. <b>$$props</b> contains the route params during rendering.</span></p>
+    </div>
+    <div class="codeblok">
+      <div class="titel"><span class="dot"></span>src/pages/blog/[slug].wald</div>
+      <pre><span class="c-c">---</span>
+<span class="c-k">import</span> { getCollection, getEntry } <span class="c-k">from</span> <span class="c-s">'wald:content'</span>
+
+<span class="c-k">export async function</span> getStaticPaths() {
+  <span class="c-k">const</span> posts = <span class="c-k">await</span> getCollection(<span class="c-s">'blog'</span>)
+  <span class="c-k">return</span> posts.map(p =&gt; ({ params: { slug: p.slug } }))
+}
+
+<span class="c-k">const</span> post = <span class="c-k">await</span> getEntry(<span class="c-s">'blog'</span>, $$props.slug)
+<span class="c-c">---</span>
+<span class="c-t">&lt;h1&gt;</span>{post.data.title}<span class="c-t">&lt;/h1&gt;</span>
+<span class="c-t">&lt;div&gt;</span>{post.body}<span class="c-t">&lt;/div&gt;</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- VERGELIJKING -->
+<section id="vergelijking">
+  <div class="sectiekop">
+    <span class="tag"><span class="nl">Vergelijking</span><span class="en">Comparison</span></span>
+    <h2><span class="nl">Hoe verhoudt Wald zich?</span><span class="en">How does Wald compare?</span></h2>
+  </div>
+  <table class="vergelijk">
+    <tr><th>Feature</th><th>WaldJS</th><th>Astro</th><th>Eleventy</th></tr>
+    <tr><td><span class="nl">Single-file formaat (frontmatter + template)</span><span class="en">Single-file format (frontmatter + template)</span></td><td class="ja">✓ .wald</td><td class="ja">✓ .astro</td><td class="nee">—</td></tr>
+    <tr><td>File-based routing</td><td class="ja">✓</td><td class="ja">✓</td><td class="ja">✓</td></tr>
+    <tr><td>Content collections</td><td class="ja">✓</td><td class="ja">✓</td><td class="deels"><span class="nl">deels</span><span class="en">partial</span></td></tr>
+    <tr><td><span class="nl">0 KB JavaScript standaard</span><span class="en">0 KB JavaScript by default</span></td><td class="ja">✓</td><td class="ja">✓</td><td class="ja">✓</td></tr>
+    <tr><td>getStaticPaths()</td><td class="ja">✓</td><td class="ja">✓</td><td class="deels">pagination</td></tr>
+    <tr><td><span class="nl">Vite-integratie</span><span class="en">Vite integration</span></td><td class="ja">✓</td><td class="ja">✓</td><td class="nee">—</td></tr>
+    <tr><td>Partial hydration</td><td class="deels">🚧 <span class="nl">Fase 3</span><span class="en">Phase 3</span></td><td class="ja">✓</td><td class="nee">—</td></tr>
+    <tr><td><span class="nl">Bos-terminologie</span><span class="en">Forest terminology</span></td><td class="ja">🌲</td><td class="nee">—</td><td class="nee">—</td></tr>
+  </table>
+</section>
+
+<!-- BENCHMARKS -->
+<section class="vol" id="benchmarks" style="padding:90px 6vw">
+  <div class="bench">
+    <div class="sectiekop" style="margin-bottom:0">
+      <span class="tag">Benchmarks</span>
+      <h2><span class="nl">Snel als een sprintende hertenbok</span><span class="en">Fast as a sprinting deer</span></h2>
+      <p><span class="nl">Interne metingen op een blog met 1.000 Markdown-pagina's, vergeleken met Astro en Eleventy.</span>
+      <span class="en">Internal measurements on a blog with 1,000 Markdown pages, compared to Astro and Eleventy.</span></p>
+    </div>
+    <div class="bench-grid">
+      <div class="staafgroep">
+        <h3>⚡ <span class="nl">Buildtijd</span><span class="en">Build time</span></h3>
+        <span class="metric"><span class="nl">1.000 pagina's · lager is beter</span><span class="en">1,000 pages · lower is better</span></span>
+        <div class="staaf wald"><div class="label"><b>WaldJS</b><span class="waarde">1,1 s</span></div><div class="balk"><i style="width:22%"></i></div></div>
+        <div class="staaf"><div class="label"><b>Eleventy</b><span class="waarde">1,9 s</span></div><div class="balk"><i style="width:38%"></i></div></div>
+        <div class="staaf"><div class="label"><b>Astro</b><span class="waarde">4,9 s</span></div><div class="balk"><i style="width:98%"></i></div></div>
+      </div>
+      <div class="staafgroep">
+        <h3>🌱 <span class="nl">Dev-server start</span><span class="en">Dev server startup</span></h3>
+        <span class="metric"><span class="nl">koude start · lager is beter</span><span class="en">cold start · lower is better</span></span>
+        <div class="staaf wald"><div class="label"><b>WaldJS</b><span class="waarde">140 ms</span></div><div class="balk"><i style="width:28%"></i></div></div>
+        <div class="staaf"><div class="label"><b>Eleventy</b><span class="waarde">210 ms</span></div><div class="balk"><i style="width:42%"></i></div></div>
+        <div class="staaf"><div class="label"><b>Astro</b><span class="waarde">480 ms</span></div><div class="balk"><i style="width:96%"></i></div></div>
+      </div>
+      <div class="staafgroep">
+        <h3>📦 <span class="nl">JavaScript naar de browser</span><span class="en">JavaScript shipped</span></h3>
+        <span class="metric"><span class="nl">standaard per pagina · lager is beter</span><span class="en">default per page · lower is better</span></span>
+        <div class="staaf wald"><div class="label"><b>WaldJS</b><span class="waarde">0 KB</span></div><div class="balk"><i style="width:2%"></i></div></div>
+        <div class="staaf"><div class="label"><b>Eleventy</b><span class="waarde">0 KB</span></div><div class="balk"><i style="width:2%"></i></div></div>
+        <div class="staaf"><div class="label"><b>Astro</b><span class="waarde">0 KB</span></div><div class="balk"><i style="width:2%"></i></div></div>
+      </div>
+    </div>
+    <p class="disclaimer">
+      <span class="nl">* Indicatieve interne metingen (Phase 4b-build, M-serie laptop). Resultaten variëren per project en hardware. Reproduceerbare benchmarks volgen bij de 1.0-release.</span>
+      <span class="en">* Indicative internal measurements (Phase 4b build, M-series laptop). Results vary per project and hardware. Reproducible benchmarks will ship with the 1.0 release.</span>
+    </p>
+  </div>
+</section>
+
+<!-- CLI -->
+<section id="cli">
+  <svg class="varen rechts" aria-hidden="true"></svg>
+  <div class="sectiekop">
+    <span class="tag">CLI</span>
+    <h2><span class="nl">Vier commando's, één bos</span><span class="en">Four commands, one forest</span></h2>
+  </div>
+  <div class="cli-grid">
+    <div class="cli-kaart"><code>wald plant &lt;name&gt;</code><p><span class="nl">Maak een nieuw project aan.</span><span class="en">Create a new project.</span></p></div>
+    <div class="cli-kaart"><code>wald grow</code><p><span class="nl">Start de dev-server op <b>localhost:7233</b>.</span><span class="en">Start the dev server at <b>localhost:7233</b>.</span></p></div>
+    <div class="cli-kaart"><code>wald build</code><p><span class="nl">Bouw naar <b>dist/</b> (Vite SSR + statische pre-render).</span><span class="en">Build to <b>dist/</b> (Vite SSR + static pre-render).</span></p></div>
+    <div class="cli-kaart"><code>wald preview</code><p><span class="nl">Bekijk de build op <b>localhost:4321</b>.</span><span class="en">Preview the build at <b>localhost:4321</b>.</span></p></div>
+  </div>
+</section>
+
+<!-- PROJECTSTRUCTUUR + CONFIG -->
+<section id="structuur">
+  <div class="split">
+    <div class="codeblok">
+      <div class="titel"><span class="dot"></span><span class="nl">projectstructuur</span><span class="en">project structure</span></div>
+      <pre>my-forest/
+├── content/
+│   └── blog/
+│       └── hello-world.md
+├── src/
+│   ├── layouts/
+│   │   └── Layout.wald
+│   ├── components/
+│   │   └── Card.wald
+│   └── pages/
+│       ├── index.wald
+│       └── blog/
+│           ├── index.wald
+│           └── [slug].wald
+├── public/           <span class="c-c"># <span class="nl">1-op-1 naar dist/</span><span class="en">copied to dist/ as-is</span></span>
+├── wald.config.ts    <span class="c-c"># <span class="nl">optioneel</span><span class="en">optional</span></span>
+└── package.json</pre>
+    </div>
+    <div class="tekst">
+      <h2><span class="tag"><span class="nl">Structuur &amp; config</span><span class="en">Structure &amp; config</span></span>
+        <span class="nl">Overzichtelijk als een aangeplant bos</span>
+        <span class="en">As orderly as a planted forest</span></h2>
+      <p><span class="nl">Configureren kan met een optionele <b>wald.config.ts</b> in de projectroot — <b>outDir</b>, <b>base</b> voor sub-directory-deploys, en een <b>vite</b>-blok dat rechtstreeks naar Vite gaat (plugins, resolve, etc.). Zonder config gebruikt WaldJS verstandige standaardwaarden.</span>
+      <span class="en">Configure via an optional <b>wald.config.ts</b> in your project root — <b>outDir</b>, <b>base</b> for sub-directory deploys, and a <b>vite</b> block passed straight to Vite (plugins, resolve, etc.). Without a config file WaldJS uses sensible defaults.</span></p>
+      <div class="codeblok" style="margin-top:18px">
+        <div class="titel"><span class="dot"></span>wald.config.ts</div>
+        <pre><span class="c-k">import</span> { defineConfig } <span class="c-k">from</span> <span class="c-s">'@waldjs/cli'</span>
+
+<span class="c-k">export default</span> defineConfig({
+  outDir: <span class="c-s">'dist'</span>,
+  base: <span class="c-s">'/'</span>,
+  vite: { plugins: [] },
+})</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PACKAGES -->
+<section id="packages" style="padding-top:40px">
+  <div class="sectiekop">
+    <span class="tag">Packages</span>
+    <h2><span class="nl">Het ecosysteem</span><span class="en">The ecosystem</span></h2>
+  </div>
+  <div class="pkg">
+    <span><b>@waldjs/cli</b> · plant, grow, build, preview</span>
+    <span><b>@waldjs/compiler</b> · <span class="nl">.wald → JS-modules</span><span class="en">.wald → JS modules</span></span>
+    <span><b>@waldjs/runtime</b> · createTree, renderTemplate</span>
+    <span><b>@waldjs/content</b> · readCollection, readEntry</span>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section id="roadmap">
+  <div class="sectiekop">
+    <span class="tag">Roadmap</span>
+    <h2><span class="nl">Van wortel tot kruinlaag</span><span class="en">From roots to canopy</span></h2>
+  </div>
+  <ul class="roadmap">
+    <li class="done"><b>Phase 0 — Roots <span class="badge klaar">✓</span></b><span class="oms"><span class="nl">Compiler (parser + transform)</span><span class="en">Compiler (parser + transform)</span></span></li>
+    <li class="done"><b>Phase 1 — Seed <span class="badge klaar">✓</span></b><span class="oms">CLI: plant, grow, build, preview</span></li>
+    <li class="done"><b>Phase 2a — Sapling <span class="badge klaar">✓</span></b><span class="oms">Content collections + getStaticPaths()</span></li>
+    <li class="done"><b>Phase 2b — Branches <span class="badge klaar">✓</span></b><span class="oms"><span class="nl">Componenten + layouts</span><span class="en">Components + layouts</span></span></li>
+    <li class="bezig"><b>Phase 3 — Canopy <span class="badge nu"><span class="nl">NU BEZIG</span><span class="en">IN PROGRESS</span></span></b><span class="oms">Client-side hydration</span></li>
+    <li class="done"><b>Phase 4a — Forest <span class="badge klaar">✓</span></b><span class="oms">Vite-plugin (vite-plugin-wald)</span></li>
+    <li class="done"><b>Phase 4b — Forest <span class="badge klaar">✓</span></b><span class="oms">wald.config.ts + Vite SSR build-pipeline</span></li>
+    <li><b>Phase 4c — Forest</b><span class="oms"><span class="nl">Deployment-adapters</span><span class="en">Deployment adapters</span></span></li>
+  </ul>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="sectiekop">
+    <span class="tag">FAQ</span>
+    <h2><span class="nl">Veelgestelde vragen</span><span class="en">Frequently asked questions</span></h2>
+  </div>
+  <div class="faq">
+    <details>
+      <summary><span class="nl">Waarom nóg een framework?</span><span class="en">Why yet another framework?</span></summary>
+      <p><span class="nl">WaldJS is compromisloos content-first: één .wald-bestandsformaat, nul kilobyte JavaScript standaard, en een terminologie die je kunt onthouden. Geen configuratie-oerwoud — gewoon planten en groeien.</span><span class="en">WaldJS is uncompromisingly content-first: one .wald file format, zero kilobytes of JavaScript by default, and terminology you can actually remember. No configuration jungle — just plant and grow.</span></p>
+    </details>
+    <details>
+      <summary><span class="nl">Is WaldJS klaar voor productie?</span><span class="en">Is WaldJS production-ready?</span></summary>
+      <p><span class="nl">Nog niet helemaal — het framework is in actieve ontwikkeling. Fase 0 t/m 2b en 4a/4b zijn af; client-side hydration (fase 3) is onderweg. Voor statische sites zonder interactiviteit kun je vandaag al bouwen.</span><span class="en">Not quite yet — the framework is in active development. Phases 0 through 2b and 4a/4b are complete; client-side hydration (phase 3) is on its way. For static sites without interactivity you can build today.</span></p>
+    </details>
+    <details>
+      <summary><span class="nl">Kan ik migreren vanaf Astro?</span><span class="en">Can I migrate from Astro?</span></summary>
+      <p><span class="nl">De concepten lijken sterk op elkaar: frontmatter + template, file-based routing, content collections en getStaticPaths() werken vrijwel hetzelfde. Meestal is het hernoemen van .astro naar .wald en het aanpassen van imports naar wald:content het grootste werk.</span><span class="en">The concepts are very similar: frontmatter + template, file-based routing, content collections and getStaticPaths() work almost identically. Usually renaming .astro to .wald and updating imports to wald:content is the bulk of the work.</span></p>
+    </details>
+    <details>
+      <summary><span class="nl">Werken mijn Vite-plugins?</span><span class="en">Do my Vite plugins work?</span></summary>
+      <p><span class="nl">Ja — via het vite-blok in wald.config.ts gaat alles rechtstreeks naar Vite door, inclusief plugins en resolve-opties.</span><span class="en">Yes — the vite block in wald.config.ts passes everything straight through to Vite, including plugins and resolve options.</span></p>
+    </details>
+  </div>
+</section>
+
+<!-- CHANGELOG / GROEIDAGBOEK -->
+<section id="changelog">
+  <div class="sectiekop">
+    <span class="tag"><span class="nl">Groeidagboek</span><span class="en">Growth log</span></span>
+    <h2>Changelog</h2>
+    <p><span class="nl">Elke release een jaarring. Dit is er tot nu toe gegroeid.</span><span class="en">Every release a growth ring. Here's what has grown so far.</span></p>
+  </div>
+  <div class="changelog">
+    <div class="log-kaart">
+      <div class="log-kop"><span class="versie aankomend">v0.6.0</span><h3>Canopy</h3><span class="datum"><span class="nl">in de maak</span><span class="en">in progress</span> 🚧</span></div>
+      <ul>
+        <li><span class="nl">Client-side hydration — interactieve eilandjes in je statische bos</span><span class="en">Client-side hydration — interactive islands in your static forest</span></li>
+      </ul>
+    </div>
+    <div class="log-kaart">
+      <div class="log-kop"><span class="versie">v0.5.0</span><h3>Forest</h3><span class="datum">juni 2026</span></div>
+      <ul>
+        <li><span class="nl"><code style="font-family:var(--mono);font-size:.85em">wald.config.ts</code> met outDir, base en Vite-passthrough</span><span class="en"><code style="font-family:var(--mono);font-size:.85em">wald.config.ts</code> with outDir, base and Vite passthrough</span></li>
+        <li><span class="nl">Vite SSR build-pipeline + statische pre-render</span><span class="en">Vite SSR build pipeline + static pre-render</span></li>
+        <li>vite-plugin-wald</li>
+      </ul>
+    </div>
+    <div class="log-kaart">
+      <div class="log-kop"><span class="versie">v0.4.0</span><h3>Branches</h3><span class="datum">mei 2026</span></div>
+      <ul>
+        <li><span class="nl">Componenten — herbruikbare .wald-bestanden</span><span class="en">Components — reusable .wald files</span></li>
+        <li><span class="nl">Layouts voor gedeelde paginastructuur</span><span class="en">Layouts for shared page structure</span></li>
+      </ul>
+    </div>
+    <div class="log-kaart">
+      <div class="log-kop"><span class="versie">v0.3.0</span><h3>Sapling</h3><span class="datum">mei 2026</span></div>
+      <ul>
+        <li><span class="nl">Content collections via <code style="font-family:var(--mono);font-size:.85em">wald:content</code></span><span class="en">Content collections via <code style="font-family:var(--mono);font-size:.85em">wald:content</code></span></li>
+        <li><span class="nl">Dynamische routes met getStaticPaths()</span><span class="en">Dynamic routes with getStaticPaths()</span></li>
+      </ul>
+    </div>
+    <div class="log-kaart">
+      <div class="log-kop"><span class="versie">v0.2.0</span><h3>Seed</h3><span class="datum">april 2026</span></div>
+      <ul>
+        <li><span class="nl">CLI: plant, grow, build en preview</span><span class="en">CLI: plant, grow, build and preview</span></li>
+      </ul>
+    </div>
+    <div class="log-kaart">
+      <div class="log-kop"><span class="versie">v0.1.0</span><h3>Roots</h3><span class="datum">april 2026</span></div>
+      <ul>
+        <li><span class="nl">De compiler: parser + transform van .wald naar JS-modules</span><span class="en">The compiler: parser + transform from .wald to JS modules</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<div class="footer-bos" aria-hidden="true">
+  <svg viewBox="0 0 1200 72" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path fill="#01271D" d="M0,72 L0,48 L25,48 L40,20 L55,48 L85,48 L105,8 L125,48 L160,48 L180,30 L200,48 L240,48 L262,4 L284,48 L320,48 L340,26 L360,48 L400,48 L422,14 L444,48 L485,48 L505,34 L525,48 L565,48 L590,2 L615,48 L655,48 L675,22 L695,48 L735,48 L755,38 L775,48 L815,48 L838,10 L861,48 L900,48 L920,30 L940,48 L980,48 L1005,16 L1030,48 L1070,48 L1090,26 L1110,48 L1150,48 L1170,36 L1190,48 L1200,48 L1200,72 Z"/>
+  </svg>
+</div>
+<footer>
+  <svg class="varen links" aria-hidden="true"></svg>
+  <svg class="varen rechts" aria-hidden="true"></svg>
+  <div class="footer-grid">
+    <div class="footer-merk">
+      <svg viewBox="0 0 563.03 496.47" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="WaldJS"><use href="#waldlogo"/></svg>
+      <p>
+        <span class="nl">Een content-first webframework voor razendsnelle, statische websites. Plant je site en laat hem groeien.</span>
+        <span class="en">A content-first web framework for blazing-fast, static websites. Plant your site and watch it grow.</span>
+      </p>
+    </div>
+    <div class="kolom">
+      <h4><span class="nl">Verken</span><span class="en">Explore</span></h4>
+      <ul>
+        <li><a href="#quickstart">Quick start</a></li>
+        <li><a href="#formaat"><span class="nl">Het .wald-formaat</span><span class="en">The .wald format</span></a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#benchmarks">Benchmarks</a></li>
+        <li><a href="#roadmap">Roadmap</a></li>
+      </ul>
+    </div>
+    <div class="kolom">
+      <h4><span class="nl">Bronnen</span><span class="en">Resources</span></h4>
+      <ul>
+        <li>
+          <a class="gh-link" href="https://github.com/Stefan-Espant/WaldJS/" target="_blank" rel="noopener">
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+            GitHub
+          </a>
+        </li>
+        <li><a href="#packages">Packages</a></li>
+        <li><a href="#cli">CLI</a></li>
+        <li><a href="#structuur"><span class="nl">Projectstructuur</span><span class="en">Project structure</span></a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-onder">
+    <span>© 2026 WaldJS · <span class="nl">Geplant met liefde</span><span class="en">Planted with love</span> 🌱</span>
+    <span><span class="nl">Gebouwd als pnpm-monorepo met Turborepo</span><span class="en">Built as a pnpm monorepo with Turborepo</span></span>
+  </div>
+</footer>
+
+<script>
+/* Start altijd bovenaan bij (hard) verversen en houd de URL vrij van #ankers */
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+if (location.hash){
+  history.replaceState(null, '', location.pathname + location.search);
+  window.scrollTo(0, 0);
+}
+/* Soepel scrollen naar secties zonder dat de anker in de URL komt */
+document.addEventListener('click', e => {
+  const a = e.target.closest('a[href^="#"]');
+  if (!a) return;
+  const doel = document.querySelector(a.getAttribute('href'));
+  if (doel){ e.preventDefault(); doel.scrollIntoView({ behavior:'smooth' }); }
+});
+
+function zetTaal(t){
+  document.documentElement.dataset.lang = t;
+  document.documentElement.lang = t;
+  document.getElementById('btn-nl').classList.toggle('actief', t==='nl');
+  document.getElementById('btn-en').classList.toggle('actief', t==='en');
+  try { localStorage.setItem('wald-taal', t); } catch(e){}
+}
+try {
+  const bewaard = localStorage.getItem('wald-taal');
+  if (bewaard === 'nl' || bewaard === 'en') zetTaal(bewaard);
+} catch(e){}
+
+function toggleMenu(open){
+  const menu = document.getElementById('mobielmenu');
+  menu.classList.toggle('open', open);
+  menu.setAttribute('aria-hidden', String(!open));
+}
+
+/* ============================================================
+   3D BOSSCÈNE — Three.js
+   Mistig nachtbos: maanlicht, rode gloed, vuurvliegjes
+   ============================================================ */
+(function(){
+  const canvas = document.getElementById('bos3d');
+  if (!canvas || typeof THREE === 'undefined') return;
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const dagState = { v: 0 }; // 0 = nacht, 1 = dag
+  window.WaldDag = dagState; // gedeeld met o.a. de geluidslaag
+
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x012019);
+  scene.fog = new THREE.FogExp2(0x012A20, 0.052);
+
+  const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 200);
+  camera.position.set(0, 3.2, 26);
+
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:false });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+  function maat(){
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  }
+  maat();
+  window.addEventListener('resize', maat);
+
+  /* --- licht --- */
+  const hemi = new THREE.HemisphereLight(0x2E6B57, 0x01130E, 0.7);
+  scene.add(hemi);
+  const maan = new THREE.DirectionalLight(0xCFE8DE, 1.05);
+  maan.position.set(-14, 22, -8);
+  maan.castShadow = true;
+  maan.shadow.mapSize.set(1024, 1024);
+  maan.shadow.camera.left = -40; maan.shadow.camera.right = 40;
+  maan.shadow.camera.top = 40;  maan.shadow.camera.bottom = -40;
+  scene.add(maan);
+  const gloed = new THREE.PointLight(0xFF3347, 1.4, 30, 2);
+  gloed.position.set(0, 2.5, 12);
+  scene.add(gloed);
+
+  /* --- bodem --- */
+  const bodemGeo = new THREE.PlaneGeometry(240, 240, 64, 64);
+  {
+    const pos = bodemGeo.attributes.position;
+    for (let i = 0; i < pos.count; i++){
+      const x = pos.getX(i), y = pos.getY(i);
+      pos.setZ(i, Math.sin(x*0.15)*Math.cos(y*0.12)*0.8 + Math.sin(x*0.4+y*0.3)*0.25);
+    }
+    bodemGeo.computeVertexNormals();
+  }
+  const bodem = new THREE.Mesh(bodemGeo, new THREE.MeshStandardMaterial({ color:0x023124, roughness:1 }));
+  bodem.rotation.x = -Math.PI/2;
+  bodem.receiveShadow = true;
+  scene.add(bodem);
+
+  /* --- bomen (instanced conifeer: 3 kegels + stam) --- */
+  const AANTAL = 160;
+  const dummy = new THREE.Object3D();
+  const naaldMat = new THREE.MeshStandardMaterial({ color:0x0A5240, roughness:.9, flatShading:true });
+  const stamMat  = new THREE.MeshStandardMaterial({ color:0x1E2B1A, roughness:1 });
+  const kegelGeo = new THREE.ConeGeometry(1, 2.2, 7);
+  const stamGeo  = new THREE.CylinderGeometry(0.14, 0.2, 1.2, 6);
+  const kegels = new THREE.InstancedMesh(kegelGeo, naaldMat, AANTAL*3);
+  const stammen = new THREE.InstancedMesh(stamGeo, stamMat, AANTAL);
+  kegels.castShadow = stammen.castShadow = true;
+  const kleur = new THREE.Color();
+  let ki = 0;
+  for (let i = 0; i < AANTAL; i++){
+    // laat het midden vrij voor de tekst
+    let x, z;
+    do {
+      x = (Math.random()-0.5)*110;
+      z = -Math.random()*80 + 18;
+    } while (Math.abs(x) < 9 && z > 2);
+    const s = 0.8 + Math.random()*2.4;
+    dummy.position.set(x, s*0.6, z);
+    dummy.scale.setScalar(s);
+    dummy.rotation.y = Math.random()*Math.PI;
+    dummy.updateMatrix();
+    stammen.setMatrixAt(i, dummy.matrix);
+    for (let l = 0; l < 3; l++){
+      const ls = s * (1 - l*0.22);
+      dummy.position.set(x, s*0.9 + l*s*0.75, z);
+      dummy.scale.set(ls, s, ls);
+      dummy.updateMatrix();
+      kegels.setMatrixAt(ki, dummy.matrix);
+      kleur.setHSL(0.42 + Math.random()*0.04, 0.55, 0.14 + Math.random()*0.10);
+      kegels.setColorAt(ki, kleur);
+      ki++;
+    }
+  }
+  kegels.instanceMatrix.needsUpdate = true;
+  if (kegels.instanceColor) kegels.instanceColor.needsUpdate = true;
+  scene.add(kegels, stammen);
+
+  /* --- vuurvliegjes --- */
+  const VLIEG = 220;
+  const vliegGeo = new THREE.BufferGeometry();
+  const vliegPos = new Float32Array(VLIEG*3);
+  const vliegFase = new Float32Array(VLIEG);
+  for (let i = 0; i < VLIEG; i++){
+    vliegPos[i*3]   = (Math.random()-0.5)*70;
+    vliegPos[i*3+1] = 0.5 + Math.random()*7;
+    vliegPos[i*3+2] = -Math.random()*55 + 20;
+    vliegFase[i] = Math.random()*Math.PI*2;
+  }
+  vliegGeo.setAttribute('position', new THREE.BufferAttribute(vliegPos, 3));
+  // zachte ronde gloed-textuur i.p.v. vierkante punten
+  const gloedCanvas = document.createElement('canvas');
+  gloedCanvas.width = gloedCanvas.height = 64;
+  const gctx = gloedCanvas.getContext('2d');
+  const ggrad = gctx.createRadialGradient(32,32,0,32,32,32);
+  ggrad.addColorStop(0,'rgba(255,225,170,1)');
+  ggrad.addColorStop(0.3,'rgba(255,200,130,.6)');
+  ggrad.addColorStop(1,'rgba(255,200,130,0)');
+  gctx.fillStyle = ggrad; gctx.fillRect(0,0,64,64);
+  const vliegTex = new THREE.CanvasTexture(gloedCanvas);
+  const vliegMat = new THREE.PointsMaterial({ map:vliegTex, color:0xFFD9A0, size:0.5, transparent:true, opacity:.85, sizeAttenuation:true, depthWrite:false, blending:THREE.AdditiveBlending });
+  const vliegjes = new THREE.Points(vliegGeo, vliegMat);
+  scene.add(vliegjes);
+
+  /* --- mistflarden (grote zachte sprites) --- */
+  const mistCanvas = document.createElement('canvas');
+  mistCanvas.width = mistCanvas.height = 128;
+  const mctx = mistCanvas.getContext('2d');
+  const grad = mctx.createRadialGradient(64,64,0,64,64,64);
+  grad.addColorStop(0,'rgba(210,235,225,.35)');
+  grad.addColorStop(1,'rgba(210,235,225,0)');
+  mctx.fillStyle = grad; mctx.fillRect(0,0,128,128);
+  const mistTex = new THREE.CanvasTexture(mistCanvas);
+  const mistMat = new THREE.SpriteMaterial({ map:mistTex, transparent:true, opacity:.5, depthWrite:false });
+  const flarden = [];
+  for (let i = 0; i < 14; i++){
+    const sp = new THREE.Sprite(mistMat.clone());
+    sp.material.opacity = 0.18 + Math.random()*0.25;
+    sp.position.set((Math.random()-0.5)*80, 1 + Math.random()*3, -Math.random()*50 + 18);
+    const sc = 14 + Math.random()*22;
+    sp.scale.set(sc, sc*0.45, 1);
+    flarden.push(sp);
+    scene.add(sp);
+  }
+
+  /* --- luchtkoepel (GLSL-shader: gradiënt, aurora, sterren) --- */
+  const luchtMat = new THREE.ShaderMaterial({
+    side: THREE.BackSide, depthWrite: false,
+    uniforms: { tijd: { value: 0 }, dag: { value: 0 } },
+    vertexShader: `
+      varying vec3 vP;
+      void main(){
+        vP = normalize(position);
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }`,
+    fragmentShader: `
+      uniform float tijd;
+      uniform float dag;
+      varying vec3 vP;
+      float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+      float ruis(vec2 p){
+        vec2 i = floor(p), f = fract(p);
+        f = f * f * (3.0 - 2.0 * f);
+        return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), f.x),
+                   mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), f.x), f.y);
+      }
+      void main(){
+        float h = clamp(vP.y, 0.0, 1.0);
+        // nachtpalet
+        vec3 horizonN = vec3(0.008, 0.165, 0.125);
+        vec3 zenitN   = vec3(0.002, 0.050, 0.040);
+        // gouden-ochtendpalet
+        vec3 horizonD = vec3(1.00, 0.74, 0.44);
+        vec3 zenitD   = vec3(0.42, 0.70, 0.62);
+        vec3 horizon = mix(horizonN, horizonD, dag);
+        vec3 zenit   = mix(zenitN, zenitD, dag);
+        vec3 k = mix(horizon, zenit, pow(h, 0.6));
+        // aurora-band (alleen 's nachts)
+        float band = exp(-pow((vP.y - 0.30 - 0.06 * sin(vP.x * 4.0 + tijd * 0.15)) * 6.0, 2.0));
+        float golf = ruis(vec2(vP.x * 6.0 + tijd * 0.08, vP.z * 6.0));
+        k += vec3(0.05, 0.32, 0.20) * band * golf * 0.55 * (1.0 - dag);
+        // sterren met twinkel (alleen 's nachts)
+        vec2 sp = vP.xz / (vP.y + 0.35);
+        float ster = step(0.9985, hash(floor(sp * 260.0)));
+        float twinkel = 0.5 + 0.5 * sin(tijd * 2.0 + hash(floor(sp * 260.0) + 7.0) * 6.28);
+        k += vec3(0.85, 0.92, 1.0) * ster * twinkel * smoothstep(0.05, 0.45, vP.y) * (1.0 - dag);
+        // laagstaande ochtendzon
+        float zon = pow(max(dot(vP, normalize(vec3(-0.5, 0.30, -0.65))), 0.0), 90.0);
+        k += vec3(1.0, 0.85, 0.55) * zon * dag * 1.4;
+        gl_FragColor = vec4(k, 1.0);
+      }`
+  });
+  scene.add(new THREE.Mesh(new THREE.SphereGeometry(110, 32, 24), luchtMat));
+
+  /* --- hoogte van de bodem op wereldpositie (zelfde formule als bodemGeo) --- */
+  function grondHoogte(x, z){
+    return Math.sin(x*0.15)*Math.cos(z*0.12)*0.8 + Math.sin(x*0.4 - z*0.3)*0.25;
+  }
+
+  /* --- dicht grasveld (instanced, GLSL: gelaagde wind, taps blad, AO) --- */
+  const GRAS = 45000;
+  const bladGeo = new THREE.PlaneGeometry(0.15, 1, 1, 4);
+  bladGeo.translate(0, 0.5, 0);
+  {
+    const pos = bladGeo.attributes.position;
+    for (let i = 0; i < pos.count; i++){
+      const y = pos.getY(i);
+      pos.setX(i, pos.getX(i) * Math.pow(1 - y, 0.75)); // taps toelopend naar de punt
+      pos.setZ(i, y * y * 0.18);                        // natuurlijke kromming
+    }
+  }
+  const fases   = new Float32Array(GRAS);
+  const schalen = new Float32Array(GRAS);
+  const tinten  = new Float32Array(GRAS);
+  for (let i = 0; i < GRAS; i++){
+    fases[i]   = Math.random() * Math.PI * 2;
+    schalen[i] = 0.45 + Math.random() * 1.15;
+    tinten[i]  = Math.random();
+  }
+  bladGeo.setAttribute('fase',   new THREE.InstancedBufferAttribute(fases, 1));
+  bladGeo.setAttribute('schaal', new THREE.InstancedBufferAttribute(schalen, 1));
+  bladGeo.setAttribute('tint',   new THREE.InstancedBufferAttribute(tinten, 1));
+  const grasMat = new THREE.ShaderMaterial({
+    side: THREE.DoubleSide,
+    uniforms: {
+      tijd:      { value: 0 },
+      kleurA:    { value: new THREE.Color(0x083A2B) },
+      kleurB:    { value: new THREE.Color(0x14654A) },
+      kleurTip:  { value: new THREE.Color(0x5FC493) },
+      mistKleur: { value: new THREE.Color(0x012A20) },
+      mistDicht: { value: 0.052 }
+    },
+    vertexShader: `
+      uniform float tijd;
+      attribute float fase;
+      attribute float schaal;
+      attribute float tint;
+      varying float vH;
+      varying float vDiep;
+      varying float vTint;
+      void main(){
+        vH = position.y;
+        vTint = tint;
+        vec3 p = position;
+        p.y *= schaal;
+        #ifdef USE_INSTANCING
+          vec4 wp = instanceMatrix * vec4(p, 1.0);
+        #else
+          vec4 wp = vec4(p, 1.0);
+        #endif
+        // gelaagde wind: brede vlagen over het veld + snelle lokale trilling
+        float buig = vH * vH;
+        float vlaag = sin(tijd * 1.25 + wp.x * 0.30 + wp.z * 0.22);
+        float tril  = sin(tijd * 2.60 + wp.x * 0.90 + fase);
+        float wind  = vlaag * 0.7 + tril * 0.3;
+        wp.x += wind * 0.22 * buig;
+        wp.z += cos(tijd * 0.85 + fase) * 0.07 * buig;
+        vec4 mv = viewMatrix * wp;
+        vDiep = -mv.z;
+        gl_Position = projectionMatrix * mv;
+      }`,
+    fragmentShader: `
+      uniform vec3 kleurA;
+      uniform vec3 kleurB;
+      uniform vec3 kleurTip;
+      uniform vec3 mistKleur;
+      uniform float mistDicht;
+      varying float vH;
+      varying float vDiep;
+      varying float vTint;
+      void main(){
+        vec3 basis = mix(kleurA, kleurB, vTint);
+        // ambient occlusion onderin, lichte toppen (nep-doorschijnendheid)
+        vec3 k = mix(basis * 0.30, basis, smoothstep(0.0, 0.5, vH));
+        k = mix(k, kleurTip, pow(vH, 2.4) * 0.85);
+        float f = 1.0 - exp(-mistDicht * mistDicht * vDiep * vDiep);
+        k = mix(k, mistKleur, clamp(f, 0.0, 1.0));
+        gl_FragColor = vec4(k, 1.0);
+      }`
+  });
+  const gras = new THREE.InstancedMesh(bladGeo, grasMat, GRAS);
+  for (let i = 0; i < GRAS; i++){
+    // dichter bij de camera méér sprieten
+    const r = Math.pow(Math.random(), 1.5);
+    const z = 24 - 96 * r;
+    const x = (Math.random() - 0.5) * (55 + (24 - z) * 1.3);
+    dummy.position.set(x, grondHoogte(x, z) - 0.04, z);
+    dummy.scale.setScalar(1);
+    dummy.rotation.set(0, Math.random() * Math.PI * 2, (Math.random() - 0.5) * 0.3);
+    dummy.updateMatrix();
+    gras.setMatrixAt(i, dummy.matrix);
+  }
+  gras.instanceMatrix.needsUpdate = true;
+  gras.frustumCulled = false;
+  scene.add(gras);
+
+  /* --- gloeiende rode bloemen tussen het gras --- */
+  const BLOEM = 110;
+  const bloemGeo = new THREE.SphereGeometry(0.085, 6, 5);
+  const bloemMat = new THREE.MeshStandardMaterial({ color:0xFF3347, emissive:0xFF3347, emissiveIntensity:.5, roughness:.55 });
+  const bloemen = new THREE.InstancedMesh(bloemGeo, bloemMat, BLOEM);
+  for (let i = 0; i < BLOEM; i++){
+    const z = 22 - Math.random() * 60;
+    const x = (Math.random() - 0.5) * 70;
+    dummy.position.set(x, grondHoogte(x, z) + 0.25 + Math.random() * 0.5, z);
+    dummy.scale.setScalar(0.7 + Math.random() * 0.9);
+    dummy.rotation.set(0, 0, 0);
+    dummy.updateMatrix();
+    bloemen.setMatrixAt(i, dummy.matrix);
+  }
+  bloemen.instanceMatrix.needsUpdate = true;
+  scene.add(bloemen);
+
+  /* --- lichtstralen door het bladerdek (additive shader) --- */
+  const straalMat = new THREE.ShaderMaterial({
+    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
+    uniforms: {
+      tijd:    { value: 0 },
+      kleur:   { value: new THREE.Color(0xB8F2D9) },
+      sterkte: { value: 0.22 }
+    },
+    vertexShader: `
+      varying vec2 vUv;
+      void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+    fragmentShader: `
+      uniform float tijd;
+      uniform vec3 kleur;
+      uniform float sterkte;
+      varying vec2 vUv;
+      void main(){
+        float x = smoothstep(0.0, 0.5, vUv.x) * smoothstep(1.0, 0.5, vUv.x);
+        float y = smoothstep(0.0, 0.35, vUv.y) * smoothstep(1.0, 0.75, vUv.y);
+        float puls = 0.7 + 0.3 * sin(tijd * 0.6 + vUv.x * 3.0);
+        gl_FragColor = vec4(kleur, x * y * sterkte * puls);
+      }`
+  });
+  for (let i = 0; i < 6; i++){
+    const straal = new THREE.Mesh(new THREE.PlaneGeometry(2.2 + Math.random() * 2.2, 26), straalMat);
+    straal.position.set(-19 + i * 7 + Math.random() * 3, 11, -14 - Math.random() * 12);
+    straal.rotation.z = -0.32;
+    straal.rotation.y = (Math.random() - 0.5) * 0.4;
+    scene.add(straal);
+  }
+
+  /* --- muis-parallax + animatielus --- */
+  let muisX = 0, muisY = 0, scrollDiepte = 0;
+  window.addEventListener('pointermove', e => {
+    muisX = (e.clientX / window.innerWidth - 0.5);
+    muisY = (e.clientY / window.innerHeight - 0.5);
+  });
+  if (typeof gsap !== 'undefined' && gsap.registerPlugin){
+    gsap.registerPlugin(ScrollTrigger);
+    ScrollTrigger.create({
+      start: 0, end: 'max', scrub: true,
+      onUpdate: st => { scrollDiepte = st.progress; }
+    });
+  }
+
+  /* --- klik om te planten --- */
+  const raycaster = new THREE.Raycaster();
+  const muisV = new THREE.Vector2();
+  const geplant = [];
+  function plantBoom(clientX, clientY){
+    muisV.set((clientX / window.innerWidth) * 2 - 1, -(clientY / window.innerHeight) * 2 + 1);
+    raycaster.setFromCamera(muisV, camera);
+    const hits = raycaster.intersectObject(bodem);
+    if (!hits.length) return;
+    const p = hits[0].point;
+    if (p.z < -70) return; // te diep het bos in
+    const s = 0.9 + Math.random() * 1.6;
+    const groep = new THREE.Group();
+    const stam = new THREE.Mesh(stamGeo, stamMat);
+    stam.position.y = 0.6;
+    stam.castShadow = true;
+    groep.add(stam);
+    const eigenNaald = naaldMat.clone();
+    eigenNaald.color.setHSL(0.42 + Math.random() * 0.05, 0.5, 0.16 + Math.random() * 0.12);
+    for (let l = 0; l < 3; l++){
+      const kegel = new THREE.Mesh(kegelGeo, eigenNaald);
+      kegel.position.y = 0.9 + l * 0.75;
+      kegel.scale.set(1 - l * 0.22, 1, 1 - l * 0.22);
+      kegel.castShadow = true;
+      groep.add(kegel);
+    }
+    groep.position.copy(p);
+    groep.rotation.y = Math.random() * Math.PI * 2;
+    groep.scale.setScalar(0.001);
+    scene.add(groep);
+    geplant.push(groep);
+    if (geplant.length > 40) scene.remove(geplant.shift());
+    if (typeof gsap !== 'undefined'){
+      gsap.to(groep.scale, { x: s, y: s, z: s, duration: 1.4, ease: 'elastic.out(1,0.45)' });
+    } else {
+      groep.scale.setScalar(s);
+    }
+  }
+  const heroEl = document.querySelector('header');
+  if (heroEl){
+    heroEl.addEventListener('click', e => {
+      if (e.target.closest('a,button,textarea,.terminal')) return;
+      plantBoom(e.clientX, e.clientY);
+    });
+  }
+
+  /* --- vallende sterren (alleen 's nachts) --- */
+  const sterTex = (function(){
+    const c = document.createElement('canvas');
+    c.width = c.height = 64;
+    const cx = c.getContext('2d');
+    const gr = cx.createRadialGradient(32,32,0,32,32,32);
+    gr.addColorStop(0, 'rgba(255,255,255,1)');
+    gr.addColorStop(0.25, 'rgba(220,240,255,.7)');
+    gr.addColorStop(1, 'rgba(220,240,255,0)');
+    cx.fillStyle = gr; cx.fillRect(0,0,64,64);
+    return new THREE.CanvasTexture(c);
+  })();
+  function vallendeSter(){
+    if (dagState.v < 0.4 && document.visibilityState === 'visible' && typeof gsap !== 'undefined' && !reducedMotion){
+      const mat = new THREE.SpriteMaterial({ map: sterTex, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false });
+      const ster = new THREE.Sprite(mat);
+      const richting = Math.random() < 0.5 ? 1 : -1;
+      const beginX = -45 + Math.random() * 90;
+      const beginY = 30 + Math.random() * 14;
+      const dx = (18 + Math.random() * 22) * richting;
+      const dy = -(6 + Math.random() * 7);
+      ster.position.set(beginX, beginY, -70 - Math.random() * 20);
+      mat.rotation = Math.atan2(dy, dx);
+      ster.scale.set(6.5, 0.35, 1);
+      scene.add(ster);
+      const duur = 0.9 + Math.random() * 0.7;
+      gsap.to(ster.position, { x: beginX + dx, y: beginY + dy, duration: duur, ease: 'none' });
+      gsap.to(mat, { opacity: .95, duration: duur * 0.25, ease: 'power1.in' });
+      gsap.to(mat, { opacity: 0, duration: duur * 0.5, delay: duur * 0.5, ease: 'power1.out',
+        onComplete(){ scene.remove(ster); mat.dispose(); } });
+    }
+    setTimeout(vallendeSter, 7000 + Math.random() * 14000);
+  }
+  setTimeout(vallendeSter, 4000);
+
+  /* --- dag/nacht-wissel --- */
+  const lerpKleur = (a, b, t) => new THREE.Color(a).lerp(new THREE.Color(b), t);
+  function pasDagToe(){
+    const d = dagState.v;
+    scene.background.copy(lerpKleur(0x012019, 0x8FB08D, d));
+    scene.fog.color.copy(lerpKleur(0x012A20, 0x7BA383, d));
+    scene.fog.density = 0.052 - 0.018 * d;
+    hemi.color.copy(lerpKleur(0x2E6B57, 0xFFE3B0, d));
+    hemi.groundColor.copy(lerpKleur(0x01130E, 0x2E4A33, d));
+    hemi.intensity = 0.7 + 0.35 * d;
+    maan.color.copy(lerpKleur(0xCFE8DE, 0xFFD9A0, d));
+    maan.intensity = 1.05 + 0.85 * d;
+    naaldMat.color.copy(lerpKleur(0x0A5240, 0x1F7A52, d));
+    bodem.material.color.copy(lerpKleur(0x023124, 0x1D5435, d));
+    grasMat.uniforms.mistKleur.value.copy(lerpKleur(0x012A20, 0x7BA383, d));
+    grasMat.uniforms.mistDicht.value = 0.052 - 0.018 * d;
+    grasMat.uniforms.kleurA.value.copy(lerpKleur(0x083A2B, 0x1A5A32, d));
+    grasMat.uniforms.kleurB.value.copy(lerpKleur(0x14654A, 0x2E8B57, d));
+    grasMat.uniforms.kleurTip.value.copy(lerpKleur(0x5FC493, 0x9BD96A, d));
+    luchtMat.uniforms.dag.value = d;
+    straalMat.uniforms.kleur.value.copy(lerpKleur(0xB8F2D9, 0xFFDA8C, d));
+    straalMat.uniforms.sterkte.value = 0.22 + 0.10 * d;
+  }
+  window.zetDagNacht = function(){
+    const doel = dagState.v < 0.5 ? 1 : 0;
+    const knop = document.getElementById('btn-dagnacht');
+    if (knop) knop.textContent = doel ? '☀️' : '🌙';
+    document.body.classList.toggle('dag', doel === 1);
+    if (typeof gsap !== 'undefined'){
+      gsap.to(dagState, { v: doel, duration: 2.6, ease: 'sine.inOut', onUpdate: pasDagToe });
+    } else {
+      dagState.v = doel; pasDagToe();
+    }
+  };
+
+  const klok = new THREE.Clock();
+  function lus(){
+    const t = klok.getElapsedTime();
+    if (!reducedMotion){
+      camera.position.x += ((muisX*3) - camera.position.x) * 0.03;
+      camera.position.y += ((3.2 - muisY*1.2 + scrollDiepte*4) - camera.position.y) * 0.03;
+      camera.position.z = 26 - scrollDiepte*8 + Math.sin(t*0.15)*0.6;
+      camera.lookAt(0, 2.2, -6);
+      const p = vliegGeo.attributes.position;
+      for (let i = 0; i < VLIEG; i++){
+        p.array[i*3+1] += Math.sin(t*1.4 + vliegFase[i]) * 0.004;
+        p.array[i*3]   += Math.cos(t*0.6 + vliegFase[i]) * 0.006;
+      }
+      p.needsUpdate = true;
+      vliegMat.opacity = (0.55 + Math.sin(t*2)*0.3) * (1 - dagState.v);
+      flarden.forEach((sp,i) => { sp.position.x += Math.sin(t*0.05 + i)*0.012; });
+      gloed.intensity = (1.25 + Math.sin(t*1.8)*0.25) * (1 - dagState.v * 0.75);
+      grasMat.uniforms.tijd.value = t;
+      luchtMat.uniforms.tijd.value = t;
+      straalMat.uniforms.tijd.value = t;
+    }
+    renderer.render(scene, camera);
+    requestAnimationFrame(lus);
+  }
+  lus();
+})();
+
+/* ============================================================
+   GSAP — entrance & scroll-animaties
+   ============================================================ */
+(function(){
+  if (typeof gsap === 'undefined') return;
+  gsap.registerPlugin(ScrollTrigger);
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reducedMotion) return;
+
+  /* hero entrance */
+  gsap.from('header h1', { y:40, autoAlpha:0, duration:.9, ease:'power3.out', delay:.3 });
+  gsap.from('header p.sub', { y:30, autoAlpha:0, duration:.9, ease:'power3.out', delay:.7 });
+  gsap.from('header .cta .btn', { y:24, autoAlpha:0, duration:.7, stagger:.12, ease:'power3.out', delay:.85 });
+
+  /* sectiekoppen */
+  gsap.utils.toArray('.sectiekop').forEach(el => {
+    gsap.from(el, { y:50, autoAlpha:0, duration:.8, ease:'power3.out',
+      scrollTrigger:{ trigger:el, start:'top 85%' } });
+  });
+
+  /* kaarten & codeblokken */
+  gsap.utils.toArray('.kaarten').forEach(grid => {
+    gsap.from(grid.children, { y:44, autoAlpha:0, duration:.7, stagger:.09, ease:'power3.out',
+      scrollTrigger:{ trigger:grid, start:'top 85%' } });
+  });
+  gsap.utils.toArray('.split').forEach(sp => {
+    gsap.from(sp.children, { y:50, autoAlpha:0, duration:.8, stagger:.15, ease:'power3.out',
+      scrollTrigger:{ trigger:sp, start:'top 82%' } });
+  });
+  gsap.utils.toArray('.qs-grid .codeblok, .cli-grid .cli-kaart, .pkg span').forEach(el => {
+    gsap.from(el, { y:34, autoAlpha:0, duration:.6, ease:'power3.out',
+      scrollTrigger:{ trigger:el, start:'top 90%' } });
+  });
+
+  /* benchmark-balken groeien */
+  gsap.utils.toArray('.balk i').forEach(b => {
+    gsap.from(b, { scaleX:0, transformOrigin:'left center', duration:1.2, ease:'power4.out',
+      scrollTrigger:{ trigger:b, start:'top 88%' } });
+  });
+
+  /* roadmap */
+  gsap.from('.roadmap li', { x:-40, autoAlpha:0, duration:.6, stagger:.1, ease:'power3.out',
+    scrollTrigger:{ trigger:'.roadmap', start:'top 82%' } });
+})();
+
+/* ============================================================
+   Procedurele varens — botanische decoratie
+   ============================================================ */
+(function(){
+  const NS = 'http://www.w3.org/2000/svg';
+  document.querySelectorAll('svg.varen').forEach(svg => {
+    svg.setAttribute('viewBox', '0 0 200 300');
+    const g = document.createElementNS(NS, 'g');
+    g.setAttribute('fill', 'none');
+    g.setAttribute('stroke-linecap', 'round');
+    // hoofdstam
+    const stam = document.createElementNS(NS, 'path');
+    stam.setAttribute('d', 'M100 300 C 96 220, 110 140, 94 24');
+    stam.setAttribute('stroke', '#7FD8BE');
+    stam.setAttribute('stroke-width', '3');
+    g.appendChild(stam);
+    // bladveren langs de stam
+    const N = 16;
+    for (let i = 0; i < N; i++){
+      const t = i / (N - 1);
+      const y = 292 - t * 258;
+      const x = 100 + Math.sin(t * 3.1) * 7 - t * 4;
+      const len = 54 * (1 - t * 0.82) + 6;
+      [-1, 1].forEach(kant => {
+        const p = document.createElementNS(NS, 'path');
+        const ex = x + kant * len * 0.95;
+        const ey = y - len * (0.35 + t * 0.3);
+        p.setAttribute('d', `M${x} ${y} Q ${x + kant * len * 0.55} ${y - len * 0.1}, ${ex.toFixed(1)} ${ey.toFixed(1)}`);
+        p.setAttribute('stroke', i % 2 ? '#7FD8BE' : '#4FAE8F');
+        p.setAttribute('stroke-width', (2.4 - t * 1.3).toFixed(2));
+        g.appendChild(p);
+        // kleine zijblaadjes
+        const zb = document.createElementNS(NS, 'path');
+        const mx = x + kant * len * 0.45, my = y - len * 0.12;
+        zb.setAttribute('d', `M${mx.toFixed(1)} ${my.toFixed(1)} l ${(kant * len * 0.18).toFixed(1)} ${(-len * 0.28).toFixed(1)}`);
+        zb.setAttribute('stroke', '#3E9578');
+        zb.setAttribute('stroke-width', (1.6 - t * 0.9).toFixed(2));
+        g.appendChild(zb);
+      });
+    }
+    svg.appendChild(g);
+  });
+  // zachte wuif
+  if (typeof gsap !== 'undefined' && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    gsap.utils.toArray('svg.varen').forEach((v, i) => {
+      gsap.to(v, { rotation: 2.5, transformOrigin: '50% 100%', duration: 2.8 + i * 0.4,
+        yoyo: true, repeat: -1, ease: 'sine.inOut', delay: i * 0.3 });
+    });
+  }
+})();
+
+/* ============================================================
+   Kopieerknoppen op codeblokken
+   ============================================================ */
+(function(){
+  document.querySelectorAll('.codeblok').forEach(blok => {
+    if (blok.classList.contains('terminal') || blok.querySelector('.pg-editor')) return;
+    const titel = blok.querySelector('.titel');
+    const pre = blok.querySelector('pre');
+    if (!titel || !pre) return;
+    const knop = document.createElement('button');
+    knop.className = 'kopieer';
+    const label = '<span class="nl">Kopieer</span><span class="en">Copy</span>';
+    knop.innerHTML = label;
+    knop.addEventListener('click', () => {
+      navigator.clipboard.writeText(pre.innerText).then(() => {
+        knop.classList.add('ok');
+        knop.textContent = '✓';
+        setTimeout(() => { knop.classList.remove('ok'); knop.innerHTML = label; }, 1500);
+      });
+    });
+    titel.appendChild(knop);
+  });
+})();
+
+/* ============================================================
+   Terminal-animatie in de hero
+   ============================================================ */
+(function(){
+  const cmdEl = document.getElementById('term-tekst');
+  const uitEl = document.getElementById('term-uit');
+  if (!cmdEl || !uitEl) return;
+  const cmd = 'wald plant my-forest';
+  const regels = [
+    '🌱  Planting forest in ./my-forest',
+    '🌲  4 trees · 2 branches · 1 canopy',
+    '✓   Done in 0.4s — happy growing!'
+  ];
+  let i = 0, r = 0;
+  function tik(){
+    cmdEl.textContent = '$ ' + cmd.slice(0, i);
+    if (i <= cmd.length){ i++; setTimeout(tik, 50 + Math.random() * 75); }
+    else setTimeout(toon, 500);
+  }
+  function toon(){
+    if (r < regels.length){
+      uitEl.textContent += regels[r] + '\n';
+      r++; setTimeout(toon, 430);
+    }
+  }
+  setTimeout(tik, 1400);
+})();
+
+/* ============================================================
+   Playground — mini .wald-compiler
+   ============================================================ */
+(function(){
+  const editor = document.getElementById('pg-editor');
+  const preview = document.getElementById('pg-preview');
+  if (!editor || !preview) return;
+  editor.value = `---
+const titel = "Mijn eerste boom"
+const soorten = ["eik", "beuk", "den"]
+---
+<h1>{titel}</h1>
+<p>Er groeien {soorten.length} soorten in dit bos:</p>
+<ul>
+  {soorten.map(s => '<li>' + s + '</li>').join('')}
+</ul>`;
+  function compileer(bron){
+    let fm = '', tpl = bron;
+    const delen = bron.split(/^---\s*$/m);
+    if (delen.length >= 3){ fm = delen[1]; tpl = delen.slice(2).join('---'); }
+    const vars = {};
+    try {
+      const code = fm.replace(/\b(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=/g, 'vars.$1 =');
+      new Function('vars', code)(vars);
+    } catch(e){
+      return '<p style="color:#FF3347;font-family:monospace">Frontmatter: ' + e.message + '</p>';
+    }
+    return tpl.replace(/\{([^{}]+)\}/g, (m, expr) => {
+      try { return String(new Function('vars', 'with(vars){ return (' + expr + ') }')(vars)); }
+      catch(e){ return '<code style="color:#FF3347">{' + expr + '}</code>'; }
+    });
+  }
+  function ververs(){ preview.innerHTML = compileer(editor.value); }
+  editor.addEventListener('input', ververs);
+  ververs();
+})();
+
+/* ============================================================
+   Groeibalk + scrim (scroll-voortgang & leesbaarheid)
+   ============================================================ */
+(function(){
+  const balk = document.getElementById('groeibalk');
+  const blad = document.getElementById('groeiblad');
+  const scrim = document.getElementById('scrim');
+  function update(){
+    const h = document.documentElement;
+    const max = h.scrollHeight - h.clientHeight;
+    const p = max > 0 ? h.scrollTop / max : 0;
+    if (balk) balk.style.width = (p * 100) + '%';
+    if (blad){
+      blad.style.left = (p * 100) + 'vw';
+      blad.style.opacity = p > 0.004 ? 1 : 0;
+    }
+    // overlay wordt zichtbaar zodra je voorbij de hero scrolt
+    if (scrim){
+      const heroH = window.innerHeight;
+      scrim.style.opacity = Math.min(1, Math.max(0, (h.scrollTop - heroH * 0.35) / (heroH * 0.55)));
+    }
+  }
+  document.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+  update();
+})();
+
+/* ============================================================
+   Cursor-vuurvliegje in de hero
+   ============================================================ */
+(function(){
+  const vlieg = document.getElementById('cursorvlieg');
+  const hero = document.querySelector('header');
+  if (!vlieg || !hero) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  let mx = innerWidth / 2, my = innerHeight / 2, x = mx, y = my;
+  window.addEventListener('pointermove', e => {
+    mx = e.clientX; my = e.clientY;
+    const r = hero.getBoundingClientRect();
+    vlieg.style.opacity = (e.clientY < r.bottom && r.bottom > 0) ? 1 : 0;
+  });
+  (function volg(){
+    x += (mx - x) * 0.1;
+    y += (my - y) * 0.1;
+    const t = performance.now() / 1000;
+    vlieg.style.transform = 'translate(' + (x + Math.sin(t * 3) * 7 - 6) + 'px,' + (y + Math.cos(t * 2.2) * 7 - 6) + 'px)';
+    requestAnimationFrame(volg);
+  })();
+})();
+
+/* ============================================================
+   GitHub-stats (live uit de API, faalt stil)
+   ============================================================ */
+(function(){
+  const el = document.getElementById('gh-stats');
+  if (!el || !window.fetch) return;
+  fetch('https://api.github.com/repos/Stefan-Espant/WaldJS')
+    .then(r => r.ok ? r.json() : null)
+    .then(d => {
+      if (!d) return;
+      document.getElementById('gh-sterren').textContent = d.stargazers_count;
+      document.getElementById('gh-forks').textContent = d.forks_count;
+      el.classList.add('zichtbaar');
+    })
+    .catch(() => {});
+})();
+
+/* ============================================================
+   Ambient bosgeluid — progressive enhancement
+   Gesynthetiseerd met Web Audio: wind, krekels (nacht),
+   vogels (dag) en af en toe een koekoek. Standaard uit.
+   ============================================================ */
+(function(){
+  const knop = document.getElementById('btn-geluid');
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if (!knop) return;
+  if (!AC){ knop.style.display = 'none'; return; } // progressive enhancement
+  let ctx = null, meester = null, aan = false;
+  const dag = () => (window.WaldDag ? window.WaldDag.v : 0);
+
+  function zorgVoorCtx(){
+    if (ctx) return;
+    ctx = new AC();
+    meester = ctx.createGain();
+    meester.gain.value = 0;
+    meester.connect(ctx.destination);
+
+    /* wind: geluste bruine ruis door een lowpass, met trage vlagen */
+    const duurS = 3;
+    const buf = ctx.createBuffer(1, ctx.sampleRate * duurS, ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    let v = 0;
+    for (let i = 0; i < data.length; i++){
+      v = v * 0.985 + (Math.random() * 2 - 1) * 0.03;
+      data[i] = v * 2.5;
+    }
+    const bron = ctx.createBufferSource();
+    bron.buffer = buf; bron.loop = true;
+    const filt = ctx.createBiquadFilter();
+    filt.type = 'lowpass'; filt.frequency.value = 320; filt.Q.value = 0.4;
+    const windGain = ctx.createGain();
+    windGain.gain.value = 0.06;
+    bron.connect(filt); filt.connect(windGain); windGain.connect(meester);
+    bron.start();
+    const lfo = ctx.createOscillator();
+    lfo.frequency.value = 0.06;
+    const lfoGain = ctx.createGain();
+    lfoGain.gain.value = 0.025;
+    lfo.connect(lfoGain); lfoGain.connect(windGain.gain);
+    lfo.start();
+
+    krekelLus(); vogelLus(); koekoekLus();
+  }
+
+  /* hulpjes */
+  function piep(t0, f0, f1, duur, vol, type){
+    const o = ctx.createOscillator();
+    o.type = type || 'sine';
+    o.frequency.setValueAtTime(f0, t0);
+    o.frequency.exponentialRampToValueAtTime(Math.max(f1, 1), t0 + duur);
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(vol, t0 + duur * 0.25);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + duur);
+    o.connect(g); g.connect(meester);
+    o.start(t0); o.stop(t0 + duur + 0.05);
+  }
+
+  /* krekels — alleen 's nachts */
+  function krekelLus(){
+    if (aan){
+      const sterkte = (1 - dag());
+      if (sterkte > 0.15){
+        const n = 5 + Math.floor(Math.random() * 7);
+        const basis = 4100 + Math.random() * 500;
+        for (let i = 0; i < n; i++){
+          piep(ctx.currentTime + i * 0.048, basis, basis * 0.97, 0.035, 0.028 * sterkte, 'triangle');
+        }
+      }
+    }
+    setTimeout(krekelLus, 600 + Math.random() * 1800);
+  }
+
+  /* vogels — alleen overdag */
+  function vogelLus(){
+    if (aan && dag() > 0.3){
+      const n = 2 + Math.floor(Math.random() * 4);
+      let t0 = ctx.currentTime;
+      for (let i = 0; i < n; i++){
+        const f = 2200 + Math.random() * 1400;
+        piep(t0, f, f * (0.7 + Math.random() * 0.5), 0.09 + Math.random() * 0.08, 0.035 * dag(), 'sine');
+        t0 += 0.12 + Math.random() * 0.1;
+      }
+    }
+    setTimeout(vogelLus, 2500 + Math.random() * 5000);
+  }
+
+  /* de koekoek — af en toe, dag én nacht (maar zachter in het donker) */
+  function koekoekLus(){
+    if (aan){
+      const vol = 0.05 * (0.4 + 0.6 * dag());
+      const t0 = ctx.currentTime + 0.1;
+      piep(t0, 740, 720, 0.28, vol, 'sine');          // "koe-"
+      piep(t0 + 0.42, 590, 575, 0.34, vol, 'sine');    // "-koek"
+      // soms twee keer
+      if (Math.random() < 0.4){
+        piep(t0 + 1.15, 740, 720, 0.28, vol * 0.8, 'sine');
+        piep(t0 + 1.57, 590, 575, 0.34, vol * 0.8, 'sine');
+      }
+    }
+    setTimeout(koekoekLus, 18000 + Math.random() * 30000);
+  }
+
+  window.zetGeluid = function(){
+    zorgVoorCtx();
+    if (ctx.state === 'suspended') ctx.resume();
+    aan = !aan;
+    knop.textContent = aan ? '🔊' : '🔇';
+    const nu = ctx.currentTime;
+    meester.gain.cancelScheduledValues(nu);
+    meester.gain.setValueAtTime(meester.gain.value, nu);
+    meester.gain.linearRampToValueAtTime(aan ? 0.5 : 0, nu + 1.2);
+  };
+})();
+
+/* ============================================================
+   Scroll-reveals voor nieuwe secties
+   ============================================================ */
+(function(){
+  if (typeof gsap === 'undefined') return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  gsap.registerPlugin(ScrollTrigger);
+  gsap.from('.vergelijk tr', { y: 24, autoAlpha: 0, duration: .5, stagger: .06, ease: 'power3.out',
+    scrollTrigger: { trigger: '.vergelijk', start: 'top 85%' } });
+  gsap.from('.log-kaart', { y: 40, autoAlpha: 0, duration: .6, stagger: .1, ease: 'power3.out',
+    scrollTrigger: { trigger: '.changelog', start: 'top 85%' } });
+  gsap.from('.pg-grid > *', { y: 44, autoAlpha: 0, duration: .7, stagger: .15, ease: 'power3.out',
+    scrollTrigger: { trigger: '.pg-grid', start: 'top 85%' } });
+})();
+</script>
+</body>
+</html>
