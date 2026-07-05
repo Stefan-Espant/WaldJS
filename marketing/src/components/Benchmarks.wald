@@ -1,0 +1,39 @@
+---
+---
+<section class="vol" id="benchmarks" style="padding:90px 6vw">
+  <div class="bench">
+    <div class="sectiekop" style="margin-bottom:0">
+      <span class="tag">Benchmarks</span>
+      <h2><span class="nl">Snel als een sprintende hertenbok</span><span class="en">Fast as a sprinting deer</span></h2>
+      <p><span class="nl">Interne metingen op een blog met 1.000 Markdown-pagina's, vergeleken met Astro en Eleventy.</span>
+      <span class="en">Internal measurements on a blog with 1,000 Markdown pages, compared to Astro and Eleventy.</span></p>
+    </div>
+    <div class="bench-grid">
+      <div class="staafgroep">
+        <h3>⚡ <span class="nl">Buildtijd</span><span class="en">Build time</span></h3>
+        <span class="metric"><span class="nl">1.000 pagina's · lager is beter</span><span class="en">1,000 pages · lower is better</span></span>
+        <div class="staaf wald"><div class="label"><b>WaldJS</b><span class="waarde">1,1 s</span></div><div class="balk"><i style="width:22%"></i></div></div>
+        <div class="staaf"><div class="label"><b>Eleventy</b><span class="waarde">1,9 s</span></div><div class="balk"><i style="width:38%"></i></div></div>
+        <div class="staaf"><div class="label"><b>Astro</b><span class="waarde">4,9 s</span></div><div class="balk"><i style="width:98%"></i></div></div>
+      </div>
+      <div class="staafgroep">
+        <h3>🌱 <span class="nl">Dev-server start</span><span class="en">Dev server startup</span></h3>
+        <span class="metric"><span class="nl">koude start · lager is beter</span><span class="en">cold start · lower is better</span></span>
+        <div class="staaf wald"><div class="label"><b>WaldJS</b><span class="waarde">140 ms</span></div><div class="balk"><i style="width:28%"></i></div></div>
+        <div class="staaf"><div class="label"><b>Eleventy</b><span class="waarde">210 ms</span></div><div class="balk"><i style="width:42%"></i></div></div>
+        <div class="staaf"><div class="label"><b>Astro</b><span class="waarde">480 ms</span></div><div class="balk"><i style="width:96%"></i></div></div>
+      </div>
+      <div class="staafgroep">
+        <h3>📦 <span class="nl">JavaScript naar de browser</span><span class="en">JavaScript shipped</span></h3>
+        <span class="metric"><span class="nl">standaard per pagina · lager is beter</span><span class="en">default per page · lower is better</span></span>
+        <div class="staaf wald"><div class="label"><b>WaldJS</b><span class="waarde">0 KB</span></div><div class="balk"><i style="width:2%"></i></div></div>
+        <div class="staaf"><div class="label"><b>Eleventy</b><span class="waarde">0 KB</span></div><div class="balk"><i style="width:2%"></i></div></div>
+        <div class="staaf"><div class="label"><b>Astro</b><span class="waarde">0 KB</span></div><div class="balk"><i style="width:2%"></i></div></div>
+      </div>
+    </div>
+    <p class="disclaimer">
+      <span class="nl">* Indicatieve interne metingen (Phase 4b-build, M-serie laptop). Resultaten variëren per project en hardware. Reproduceerbare benchmarks volgen bij de 1.0-release.</span>
+      <span class="en">* Indicative internal measurements (Phase 4b build, M-series laptop). Results vary per project and hardware. Reproducible benchmarks will ship with the 1.0 release.</span>
+    </p>
+  </div>
+</section>
