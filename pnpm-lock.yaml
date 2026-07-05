@@ -28,6 +28,16 @@ importers:
         specifier: ^2.0.0
         version: 2.1.9(@types/node@20.19.43)
 
+  marketing:
+    dependencies:
+      '@waldjs/cli':
+        specifier: workspace:*
+        version: link:../packages/cli
+    devDependencies:
+      vitest:
+        specifier: ^2.0.0
+        version: 2.1.9(@types/node@20.19.43)
+
   packages/cli:
     dependencies:
       '@waldjs/compiler':
