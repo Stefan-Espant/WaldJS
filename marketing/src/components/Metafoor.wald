@@ -1,0 +1,25 @@
+---
+---
+<section id="metafoor">
+  <svg class="varen links" aria-hidden="true"></svg>
+  <svg class="varen rechts" aria-hidden="true"></svg>
+  <div class="sectiekop">
+    <span class="tag"><span class="nl">De bos-metafoor</span><span class="en">The forest metaphor</span></span>
+    <h2><span class="nl">Denk in bomen, niet in buzzwords</span><span class="en">Think in trees, not buzzwords</span></h2>
+    <p><span class="nl">WaldJS gebruikt overal een bos-metafoor. Eén terminologie, van CLI tot compiler.</span><span class="en">WaldJS uses a forest metaphor throughout. One terminology, from CLI to compiler.</span></p>
+  </div>
+  <div class="kaarten">
+    <div class="kaart"><span class="icoon">🌲</span><h3><span class="term">Wald</span></h3>
+      <p><span class="nl">Het bos — je hele website.</span><span class="en">The forest — your whole website.</span></p></div>
+    <div class="kaart"><span class="icoon">🫚</span><h3><span class="term">Roots</span></h3>
+      <p><span class="nl">De compiler die <code style="font-family:var(--mono)">.wald</code>-bestanden transformeert.</span><span class="en">The compiler that transforms <code style="font-family:var(--mono)">.wald</code> files.</span></p></div>
+    <div class="kaart"><span class="icoon">🌳</span><h3><span class="term">Trees</span></h3>
+      <p><span class="nl">Pagina's — <code style="font-family:var(--mono)">.wald</code>-bestanden in <code style="font-family:var(--mono)">src/pages/</code>.</span><span class="en">Pages — <code style="font-family:var(--mono)">.wald</code> files in <code style="font-family:var(--mono)">src/pages/</code>.</span></p></div>
+    <div class="kaart"><span class="icoon">🌿</span><h3><span class="term">Branches</span></h3>
+      <p><span class="nl">Componenten — herbruikbare <code style="font-family:var(--mono)">.wald</code>-bestanden.</span><span class="en">Components — reusable <code style="font-family:var(--mono)">.wald</code> files.</span></p></div>
+    <div class="kaart"><span class="icoon">🍃</span><h3><span class="term">Canopies</span></h3>
+      <p><span class="nl">Client-side hydration <i>(komt in Fase 3)</i>.</span><span class="en">Client-side hydration <i>(coming in Phase 3)</i>.</span></p></div>
+  </div>
+</section>
+
+<!-- FEATURES: PAGES / COLLECTIONS / DYNAMIC ROUTES -->

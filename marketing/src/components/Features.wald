@@ -1,0 +1,72 @@
+---
+---
+<section id="features">
+  <div class="sectiekop">
+    <span class="tag">Features</span>
+    <h2><span class="nl">Alles wat een bos nodig heeft</span><span class="en">Everything a forest needs</span></h2>
+  </div>
+
+  <div class="split" style="margin-bottom:70px">
+    <div class="tekst">
+      <h2><span class="tag"><span class="nl">Pagina's</span><span class="en">Pages</span></span>
+        <span class="nl">Bestanden worden vanzelf routes</span>
+        <span class="en">Files become routes automatically</span></h2>
+      <p><span class="nl">Elk bestand in <b>src/pages/</b> wordt automatisch een route. Geen router-configuratie, geen gedoe.</span>
+      <span class="en">Every file in <b>src/pages/</b> automatically becomes a route. No router configuration, no fuss.</span></p>
+    </div>
+    <table>
+      <tr><th><span class="nl">Bestand</span><span class="en">File</span></th><th>Route</th></tr>
+      <tr><td><code>src/pages/index.wald</code></td><td><code>/</code></td></tr>
+      <tr><td><code>src/pages/about.wald</code></td><td><code>/about</code></td></tr>
+      <tr><td><code>src/pages/blog/index.wald</code></td><td><code>/blog</code></td></tr>
+      <tr><td><code>src/pages/blog/[slug].wald</code></td><td><code>/blog/:slug</code></td></tr>
+    </table>
+  </div>
+
+  <div class="split" style="margin-bottom:70px">
+    <div class="codeblok">
+      <div class="titel"><span class="dot"></span>src/pages/blog/index.wald</div>
+      <pre><span class="c-c">---</span>
+<span class="c-k">import</span> &#123; getCollection &#125; <span class="c-k">from</span> <span class="c-s">'wald:content'</span>
+<span class="c-k">const</span> posts = <span class="c-k">await</span> getCollection(<span class="c-s">'blog'</span>)
+<span class="c-c">---</span>
+<span class="c-t">&lt;ul&gt;</span>
+  &#123;posts.map(p =&gt; <span class="c-s">'&lt;li&gt;'</span> + p.data.title + <span class="c-s">'&lt;/li&gt;'</span>).join(<span class="c-s">''</span>)&#125;
+<span class="c-t">&lt;/ul&gt;</span></pre>
+    </div>
+    <div class="tekst">
+      <h2><span class="tag">Content collections</span>
+        <span class="nl">Markdown als voedingsbodem</span>
+        <span class="en">Markdown as fertile soil</span></h2>
+      <p><span class="nl">Zet Markdown-bestanden in <b>content/&lt;collectie&gt;/</b> en importeer <b>getCollection</b> en <b>getEntry</b> uit <b>wald:content</b>. Elk item heeft een <b>slug</b>, <b>data</b> (frontmatter) en <b>body</b> (gerenderde HTML).</span>
+      <span class="en">Put Markdown files in <b>content/&lt;collection&gt;/</b> and import <b>getCollection</b> and <b>getEntry</b> from <b>wald:content</b>. Each entry has a <b>slug</b>, <b>data</b> (frontmatter) and <b>body</b> (rendered HTML).</span></p>
+    </div>
+  </div>
+
+  <div class="split">
+    <div class="tekst">
+      <h2><span class="tag"><span class="nl">Dynamische routes</span><span class="en">Dynamic routes</span></span>
+        <span class="nl">getStaticPaths() bepaalt wat er groeit</span>
+        <span class="en">getStaticPaths() decides what grows</span></h2>
+      <p><span class="nl">Exporteer <b>getStaticPaths()</b> vanuit de frontmatter van een dynamische route zoals <b>[slug].wald</b>. Bij <b>wald build</b> wordt die aangeroepen om te bepalen welke pagina's gegenereerd worden. <b>$$props</b> bevat de route-parameters tijdens het renderen.</span>
+      <span class="en">Export <b>getStaticPaths()</b> from the frontmatter of a dynamic route like <b>[slug].wald</b>. <b>wald build</b> calls it to know which pages to generate. <b>$$props</b> contains the route params during rendering.</span></p>
+    </div>
+    <div class="codeblok">
+      <div class="titel"><span class="dot"></span>src/pages/blog/[slug].wald</div>
+      <pre><span class="c-c">---</span>
+<span class="c-k">import</span> &#123; getCollection, getEntry &#125; <span class="c-k">from</span> <span class="c-s">'wald:content'</span>
+
+<span class="c-k">export async function</span> getStaticPaths() &#123;
+  <span class="c-k">const</span> posts = <span class="c-k">await</span> getCollection(<span class="c-s">'blog'</span>)
+  <span class="c-k">return</span> posts.map(p =&gt; (&#123; params: &#123; slug: p.slug &#125; &#125;))
+&#125;
+
+<span class="c-k">const</span> post = <span class="c-k">await</span> getEntry(<span class="c-s">'blog'</span>, $$props.slug)
+<span class="c-c">---</span>
+<span class="c-t">&lt;h1&gt;</span>&#123;post.data.title&#125;<span class="c-t">&lt;/h1&gt;</span>
+<span class="c-t">&lt;div&gt;</span>&#123;post.body&#125;<span class="c-t">&lt;/div&gt;</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- VERGELIJKING -->
