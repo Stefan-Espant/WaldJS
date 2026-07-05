@@ -144,6 +144,33 @@ describe('scanTemplate — script', () => {
   })
 })
 
+describe('scanTemplate — doctype en comments', () => {
+  it('geeft <!DOCTYPE html> door als letterlijke tekst', () => {
+    const nodes = scanTemplate('<!DOCTYPE html>\n<p>hi</p>')
+    expect(nodes[0]).toEqual({ type: 'text', value: '<!DOCTYPE html>' })
+  })
+
+  it('geeft een HTML-comment door als letterlijke tekst', () => {
+    const nodes = scanTemplate('<!-- logo klein --><p>hi</p>')
+    expect(nodes[0]).toEqual({ type: 'text', value: '<!-- logo klein -->' })
+  })
+
+  it('parseert accolades binnen comments niet als expressies', () => {
+    const nodes = scanTemplate('<!-- {geen expressie} -->')
+    expect(nodes[0]).toEqual({ type: 'text', value: '<!-- {geen expressie} -->' })
+  })
+
+  it('comment met > erin eindigt pas bij -->', () => {
+    const nodes = scanTemplate('<!-- a > b --><p>x</p>')
+    expect(nodes[0]).toEqual({ type: 'text', value: '<!-- a > b -->' })
+  })
+
+  it('ongesloten comment loopt tot einde bron zonder crash', () => {
+    const nodes = scanTemplate('<!-- nooit dicht')
+    expect(nodes[0]).toEqual({ type: 'text', value: '<!-- nooit dicht' })
+  })
+})
+
 describe('scanTemplate — errors', () => {
   it('throws WaldError for unclosed expression {', () => {
     expect(() => scanTemplate('{title')).toThrow(WaldError)
