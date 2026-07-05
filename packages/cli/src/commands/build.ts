@@ -1,5 +1,5 @@
 import { mkdirSync, writeFileSync, existsSync, cpSync, rmSync } from 'node:fs'
-import { join, relative, dirname } from 'node:path'
+import { join, relative, dirname, resolve } from 'node:path'
 import { defineCommand } from 'citty'
 import ora from 'ora'
 import { build, mergeConfig } from 'vite'
@@ -59,7 +59,8 @@ export async function buildPages(
     // Pass 2 — Pre-render each static route to an HTML file.
     for (const route of staticRoutes) {
       const key = relative(pagesDir, route.file).replace(/\.wald$/, '')
-      const mod = await import(join(ssrDir, key + '.js')) as {
+      const modulePath = resolve(join(ssrDir, key + '.js'))
+      const mod = await import(modulePath) as {
         default: { render: (props?: Record<string, unknown>) => Promise<string> }
       }
       const html = hoistScripts(maybeWrap(await mod.default.render()))
@@ -70,9 +71,23 @@ export async function buildPages(
 
     for (const route of dynamicRoutes) {
       const key = relative(pagesDir, route.file).replace(/\.wald$/, '')
-      const mod = await import(join(ssrDir, key + '.js')) as {
+      const modulePath = resolve(join(ssrDir, key + '.js'))
+
+      // Check if module file exists
+      if (!existsSync(modulePath)) {
+        console.warn(`⚠ Skipping dynamic route ${route.pattern} — module not generated`)
+        continue
+      }
+
+      let mod: {
         default: { render: (props?: Record<string, unknown>) => Promise<string> }
         getStaticPaths?: () => Promise<Array<{ params: Record<string, string> }>>
+      }
+      try {
+        mod = await import(modulePath) as any
+      } catch (e) {
+        console.warn(`⚠ Skipping dynamic route ${route.pattern} — failed to load module: ${e instanceof Error ? e.message : String(e)}`)
+        continue
       }
 
       if (!mod.getStaticPaths) {

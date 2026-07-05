@@ -123,6 +123,15 @@ class Scanner {
 
     if (this.current === '>') this.advance()
 
+    // Void elements don't have closing tags
+    const voidElements = new Set(['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr'])
+    if (voidElements.has(tag.toLowerCase())) {
+      if (/^[A-Z]/.test(tag)) {
+        return { type: 'component', name: tag, attrs, children: [] }
+      }
+      return { type: 'element', tag, attrs, children: [] }
+    }
+
     const children = this.scanNodes()
 
     if (this.current === '<' && this.peek(1) === '/') {

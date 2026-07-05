@@ -8,7 +8,8 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@waldjs/cli": "workspace:*"
+    "@waldjs/cli": "workspace:*",
+    "@waldjs/runtime": "workspace:*"
   },
   "devDependencies": {
     "vitest": "^2.0.0"
