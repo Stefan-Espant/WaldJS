@@ -1,5 +1,6 @@
 import type { TemplateNode, ElementNode, ComponentNode, AttributeNode, ScriptNode } from '../ast/types.js'
 import { WaldError, offsetToLineCol } from '../errors.js'
+import { VOID_ELEMENTS } from '../void-elements.js'
 
 export function scanTemplate(source: string): TemplateNode[] {
   const scanner = new Scanner(source)
@@ -34,6 +35,9 @@ class Scanner {
   }
 
   private scanNode(): TemplateNode | null {
+    if (this.current === '<' && this.peek(1) === '!') {
+      return this.scanRawMarkup()
+    }
     if (this.current === '<' && this.peek(1) !== '/') {
       if (this.isScriptTag()) return this.scanScript()
       return this.scanElement()
@@ -56,6 +60,19 @@ class Scanner {
     const content = this.source.slice(this.pos, end)
     this.pos = end
     return { type: 'script', content }
+  }
+
+  // <!DOCTYPE ...> and <!-- comments --> pass through as literal text.
+  private scanRawMarkup(): TemplateNode {
+    const start = this.pos
+    if (this.source.startsWith('<!--', this.pos)) {
+      const close = this.source.indexOf('-->', this.pos + 4)
+      this.pos = close === -1 ? this.source.length : close + 3
+    } else {
+      while (this.pos < this.source.length && this.current !== '>') this.advance()
+      if (this.pos < this.source.length) this.advance() // consume >
+    }
+    return { type: 'text', value: this.source.slice(start, this.pos) }
   }
 
   private scanText(): TemplateNode | null {
@@ -106,6 +123,11 @@ class Scanner {
     }
 
     if (this.current === '>') this.advance()
+
+    // Void elements don't have closing tags (but components with void names are not treated as void)
+    if (!/^[A-Z]/.test(tag) && VOID_ELEMENTS.has(tag.toLowerCase())) {
+      return { type: 'element', tag, attrs, children: [] }
+    }
 
     const children = this.scanNodes()
 

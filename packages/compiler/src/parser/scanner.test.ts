@@ -122,6 +122,24 @@ describe('scanTemplate — elements', () => {
   })
 })
 
+describe('scanTemplate — void elements', () => {
+  it('parseert bare void elements zonder kinderen te slikken', () => {
+    const nodes = scanTemplate('<head><meta charset="utf-8"><title>x</title></head>')
+    const head = nodes[0] as { children: { type: string; tag?: string }[] }
+    expect(head.children.map(c => (c as { tag?: string }).tag ?? c.type)).toEqual(['meta', 'title'])
+  })
+
+  it('behandelt componenten met void-namen niet als void', () => {
+    const nodes = scanTemplate('<div><Link href="/about">About</Link><p>after</p></div>')
+    const div = nodes[0] as { children: { type: string; name?: string; tag?: string }[] }
+    expect(div.children.length).toBe(2)
+    const link = div.children[0] as { type: string; name: string; children: unknown[] }
+    expect(link.type).toBe('component')
+    expect(link.name).toBe('Link')
+    expect(link.children.length).toBe(1)
+  })
+})
+
 describe('scanTemplate — script', () => {
   it('returns a ScriptNode for a <script> element', () => {
     const nodes = scanTemplate('<script>console.log("hi")</script>')
@@ -141,6 +159,33 @@ describe('scanTemplate — script', () => {
   it('handles script with type attribute', () => {
     const nodes = scanTemplate('<script type="module">export const x = 1</script>')
     expect(nodes).toEqual([{ type: 'script', content: '<script type="module">export const x = 1</script>' }])
+  })
+})
+
+describe('scanTemplate — doctype en comments', () => {
+  it('geeft <!DOCTYPE html> door als letterlijke tekst', () => {
+    const nodes = scanTemplate('<!DOCTYPE html>\n<p>hi</p>')
+    expect(nodes[0]).toEqual({ type: 'text', value: '<!DOCTYPE html>' })
+  })
+
+  it('geeft een HTML-comment door als letterlijke tekst', () => {
+    const nodes = scanTemplate('<!-- logo klein --><p>hi</p>')
+    expect(nodes[0]).toEqual({ type: 'text', value: '<!-- logo klein -->' })
+  })
+
+  it('parseert accolades binnen comments niet als expressies', () => {
+    const nodes = scanTemplate('<!-- {geen expressie} -->')
+    expect(nodes[0]).toEqual({ type: 'text', value: '<!-- {geen expressie} -->' })
+  })
+
+  it('comment met > erin eindigt pas bij -->', () => {
+    const nodes = scanTemplate('<!-- a > b --><p>x</p>')
+    expect(nodes[0]).toEqual({ type: 'text', value: '<!-- a > b -->' })
+  })
+
+  it('ongesloten comment loopt tot einde bron zonder crash', () => {
+    const nodes = scanTemplate('<!-- nooit dicht')
+    expect(nodes[0]).toEqual({ type: 'text', value: '<!-- nooit dicht' })
   })
 })
 

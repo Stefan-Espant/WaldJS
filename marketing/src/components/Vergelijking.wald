@@ -1,0 +1,21 @@
+---
+---
+<section id="vergelijking">
+  <div class="sectiekop">
+    <span class="tag"><span class="nl">Vergelijking</span><span class="en">Comparison</span></span>
+    <h2><span class="nl">Hoe verhoudt Wald zich?</span><span class="en">How does Wald compare?</span></h2>
+  </div>
+  <table class="vergelijk">
+    <tr><th>Feature</th><th>WaldJS</th><th>Astro</th><th>Eleventy</th></tr>
+    <tr><td><span class="nl">Single-file formaat (frontmatter + template)</span><span class="en">Single-file format (frontmatter + template)</span></td><td class="ja">✓ .wald</td><td class="ja">✓ .astro</td><td class="nee">—</td></tr>
+    <tr><td>File-based routing</td><td class="ja">✓</td><td class="ja">✓</td><td class="ja">✓</td></tr>
+    <tr><td>Content collections</td><td class="ja">✓</td><td class="ja">✓</td><td class="deels"><span class="nl">deels</span><span class="en">partial</span></td></tr>
+    <tr><td><span class="nl">0 KB JavaScript standaard</span><span class="en">0 KB JavaScript by default</span></td><td class="ja">✓</td><td class="ja">✓</td><td class="ja">✓</td></tr>
+    <tr><td>getStaticPaths()</td><td class="ja">✓</td><td class="ja">✓</td><td class="deels">pagination</td></tr>
+    <tr><td><span class="nl">Vite-integratie</span><span class="en">Vite integration</span></td><td class="ja">✓</td><td class="ja">✓</td><td class="nee">—</td></tr>
+    <tr><td>Partial hydration</td><td class="deels">🚧 <span class="nl">Fase 3</span><span class="en">Phase 3</span></td><td class="ja">✓</td><td class="nee">—</td></tr>
+    <tr><td><span class="nl">Bos-terminologie</span><span class="en">Forest terminology</span></td><td class="ja">🌲</td><td class="nee">—</td><td class="nee">—</td></tr>
+  </table>
+</section>
+
+<!-- BENCHMARKS -->

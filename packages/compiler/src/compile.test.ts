@@ -50,6 +50,22 @@ describe('compile — error propagation', () => {
   })
 })
 
+describe('compile — volledig HTML-document', () => {
+  it('compileert een document met doctype zonder mangling', () => {
+    const source = `---
+---
+<!DOCTYPE html>
+<html lang="nl">
+<head><title>Wald</title></head>
+<body><h1>hi</h1></body>
+</html>`
+    const output = compile(source, '/src/page.wald')
+    expect(output).toContain('<!DOCTYPE html>')
+    expect(output).not.toContain('< DOCTYPE')
+    expect(output).not.toContain('</>')
+  })
+})
+
 describe('compile — type Props inference', () => {
   it('compiles a .wald file with type Props to typed createTree output', () => {
     const source = `---

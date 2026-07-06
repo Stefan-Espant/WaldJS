@@ -1,0 +1,43 @@
+---
+---
+<section id="structuur">
+  <div class="split">
+    <div class="codeblok">
+      <div class="titel"><span class="dot"></span><span class="nl">projectstructuur</span><span class="en">project structure</span></div>
+      <pre>my-forest/
+├── content/
+│   └── blog/
+│       └── hello-world.md
+├── src/
+│   ├── layouts/
+│   │   └── Layout.wald
+│   ├── components/
+│   │   └── Card.wald
+│   └── pages/
+│       ├── index.wald
+│       └── blog/
+│           ├── index.wald
+│           └── [slug].wald
+├── public/           <span class="c-c"># <span class="nl">1-op-1 naar dist/</span><span class="en">copied to dist/ as-is</span></span>
+├── wald.config.ts    <span class="c-c"># <span class="nl">optioneel</span><span class="en">optional</span></span>
+└── package.json</pre>
+    </div>
+    <div class="tekst">
+      <h2><span class="tag"><span class="nl">Structuur &amp; config</span><span class="en">Structure &amp; config</span></span>
+        <span class="nl">Overzichtelijk als een aangeplant bos</span>
+        <span class="en">As orderly as a planted forest</span></h2>
+      <p><span class="nl">Configureren kan met een optionele <b>wald.config.ts</b> in de projectroot — <b>outDir</b>, <b>base</b> voor sub-directory-deploys, en een <b>vite</b>-blok dat rechtstreeks naar Vite gaat (plugins, resolve, etc.). Zonder config gebruikt WaldJS verstandige standaardwaarden.</span>
+      <span class="en">Configure via an optional <b>wald.config.ts</b> in your project root — <b>outDir</b>, <b>base</b> for sub-directory deploys, and a <b>vite</b> block passed straight to Vite (plugins, resolve, etc.). Without a config file WaldJS uses sensible defaults.</span></p>
+      <div class="codeblok" style="margin-top:18px">
+        <div class="titel"><span class="dot"></span>wald.config.ts</div>
+        <pre><span class="c-k">import</span> &#123; defineConfig &#125; <span class="c-k">from</span> <span class="c-s">'@waldjs/cli'</span>
+
+<span class="c-k">export default</span> defineConfig(&#123;
+  outDir: <span class="c-s">'dist'</span>,
+  base: <span class="c-s">'/'</span>,
+  vite: &#123; plugins: [] &#125;,
+&#125;)</pre>
+      </div>
+    </div>
+  </div>
+</section>

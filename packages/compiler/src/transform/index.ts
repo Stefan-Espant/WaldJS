@@ -1,9 +1,5 @@
 import type { WaldDocument, TemplateNode, ElementNode, ComponentNode, AttributeNode } from '../ast/types.js'
-
-const VOID_ELEMENTS = new Set([
-  'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input',
-  'link', 'meta', 'param', 'source', 'track', 'wbr',
-])
+import { VOID_ELEMENTS } from '../void-elements.js'
 
 export function transform(ast: WaldDocument): string {
   const templateCode = renderNodes(ast.template)

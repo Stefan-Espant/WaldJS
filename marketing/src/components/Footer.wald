@@ -1,0 +1,48 @@
+---
+---
+<div class="footer-bos" aria-hidden="true">
+  <svg viewBox="0 0 1200 72" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path fill="#01271D" d="M0,72 L0,48 L25,48 L40,20 L55,48 L85,48 L105,8 L125,48 L160,48 L180,30 L200,48 L240,48 L262,4 L284,48 L320,48 L340,26 L360,48 L400,48 L422,14 L444,48 L485,48 L505,34 L525,48 L565,48 L590,2 L615,48 L655,48 L675,22 L695,48 L735,48 L755,38 L775,48 L815,48 L838,10 L861,48 L900,48 L920,30 L940,48 L980,48 L1005,16 L1030,48 L1070,48 L1090,26 L1110,48 L1150,48 L1170,36 L1190,48 L1200,48 L1200,72 Z"/>
+  </svg>
+</div>
+<footer>
+  <svg class="varen links" aria-hidden="true"></svg>
+  <svg class="varen rechts" aria-hidden="true"></svg>
+  <div class="footer-grid">
+    <div class="footer-merk">
+      <svg viewBox="0 0 563.03 496.47" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="WaldJS"><use href="#waldlogo"/></svg>
+      <p>
+        <span class="nl">Een content-first webframework voor razendsnelle, statische websites. Plant je site en laat hem groeien.</span>
+        <span class="en">A content-first web framework for blazing-fast, static websites. Plant your site and watch it grow.</span>
+      </p>
+    </div>
+    <div class="kolom">
+      <h4><span class="nl">Verken</span><span class="en">Explore</span></h4>
+      <ul>
+        <li><a href="#quickstart">Quick start</a></li>
+        <li><a href="#formaat"><span class="nl">Het .wald-formaat</span><span class="en">The .wald format</span></a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#benchmarks">Benchmarks</a></li>
+        <li><a href="#roadmap">Roadmap</a></li>
+      </ul>
+    </div>
+    <div class="kolom">
+      <h4><span class="nl">Bronnen</span><span class="en">Resources</span></h4>
+      <ul>
+        <li>
+          <a class="gh-link" href="https://github.com/Stefan-Espant/WaldJS/" target="_blank" rel="noopener">
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+            GitHub
+          </a>
+        </li>
+        <li><a href="#packages">Packages</a></li>
+        <li><a href="#cli">CLI</a></li>
+        <li><a href="#structuur"><span class="nl">Projectstructuur</span><span class="en">Project structure</span></a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-onder">
+    <span>© 2026 WaldJS · <span class="nl">Geplant met liefde</span><span class="en">Planted with love</span> 🌱</span>
+    <span><span class="nl">Gebouwd als pnpm-monorepo met Turborepo</span><span class="en">Built as a pnpm monorepo with Turborepo</span></span>
+  </div>
+</footer>

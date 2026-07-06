@@ -1,0 +1,29 @@
+---
+---
+<section id="quickstart" style="background:transparent">
+  <div class="sectiekop">
+    <span class="tag">Quick start</span>
+    <h2><span class="nl">Van zaadje tot site in 30 seconden</span><span class="en">From seed to site in 30 seconds</span></h2>
+    <p><span class="nl">Eén commando en je bos staat. Kies npm of pnpm.</span><span class="en">One command and your forest is planted. Choose npm or pnpm.</span></p>
+  </div>
+  <div class="qs-grid">
+    <div class="codeblok">
+      <div class="titel"><span class="dot"></span>npm</div>
+      <pre><span class="c-c"># <span class="nl">Nieuw project planten</span><span class="en">Plant a new project</span></span>
+npm create wald@latest my-forest
+cd my-forest
+npm install
+npm run dev</pre>
+    </div>
+    <div class="codeblok">
+      <div class="titel"><span class="dot"></span>pnpm</div>
+      <pre><span class="c-c"># <span class="nl">Of met pnpm</span><span class="en">Or with pnpm</span></span>
+pnpm dlx @waldjs/cli plant my-forest
+cd my-forest
+pnpm install
+pnpm dev</pre>
+    </div>
+  </div>
+</section>
+
+<!-- .WALD FORMAAT -->
