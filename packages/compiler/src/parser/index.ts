@@ -3,12 +3,12 @@ import { extractFrontmatter } from './frontmatter.js'
 import { scanTemplate } from './scanner.js'
 
 export function parse(source: string): WaldDocument {
-  const { code, rest } = extractFrontmatter(source)
+  const { code, rest, line } = extractFrontmatter(source)
   const template = scanTemplate(rest)
 
   return {
     type: 'document',
-    frontmatter: { type: 'frontmatter', code },
+    frontmatter: { type: 'frontmatter', code, line },
     template,
   }
 }

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { compile } from './compile.js'
+import { compile, compileWithMap } from './compile.js'
 import { WaldError } from './errors.js'
 
 describe('compile', () => {
@@ -112,5 +112,40 @@ const title = "Hello"
     expect(output).toContain('createTree(async ($$result, $$props)')
     expect(output).not.toContain('createTree<Props>')
     expect(output).not.toContain('const $props = $$props')
+  })
+})
+
+describe('compileWithMap', () => {
+  it('returns code identical to compile plus a line map', () => {
+    const source = `---
+type Props = { title: string }
+const { title } = $props
+---
+<h1>{title}</h1>`
+    const result = compileWithMap(source, '/src/page.wald')
+    expect(result.code).toBe(compile(source, '/src/page.wald'))
+    expect(result.lineMap.length).toBe(result.code.split('\n').length)
+  })
+
+  it('maps a body line back to its .wald source line', () => {
+    const source = `---
+type Props = { title: string }
+const { title } = $props
+---
+<h1>{title}</h1>`
+    const { code, lineMap } = compileWithMap(source, '/src/page.wald')
+    const lines = code.split('\n')
+    const idx = lines.findIndex(l => l.includes('const { title } = $props'))
+    expect(lineMap[idx]).toBe(3)
+  })
+
+  it('sets file on WaldError like compile does', () => {
+    let caught: unknown
+    try {
+      compileWithMap('---\n---\n{unclosed', '/src/page.wald')
+    } catch (e) {
+      caught = e
+    }
+    expect((caught as { file?: string }).file).toBe('/src/page.wald')
   })
 })

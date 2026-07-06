@@ -3,6 +3,7 @@ import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, existsSync } from 
 import { join, resolve, dirname } from 'node:path'
 import { tmpdir } from 'node:os'
 import type { WaldConfig } from '../config.js'
+import { runCheck } from './check.js'
 
 // Mock vite.build() — simulates what Vite SSR would do by compiling .wald files
 // with the same data: URL technique as the old pipeline, writing wrapper modules
@@ -77,7 +78,11 @@ vi.mock('vite', async (importOriginal) => {
   }
 })
 
-import { buildPages } from './build.js'
+vi.mock('./check.js', () => ({
+  runCheck: vi.fn(),
+}))
+
+import { buildPages, buildCommand } from './build.js'
 
 let tmpDir: string
 
@@ -314,5 +319,31 @@ describe('buildPages', () => {
     await buildPages(pagesDir, makeConfig(distDir))
 
     expect(existsSync(join(tmpDir, '.wald-ssr'))).toBe(false)
+  })
+})
+
+describe('build --check', () => {
+  it('aborts the build when the check fails', async () => {
+    vi.mocked(runCheck).mockResolvedValue(false)
+    const prevExitCode = process.exitCode
+    await (buildCommand.run as Function)({ args: { check: true } })
+    expect(process.exitCode).toBe(1)
+    process.exitCode = prevExitCode
+  })
+
+  it('runs the check before building when --check passed', async () => {
+    vi.mocked(runCheck).mockResolvedValue(false)
+    await (buildCommand.run as Function)({ args: { check: true } })
+    expect(runCheck).toHaveBeenCalledWith(process.cwd())
+  })
+
+  it('skips the check without --check', async () => {
+    vi.mocked(runCheck).mockClear()
+    try {
+      await (buildCommand.run as Function)({ args: {} })
+    } catch {
+      // real build may fail, but we only care that runCheck was not called
+    }
+    expect(runCheck).not.toHaveBeenCalled()
   })
 })
