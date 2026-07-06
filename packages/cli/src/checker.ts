@@ -11,6 +11,9 @@ export interface CheckDiagnostic {
   message: string
 }
 
+// Normalize paths to forward slashes for consistent lookup on all platforms
+const norm = (p: string) => p.replace(/\\/g, '/')
+
 const CONTENT_SHIM = `declare module 'wald:content' {
   export type Entry = {
     slug: string
@@ -38,21 +41,25 @@ export function checkProject(root: string): CheckDiagnostic[] {
   for (const file of waldFiles) {
     const source = readFileSync(file, 'utf-8')
     const { code, lineMap } = compileWithMap(source, file)
-    virtuals.set(`${file}.ts`, { code, lineMap, original: file, originalSource: source })
+    virtuals.set(norm(`${file}.ts`), { code, lineMap, original: file, originalSource: source })
   }
 
-  const shimPath = join(root, '__wald_content__.d.ts')
-  const options = loadTsOptions(root)
+  const shimPath = norm(join(root, '__wald_content__.d.ts'))
+  const result = loadTsOptions(root)
+  const options = result.options
   const host = createVirtualHost(options, virtuals, shimPath)
 
-  const rootNames = [...virtuals.keys(), ...tsFiles, shimPath]
+  const rootNames = [...virtuals.keys(), ...tsFiles.map(norm), shimPath]
   const program = ts.createProgram({ rootNames, options, host })
 
   const rootSet = new Set(rootNames.filter(f => f !== shimPath))
   const diagnostics: CheckDiagnostic[] = []
 
+  // Add tsconfig diagnostics first
+  diagnostics.push(...result.configDiagnostics)
+
   for (const sf of program.getSourceFiles()) {
-    if (!rootSet.has(sf.fileName)) continue
+    if (!rootSet.has(norm(sf.fileName))) continue
     const fileDiags = [
       ...program.getSyntacticDiagnostics(sf),
       ...program.getSemanticDiagnostics(sf),
@@ -73,7 +80,7 @@ function remapDiagnostic(
   const sf = diag.file!
   const { line, character } = ts.getLineAndCharacterOfPosition(sf, diag.start!)
   const message = ts.flattenDiagnosticMessageText(diag.messageText, '\n')
-  const virtual = virtuals.get(sf.fileName)
+  const virtual = virtuals.get(norm(sf.fileName))
 
   if (!virtual) {
     return { file: sf.fileName, line: line + 1, column: character + 1, message }
@@ -102,21 +109,21 @@ function createVirtualHost(
 
   const origReadFile = host.readFile.bind(host)
   host.readFile = (fileName) => {
-    const v = virtuals.get(fileName)
+    const v = virtuals.get(norm(fileName))
     if (v) return v.code
-    if (fileName === shimPath) return CONTENT_SHIM
+    if (norm(fileName) === shimPath) return CONTENT_SHIM
     return origReadFile(fileName)
   }
 
   const origFileExists = host.fileExists.bind(host)
   host.fileExists = (fileName) =>
-    virtuals.has(fileName) || fileName === shimPath || origFileExists(fileName)
+    virtuals.has(norm(fileName)) || norm(fileName) === shimPath || origFileExists(fileName)
 
   const origGetSourceFile = host.getSourceFile.bind(host)
   host.getSourceFile = (fileName, languageVersionOrOptions, onError, shouldCreate) => {
-    const v = virtuals.get(fileName)
+    const v = virtuals.get(norm(fileName))
     if (v) return ts.createSourceFile(fileName, v.code, languageVersionOrOptions)
-    if (fileName === shimPath) return ts.createSourceFile(fileName, CONTENT_SHIM, languageVersionOrOptions)
+    if (norm(fileName) === shimPath) return ts.createSourceFile(fileName, CONTENT_SHIM, languageVersionOrOptions)
     return origGetSourceFile(fileName, languageVersionOrOptions, onError, shouldCreate)
   }
 
@@ -137,14 +144,35 @@ function resolveRuntimeTypes(): string | undefined {
   }
 }
 
-function loadTsOptions(root: string): ts.CompilerOptions {
+function loadTsOptions(root: string): { options: ts.CompilerOptions; configDiagnostics: CheckDiagnostic[] } {
   const runtimeTypes = resolveRuntimeTypes()
 
   let options: ts.CompilerOptions
+  const configDiagnostics: CheckDiagnostic[] = []
   const configPath = join(root, 'tsconfig.json')
   if (existsSync(configPath)) {
     const cfg = ts.readConfigFile(configPath, ts.sys.readFile)
+    // Surface readConfigFile errors
+    if (cfg.error) {
+      configDiagnostics.push({
+        file: configPath,
+        line: 1,
+        column: 1,
+        message: ts.flattenDiagnosticMessageText(cfg.error.messageText, '\n'),
+      })
+    }
     const parsed = ts.parseJsonConfigFileContent(cfg.config ?? {}, ts.sys, root)
+    // Surface parseJsonConfigFileContent errors
+    if (parsed.errors && parsed.errors.length > 0) {
+      for (const err of parsed.errors) {
+        configDiagnostics.push({
+          file: configPath,
+          line: 1,
+          column: 1,
+          message: ts.flattenDiagnosticMessageText(err.messageText, '\n'),
+        })
+      }
+    }
     options = parsed.options
   } else {
     options = {
@@ -157,12 +185,15 @@ function loadTsOptions(root: string): ts.CompilerOptions {
   }
 
   return {
-    ...options,
-    noEmit: true,
-    baseUrl: options.baseUrl ?? root,
-    ...(runtimeTypes
-      ? { paths: { ...options.paths, '@waldjs/runtime': [runtimeTypes] } }
-      : {}),
+    options: {
+      ...options,
+      noEmit: true,
+      baseUrl: options.baseUrl ?? root,
+      ...(runtimeTypes
+        ? { paths: { ...options.paths, '@waldjs/runtime': [runtimeTypes] } }
+        : {}),
+    },
+    configDiagnostics,
   }
 }
 

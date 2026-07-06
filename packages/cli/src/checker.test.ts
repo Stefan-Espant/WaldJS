@@ -86,4 +86,55 @@ const posts = await getCollection('blog')
     roots.push(root)
     expect(checkProject(root)).toEqual([])
   })
+
+  it('remaps column accurately on an indented body line', () => {
+    const root = makeProject({
+      'src/pages/index.wald': `---
+type Props = { title: string }
+const x = 1
+const { subtitle } = $props
+---
+<h1>{x}</h1>`,
+    })
+    roots.push(root)
+    const diags = checkProject(root)
+    expect(diags[0].line).toBe(4)
+    expect(diags[0].column).toBe(9)
+  })
+
+  it('valt terug op 1:1 voor fouten in template-expressies', () => {
+    const root = makeProject({
+      'src/pages/index.wald': `---
+const title = 'x'
+---
+<h1>{titel}</h1>`,
+    })
+    roots.push(root)
+    const diags = checkProject(root)
+    expect(diags.length).toBeGreaterThan(0)
+    expect(diags[0].line).toBe(1)
+    expect(diags[0].column).toBe(1)
+  })
+
+  it('remapt fouten in hoisted type Props naar de originele regel', () => {
+    const root = makeProject({
+      'src/pages/index.wald': `---
+type Props = { title: Strings }
+---
+<h1>hi</h1>`,
+    })
+    roots.push(root)
+    const diags = checkProject(root)
+    expect(diags[0].line).toBe(2)
+  })
+
+  it('rapporteert een kapotte tsconfig als diagnostic', () => {
+    const root = makeProject({
+      'tsconfig.json': '{ invalid json !!!',
+      'src/util.ts': 'export const a = 1\n',
+    })
+    roots.push(root)
+    const diags = checkProject(root)
+    expect(diags.some(d => d.file.includes('tsconfig.json'))).toBe(true)
+  })
 })
