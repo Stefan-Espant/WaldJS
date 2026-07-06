@@ -73,21 +73,9 @@ export async function buildPages(
       const key = relative(pagesDir, route.file).replace(/\.wald$/, '')
       const modulePath = resolve(join(ssrDir, key + '.js'))
 
-      // Check if module file exists
-      if (!existsSync(modulePath)) {
-        console.warn(`⚠ Skipping dynamic route ${route.pattern} — module not generated`)
-        continue
-      }
-
-      let mod: {
+      const mod = await import(modulePath) as {
         default: { render: (props?: Record<string, unknown>) => Promise<string> }
         getStaticPaths?: () => Promise<Array<{ params: Record<string, string> }>>
-      }
-      try {
-        mod = await import(modulePath) as any
-      } catch (e) {
-        console.warn(`⚠ Skipping dynamic route ${route.pattern} — failed to load module: ${e instanceof Error ? e.message : String(e)}`)
-        continue
       }
 
       if (!mod.getStaticPaths) {

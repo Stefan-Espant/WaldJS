@@ -122,6 +122,24 @@ describe('scanTemplate — elements', () => {
   })
 })
 
+describe('scanTemplate — void elements', () => {
+  it('parseert bare void elements zonder kinderen te slikken', () => {
+    const nodes = scanTemplate('<head><meta charset="utf-8"><title>x</title></head>')
+    const head = nodes[0] as { children: { type: string; tag?: string }[] }
+    expect(head.children.map(c => (c as { tag?: string }).tag ?? c.type)).toEqual(['meta', 'title'])
+  })
+
+  it('behandelt componenten met void-namen niet als void', () => {
+    const nodes = scanTemplate('<div><Link href="/about">About</Link><p>after</p></div>')
+    const div = nodes[0] as { children: { type: string; name?: string; tag?: string }[] }
+    expect(div.children.length).toBe(2)
+    const link = div.children[0] as { type: string; name: string; children: unknown[] }
+    expect(link.type).toBe('component')
+    expect(link.name).toBe('Link')
+    expect(link.children.length).toBe(1)
+  })
+})
+
 describe('scanTemplate — script', () => {
   it('returns a ScriptNode for a <script> element', () => {
     const nodes = scanTemplate('<script>console.log("hi")</script>')

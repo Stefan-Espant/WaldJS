@@ -33,6 +33,9 @@ importers:
       '@waldjs/cli':
         specifier: workspace:*
         version: link:../packages/cli
+      '@waldjs/runtime':
+        specifier: workspace:*
+        version: link:../packages/runtime
     devDependencies:
       vitest:
         specifier: ^2.0.0

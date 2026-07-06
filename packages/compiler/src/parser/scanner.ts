@@ -1,5 +1,6 @@
 import type { TemplateNode, ElementNode, ComponentNode, AttributeNode, ScriptNode } from '../ast/types.js'
 import { WaldError, offsetToLineCol } from '../errors.js'
+import { VOID_ELEMENTS } from '../void-elements.js'
 
 export function scanTemplate(source: string): TemplateNode[] {
   const scanner = new Scanner(source)
@@ -123,12 +124,8 @@ class Scanner {
 
     if (this.current === '>') this.advance()
 
-    // Void elements don't have closing tags
-    const voidElements = new Set(['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr'])
-    if (voidElements.has(tag.toLowerCase())) {
-      if (/^[A-Z]/.test(tag)) {
-        return { type: 'component', name: tag, attrs, children: [] }
-      }
+    // Void elements don't have closing tags (but components with void names are not treated as void)
+    if (!/^[A-Z]/.test(tag) && VOID_ELEMENTS.has(tag.toLowerCase())) {
       return { type: 'element', tag, attrs, children: [] }
     }
 
