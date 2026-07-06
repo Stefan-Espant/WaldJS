@@ -7,6 +7,7 @@ import { waldPlugin } from '../vite-plugin.js'
 import { loadWaldConfig, type WaldConfig } from '../config.js'
 import { scanRoutes } from '../router/index.js'
 import { maybeWrap, hoistScripts } from '../shell.js'
+import { runCheck } from './check.js'
 
 function resolveOutPath(distDir: string, pattern: string, params: Record<string, string> = {}): string {
   let path = pattern
@@ -99,8 +100,24 @@ export async function buildPages(
 
 export const buildCommand = defineCommand({
   meta: { description: 'Build your forest for production' },
-  async run() {
+  args: {
+    check: {
+      type: 'boolean',
+      description: 'Type-check .wald and .ts files before building',
+    },
+  },
+  async run({ args }) {
     const cwd = process.cwd()
+
+    if (args.check) {
+      const ok = await runCheck(cwd)
+      if (!ok) {
+        console.error('✖ Type errors found — build aborted')
+        process.exitCode = 1
+        return
+      }
+    }
+
     const config = await loadWaldConfig(cwd)
     const pagesDir = join(cwd, 'src', 'pages')
     const publicDir = join(cwd, 'public')
