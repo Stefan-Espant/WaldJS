@@ -1,13 +1,13 @@
 import { mkdirSync, writeFileSync, existsSync, cpSync, rmSync } from 'node:fs'
 import { join, relative, dirname, resolve } from 'node:path'
 import { defineCommand } from 'citty'
-import ora from 'ora'
 import { build, mergeConfig } from 'vite'
 import { waldPlugin } from '../vite-plugin.js'
 import { loadWaldConfig, type WaldConfig } from '../config.js'
 import { scanRoutes } from '../router/index.js'
 import { maybeWrap, hoistScripts } from '../shell.js'
 import { runCheck } from './check.js'
+import { withGrowingTree } from '../growing-tree.js'
 
 function resolveOutPath(distDir: string, pattern: string, params: Record<string, string> = {}): string {
   let path = pattern
@@ -19,16 +19,31 @@ function resolveOutPath(distDir: string, pattern: string, params: Record<string,
     : join(distDir, path.slice(1), 'index.html')
 }
 
+function formatSize(bytes: number): string {
+  return bytes < 1024 ? `${bytes} B` : `${(bytes / 1024).toFixed(1)} kB`
+}
+
+function logRoute(pattern: string, label: string, padTo: number): void {
+  const padded = pattern.padEnd(padTo)
+  if (!process.stdout.isTTY) {
+    console.log(`  ✓ ${pattern}  ${label}`)
+    return
+  }
+  console.log(`  \x1b[32m✓\x1b[0m ${padded}  \x1b[2m${label}\x1b[0m`)
+}
+
 export async function buildPages(
   pagesDir: string,
   config: Required<WaldConfig>,
   publicDir?: string,
   contentDir?: string,
-): Promise<void> {
+): Promise<{ routeCount: number; ms: number; bytes: number }> {
+  const start = Date.now()
   const distDir = config.outDir
   const routes = scanRoutes(pagesDir)
   const staticRoutes = routes.filter(r => r.params.length === 0)
   const dynamicRoutes = routes.filter(r => r.params.length > 0)
+  const padTo = Math.max(...routes.map(r => r.pattern.length), 0)
 
   const ssrDir = join(dirname(distDir), '.wald-ssr')
 
@@ -39,7 +54,7 @@ export async function buildPages(
   // Pass 1 — Bundle all .wald pages into an SSR build.
   // config.vite goes first so WaldJS required settings in second arg always win
   // (prevents user from accidentally overriding ssr: true or outDir).
-  await build(mergeConfig(
+  await withGrowingTree('Compiling...', build(mergeConfig(
     config.vite ?? {},
     {
       // _waldContentDir is read by the test mock to know where content files live.
@@ -54,8 +69,10 @@ export async function buildPages(
         emptyOutDir: true,
       },
     } as any,
-  ))
+  )))
 
+  let routeCount = 0
+  let totalBytes = 0
   try {
     // Pass 2 — Pre-render each static route to an HTML file.
     for (const route of staticRoutes) {
@@ -68,8 +85,15 @@ export async function buildPages(
       const outPath = resolveOutPath(distDir, route.pattern)
       mkdirSync(dirname(outPath), { recursive: true })
       writeFileSync(outPath, html)
+      routeCount++
+      const bytes = Buffer.byteLength(html)
+      totalBytes += bytes
+      logRoute(route.pattern, formatSize(bytes), padTo)
     }
 
+    // Dynamic routes are logged once per pattern (not per generated path) —
+    // a content-heavy getStaticPaths() could produce hundreds of pages, and
+    // printing every single one would drown out the rest of the build output.
     for (const route of dynamicRoutes) {
       const key = relative(pagesDir, route.file).replace(/\.wald$/, '')
       const modulePath = resolve(join(ssrDir, key + '.js'))
@@ -85,12 +109,18 @@ export async function buildPages(
       }
 
       const paths = await mod.getStaticPaths()
+      let patternBytes = 0
       for (const { params } of paths) {
         const html = hoistScripts(maybeWrap(await mod.default.render(params)))
         const outPath = resolveOutPath(distDir, route.pattern, params)
         mkdirSync(dirname(outPath), { recursive: true })
         writeFileSync(outPath, html)
+        routeCount++
+        patternBytes += Buffer.byteLength(html)
       }
+      totalBytes += patternBytes
+      const pathWord = paths.length === 1 ? 'path' : 'paths'
+      logRoute(route.pattern, `${paths.length} ${pathWord}, ${formatSize(patternBytes)}`, padTo)
     }
   } finally {
     rmSync(ssrDir, { recursive: true, force: true })
@@ -99,6 +129,8 @@ export async function buildPages(
   if (publicDir && existsSync(publicDir)) {
     cpSync(publicDir, distDir, { recursive: true })
   }
+
+  return { routeCount, ms: Date.now() - start, bytes: totalBytes }
 }
 
 export const buildCommand = defineCommand({
@@ -126,12 +158,12 @@ export const buildCommand = defineCommand({
     const publicDir = join(cwd, 'public')
     const contentDir = join(cwd, 'content')
 
-    const spinner = ora('Building your forest...').start()
     try {
-      await buildPages(pagesDir, config, publicDir, contentDir)
-      spinner.succeed(`Build complete → ${config.outDir}/`)
+      const { routeCount, ms, bytes } = await buildPages(pagesDir, config, publicDir, contentDir)
+      const pageWord = routeCount === 1 ? 'page' : 'pages'
+      console.log(`\n✔ ${routeCount} ${pageWord} (${formatSize(bytes)}) built in ${ms}ms → ${config.outDir}/`)
     } catch (e) {
-      spinner.fail(`Build failed: ${e}`)
+      console.error(`✖ Build failed: ${e}`)
       throw e
     }
   },
