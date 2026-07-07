@@ -1,0 +1,43 @@
+{
+  "name": "vscode-wald",
+  "displayName": "WaldJS",
+  "description": "Syntax highlighting for WaldJS .wald single-file components",
+  "version": "0.0.1",
+  "private": true,
+  "publisher": "waldjs",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "wald",
+        "aliases": [
+          "Wald",
+          "wald"
+        ],
+        "extensions": [
+          ".wald"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "wald",
+        "scopeName": "source.wald",
+        "path": "./syntaxes/wald.tmLanguage.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.frontmatter.wald": "typescript",
+          "meta.embedded.expression.wald": "typescript",
+          "source.ts": "typescript",
+          "text.html.basic": "html"
+        }
+      }
+    ]
+  }
+}

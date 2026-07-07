@@ -1,0 +1,160 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Wald",
+  "scopeName": "source.wald",
+  "injections": {
+    "L:meta.tag - (meta.embedded.expression.wald | string | comment)": {
+      "patterns": [
+        {
+          "include": "#expression"
+        }
+      ]
+    }
+  },
+  "patterns": [
+    {
+      "include": "#frontmatter"
+    },
+    {
+      "include": "#template"
+    }
+  ],
+  "repository": {
+    "frontmatter": {
+      "comment": "TypeScript frontmatter between --- delimiters. The opening --- must be the first non-whitespace content of the file; the closing --- sits at the start of a line (matches extractFrontmatter in @waldjs/compiler).",
+      "begin": "\\A\\s*(---)",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.frontmatter.begin.wald"
+        }
+      },
+      "end": "^(---)",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.frontmatter.end.wald"
+        }
+      },
+      "contentName": "meta.embedded.block.frontmatter.wald",
+      "patterns": [
+        {
+          "include": "source.ts"
+        }
+      ]
+    },
+    "template": {
+      "comment": "Everything after the frontmatter: HTML with {expression} islands and PascalCase component tags.",
+      "patterns": [
+        {
+          "include": "#component-tag"
+        },
+        {
+          "include": "#expression"
+        },
+        {
+          "include": "text.html.basic"
+        }
+      ]
+    },
+    "expression": {
+      "comment": "A {expr} interpolation island. The scanner counts brace depth, so nested braces stay inside the expression; #expression-braces mirrors that for one-or-more nesting levels.",
+      "name": "meta.embedded.expression.wald",
+      "begin": "\\{",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.section.embedded.begin.wald"
+        }
+      },
+      "end": "\\}",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.section.embedded.end.wald"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#expression-braces"
+        },
+        {
+          "include": "source.ts"
+        }
+      ]
+    },
+    "expression-braces": {
+      "comment": "Balanced inner braces (object literals, arrow bodies) so they don't terminate the surrounding {expr} early.",
+      "begin": "\\{",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.definition.block.ts"
+        }
+      },
+      "end": "\\}",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.block.ts"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#expression-braces"
+        },
+        {
+          "include": "source.ts"
+        }
+      ]
+    },
+    "component-tag": {
+      "comment": "Component tags start with an uppercase letter (<Card>, </Card>, <Icon />) and are highlighted as classes rather than HTML tags.",
+      "name": "meta.tag.component.wald",
+      "begin": "(</?)([A-Z][\\w-]*)",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.begin.wald"
+        },
+        "2": {
+          "name": "support.class.component.wald entity.name.type.class.component.wald"
+        }
+      },
+      "end": "(/?>)",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.end.wald"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#tag-attributes"
+        }
+      ]
+    },
+    "tag-attributes": {
+      "patterns": [
+        {
+          "include": "#expression"
+        },
+        {
+          "begin": "\"",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.begin.wald"
+            }
+          },
+          "end": "\"",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.end.wald"
+            }
+          },
+          "name": "string.quoted.double.wald"
+        },
+        {
+          "match": "=",
+          "name": "punctuation.separator.key-value.wald"
+        },
+        {
+          "match": "[\\w-]+",
+          "name": "entity.other.attribute-name.wald"
+        }
+      ]
+    }
+  }
+}
