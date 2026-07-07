@@ -20,6 +20,7 @@ import Footer from '../components/Footer.wald'
 <html lang="nl" data-lang="nl">
 <head>
 <meta charset="UTF-8">
+<script data-wald-no-hoist>try{var t=localStorage.getItem('wald-taal');if(t==='nl'||t==='en'){document.documentElement.dataset.lang=t;document.documentElement.lang=t;}}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WaldJS — Plant je site. Laat hem groeien.</title>
 <meta name="description" content="WaldJS is een content-first webframework voor razendsnelle, statische websites. Schrijf .wald-bestanden en WaldJS compileert ze tot een statische site.">
