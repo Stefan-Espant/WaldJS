@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "build:css": "node scripts/build-css.js dist",
-    "dev": "node scripts/build-css.js public && wald grow",
+    "dev": "node scripts/build-css.js public --watch",
     "build": "wald build && node scripts/build-css.js dist",
     "test": "vitest run"
   },
