@@ -1,7 +1,12 @@
 ---
 ---
 <nav>
-  <button class="hamburger" onclick="toggleMenu(true)" aria-label="Menu">☰</button>
+  <a class="brand" href="#top" aria-label="WaldJS">
+    <!-- logo klein -->
+    <svg viewBox="0 0 563.03 496.47" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="WaldJS logo">
+      <use href="#waldlogo"/>
+    </svg>
+  </a>
   <ul class="links-kant">
     <li class="verberg"><a href="#formaat"><span class="nl">Het .wald-formaat</span><span class="en">The .wald format</span></a></li>
     <li class="verberg"><a href="#playground">Playground</a></li>
@@ -9,12 +14,6 @@
     <li class="verberg"><a href="#benchmarks">Benchmarks</a></li>
     <li class="verberg"><a href="#changelog">Changelog</a></li>
   </ul>
-  <a class="brand" href="#top" aria-label="WaldJS">
-    <!-- logo klein -->
-    <svg viewBox="0 0 563.03 496.47" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="WaldJS logo">
-      <use href="#waldlogo"/>
-    </svg>
-  </a>
   <ul class="rechts-kant">
     <li><button id="btn-geluid" class="dagnacht" onclick="zetGeluid()" aria-label="Bosgeluiden aan/uit">🔇</button></li>
     <li><button id="btn-dagnacht" class="dagnacht" onclick="zetDagNacht()" aria-label="Dag / nacht">🌙</button></li>
@@ -26,6 +25,7 @@
     </li>
     <li><a class="btn" href="https://github.com/Stefan-Espant/WaldJS/" target="_blank" rel="noopener">GitHub ↗</a></li>
   </ul>
+  <button class="hamburger" onclick="toggleMenu(true)" aria-label="Menu">☰</button>
 </nav>
 
 <div id="mobielmenu" aria-hidden="true">
@@ -38,4 +38,3 @@
   <a href="#changelog" onclick="toggleMenu(false)">Changelog</a>
   <a href="https://github.com/Stefan-Espant/WaldJS/" target="_blank" rel="noopener">GitHub ↗</a>
 </div>
-
