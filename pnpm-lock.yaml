@@ -30,6 +30,9 @@ importers:
 
   marketing:
     dependencies:
+      '@waldjs/canopy':
+        specifier: workspace:*
+        version: link:../packages/canopy
       '@waldjs/cli':
         specifier: workspace:*
         version: link:../packages/cli

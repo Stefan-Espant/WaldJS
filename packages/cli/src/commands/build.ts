@@ -19,6 +19,7 @@ export type BuildPhase =
   | 'Rendering static pages'
   | 'Rendering dynamic pages'
   | 'Copying public assets'
+  | 'Copying source assets'
 
 export type BuildStats = {
   staticRoutes: number
@@ -27,6 +28,7 @@ export type BuildStats = {
   warnings: string[]
   canopyEntries: number
   copiedPublic: boolean
+  copiedAssets: boolean
 }
 
 type BuildReporter = {
@@ -110,6 +112,7 @@ export async function buildPages(
   )
 
   const srcDir = dirname(pagesDir)
+  const assetsDir = join(srcDir, 'assets')
   reporter.onPhase?.('Scanning canopy islands')
   const { entries: canopyEntries, warnings: canopyWarnings } = scanCanopyEntries(srcDir)
   for (const warning of canopyWarnings) {
@@ -195,6 +198,13 @@ export async function buildPages(
     copiedPublic = true
   }
 
+  let copiedAssets = false
+  if (existsSync(assetsDir)) {
+    reporter.onPhase?.('Copying source assets')
+    cpSync(assetsDir, join(distDir, 'assets'), { recursive: true })
+    copiedAssets = true
+  }
+
   return {
     staticRoutes: staticRoutes.length,
     dynamicRoutes: dynamicRoutes.length,
@@ -202,6 +212,7 @@ export async function buildPages(
     warnings,
     canopyEntries: canopyEntries.size,
     copiedPublic,
+    copiedAssets,
   }
 }
 

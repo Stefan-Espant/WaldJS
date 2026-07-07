@@ -43,7 +43,10 @@ export async function buildCanopyClient(
         ssr: false,
         outDir: distDir,
         emptyOutDir: false,
-        rollupOptions: { input },
+        rollupOptions: {
+          input,
+          preserveEntrySignatures: 'exports-only',
+        },
       },
     } as any,
   ))

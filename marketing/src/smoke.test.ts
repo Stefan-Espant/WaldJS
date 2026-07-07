@@ -7,7 +7,7 @@ const ROOT = join(__dirname, '..')
 
 describe('marketing site build', () => {
   beforeAll(() => {
-    execSync('pnpm build', { cwd: ROOT, stdio: 'pipe' })
+    execSync('node ../packages/cli/bin/wald.js build', { cwd: ROOT, stdio: 'pipe' })
   }, 180_000)
 
   it('produceert dist/index.html', () => {
@@ -23,15 +23,23 @@ describe('marketing site build', () => {
   })
 
   it('kopieert de assets mee', () => {
-    expect(existsSync(join(ROOT, 'dist/css/site.css'))).toBe(true)
-    expect(existsSync(join(ROOT, 'dist/js/site.js'))).toBe(true)
-    expect(existsSync(join(ROOT, 'dist/js/forest.js'))).toBe(true)
-    expect(existsSync(join(ROOT, 'dist/js/animations.js'))).toBe(true)
+    expect(existsSync(join(ROOT, 'dist/assets/css/site.css'))).toBe(true)
+    expect(existsSync(join(ROOT, 'dist/assets/js/site.js'))).toBe(true)
+    expect(existsSync(join(ROOT, 'dist/assets/js/forest.js'))).toBe(true)
+    expect(existsSync(join(ROOT, 'dist/assets/js/animations.js'))).toBe(true)
   })
 
   it('bevat geen inline script-blokken meer behalve CDN en asset-verwijzingen', () => {
     const html = readFileSync(join(ROOT, 'dist/index.html'), 'utf-8')
     const inlineScripts = html.match(/<script(?![^>]*src=)[^>]*>[\s\S]*?<\/script>/g) ?? []
     expect(inlineScripts).toEqual([])
+  })
+
+  it('bouwt canopy islands als dist assets', () => {
+    const html = readFileSync(join(ROOT, 'dist/index.html'), 'utf-8')
+    expect(html).toContain('<wald-canopy')
+    expect(html).toContain('data-strategy="load"')
+    expect(html).toContain('/assets/wald-canopy-')
+    expect(html).toContain('/assets/canopyping-')
   })
 })

@@ -133,6 +133,23 @@ describe('vite-plugin-wald-canopy-script', () => {
     expect(code).not.toContain('</script>')
   })
 
+  it('loads direct .wald?canopy-script ids from rollup input entries', async () => {
+    const tmpFile = join(tmpdir(), `wald-canopy-plugin-test-direct-${Date.now()}.wald`)
+    writeFileSync(
+      tmpFile,
+      [
+        '---',
+        '---',
+        '<button>Direct</button>',
+        '<script>export default function(root) { root.dataset.direct = "yes" }</script>',
+      ].join('\n')
+    )
+
+    const code = await callHook('vite-plugin-wald-canopy-script', 'load', `${tmpFile}?canopy-script`)
+    expect(code).toContain('root.dataset.direct = "yes"')
+    expect(code).not.toContain('<button>Direct</button>')
+  })
+
   it('returns a no-op default export when a component has no script block', async () => {
     const tmpFile = join(tmpdir(), `wald-canopy-plugin-test-noscript-${Date.now()}.wald`)
     writeFileSync(tmpFile, ['---', '---', '<p>Static</p>'].join('\n'))

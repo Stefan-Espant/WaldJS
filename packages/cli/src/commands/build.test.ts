@@ -143,6 +143,7 @@ describe('buildPages', () => {
     expect(stats.warnings).toEqual([])
     expect(stats.canopyEntries).toBe(0)
     expect(stats.copiedPublic).toBe(false)
+    expect(stats.copiedAssets).toBe(false)
   })
 
   it('generates dist/about/index.html from about.wald', async () => {
@@ -197,6 +198,21 @@ describe('buildPages', () => {
     await buildPages(pagesDir, makeConfig(distDir), publicDir)
 
     expect(existsSync(join(distDir, 'logo.svg'))).toBe(true)
+  })
+
+  it('copies src/assets/ to dist/assets/ when it exists', async () => {
+    const pagesDir = join(tmpDir, 'src', 'pages')
+    const assetsDir = join(tmpDir, 'src', 'assets', 'js')
+    const distDir = join(tmpDir, 'dist')
+    mkdirSync(pagesDir, { recursive: true })
+    mkdirSync(assetsDir, { recursive: true })
+    writeFileSync(join(pagesDir, 'index.wald'), '<p>home</p>')
+    writeFileSync(join(assetsDir, 'site.js'), 'console.log("site")')
+
+    const stats = await buildPages(pagesDir, makeConfig(distDir))
+
+    expect(existsSync(join(distDir, 'assets', 'js', 'site.js'))).toBe(true)
+    expect(stats.copiedAssets).toBe(true)
   })
 
   it('renders a static route that uses getCollection from wald:content', async () => {
@@ -484,6 +500,7 @@ describe('formatBuildSummary', () => {
       warnings: ['one'],
       canopyEntries: 4,
       copiedPublic: true,
+      copiedAssets: true,
     }, 'dist')).toEqual([
       '  Output:   dist/',
       '  Pages:    2 static routes',

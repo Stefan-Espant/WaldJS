@@ -75,6 +75,7 @@ describe('buildCanopyClient', () => {
   })
 
   it('builds the canopy runtime plus each entry and returns their asset URLs', async () => {
+    const { build } = await import('vite')
     const distDir = join(tmpDir, 'dist')
     const componentsDir = join(tmpDir, 'src', 'components')
     mkdirSync(componentsDir, { recursive: true })
@@ -86,5 +87,6 @@ describe('buildCanopyClient', () => {
 
     expect(assetMap.get('wald-canopy')).toBe('/assets/wald-canopy-testhash.js')
     expect(assetMap.get('counter')).toBe('/assets/counter-testhash.js')
+    expect(vi.mocked(build).mock.calls.at(-1)?.[0].build.rollupOptions.preserveEntrySignatures).toBe('exports-only')
   })
 })
