@@ -1,0 +1,66 @@
+/* ---------- changelog / groeidagboek ---------- */
+.changelog {
+  max-width: 760px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.log-kaart {
+  background: var(--kaart);
+  border: 1px solid var(--rand);
+  border-radius: 18px;
+  padding: 24px 28px;
+  transition: border-color .2s;
+}
+.log-kaart:hover {
+  border-color: var(--rood);
+}
+.log-kop {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.log-kop .versie {
+  background: var(--rood);
+  color: var(--wit);
+  font-weight: 700;
+  font-size: .78rem;
+  padding: 3px 12px;
+  border-radius: 999px;
+  font-family: var(--mono);
+}
+.log-kop .versie.aankomend {
+  background: transparent;
+  border: 1.5px dashed var(--rood);
+  color: var(--rood);
+}
+.log-kop h3 {
+  font-size: 1.02rem;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+}
+.log-kop .datum {
+  margin-left: auto;
+  color: rgba(255,255,255,.4);
+  font-size: .8rem;
+}
+.log-kaart ul {
+  list-style: none;
+  color: var(--wit-zacht);
+  font-size: var(--byz-text-sm);
+}
+.log-kaart li {
+  padding-left: 22px;
+  position: relative;
+  margin-bottom: 6px;
+}
+.log-kaart li::before {
+  content: "🌱";
+  position: absolute;
+  left: 0;
+  font-size: .72rem;
+  top: 3px;
+}

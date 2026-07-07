@@ -1,0 +1,7 @@
+/* ---------- taal ---------- */
+[data-lang="nl"] .en {
+  display: none !important;
+}
+[data-lang="en"] .nl {
+  display: none !important;
+}

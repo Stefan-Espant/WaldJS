@@ -1,0 +1,41 @@
+/* ---------- playground ---------- */
+.pg-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: stretch;
+}
+.pg-editor {
+  width: 100%;
+  min-height: 340px;
+  background: var(--groen-donker);
+  border: none;
+  color: var(--wit);
+  font-family: var(--mono);
+  font-size: .86rem;
+  line-height: 1.7;
+  padding: 18px 20px;
+  resize: vertical;
+  outline: none;
+  display: block;
+  box-sizing: border-box;
+}
+.pg-preview {
+  background: #FAFAF5;
+  color: var(--groen);
+  border-radius: 16px;
+  padding: 30px;
+  overflow: auto;
+  font-family: var(--font);
+}
+.pg-preview h1 {
+  margin-bottom: 10px;
+}
+.pg-preview ul {
+  margin: 10px 0 0 22px;
+}
+@media(max-width:820px) {
+  .pg-grid {
+    grid-template-columns: 1fr;
+  }
+}

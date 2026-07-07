@@ -1,0 +1,43 @@
+/* ---------- secties ---------- */
+section {
+  padding: var(--byz-space-24) 6vw;
+  max-width: 1150px;
+  margin: 0 auto;
+  position: relative;
+}
+section.vol {
+  max-width: none;
+  padding-left: 0;
+  padding-right: 0;
+}
+.sectiekop {
+  text-align: center;
+  margin-bottom: var(--byz-space-16);
+}
+.sectiekop .tag {
+  font-family: "grafolita-script",var(--font);
+  color: var(--rood);
+  font-weight: 800;
+  font-size: var(--byz-text-xl);
+}
+.sectiekop h2 {
+  font-size: clamp(1.7rem,3.4vw,2.5rem);
+  font-weight: 800;
+  margin-top: 8px;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+}
+.sectiekop p {
+  color: var(--wit-zacht);
+  max-width: 600px;
+  margin: 12px auto 0;
+}
+.sectiekop::after {
+  content: "";
+  display: block;
+  width: 140px;
+  height: 24px;
+  margin: 20px auto 0;
+  opacity: .9;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 140 24'><path d='M8 12 H132' stroke='%23FF3347' stroke-width='1.6' stroke-linecap='round' fill='none'/><g fill='%237FD8BE'><ellipse cx='34' cy='7' rx='8' ry='3.2' transform='rotate(-28 34 7)'/><ellipse cx='54' cy='17' rx='8' ry='3.2' transform='rotate(28 54 17)'/><ellipse cx='72' cy='6' rx='8' ry='3.2' transform='rotate(-28 72 6)'/><ellipse cx='90' cy='18' rx='8' ry='3.2' transform='rotate(28 90 18)'/><ellipse cx='108' cy='7' rx='8' ry='3.2' transform='rotate(-28 108 7)'/></g></svg>") no-repeat center/contain;
+}

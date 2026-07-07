@@ -1,0 +1,24 @@
+/* ---------- varens (botanische decoratie) ---------- */
+svg.varen {
+  position: absolute;
+  width: 210px;
+  height: 300px;
+  opacity: .15;
+  pointer-events: none;
+  z-index: 1;
+  overflow: visible;
+}
+svg.varen.links {
+  left: 1.5vw;
+  bottom: -10px;
+}
+svg.varen.rechts {
+  right: 1.5vw;
+  bottom: -10px;
+  transform: scaleX(-1);
+}
+@media(max-width:900px) {
+  svg.varen {
+    display: none;
+  }
+}

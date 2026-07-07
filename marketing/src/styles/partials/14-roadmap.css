@@ -1,0 +1,64 @@
+/* ---------- roadmap ---------- */
+.roadmap {
+  list-style: none;
+  position: relative;
+  max-width: 640px;
+  margin: 0 auto;
+}
+.roadmap::before {
+  content: "";
+  position: absolute;
+  left: 15px;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: var(--rand);
+}
+.roadmap li {
+  position: relative;
+  padding: 0 0 26px 52px;
+}
+.roadmap li::before {
+  content: "";
+  position: absolute;
+  left: 7px;
+  top: 5px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--groen-licht);
+  border: 3px solid var(--groen);
+}
+.roadmap li.done::before {
+  background: var(--rood);
+}
+.roadmap li.bezig::before {
+  background: var(--wit);
+  box-shadow: 0 0 0 4px rgba(255,51,71,.4);
+}
+.roadmap li b {
+  display: block;
+  font-size: 1.02rem;
+}
+.roadmap li span.oms {
+  color: var(--wit-zacht);
+  font-size: .9rem;
+}
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .05em;
+  padding: 2px 10px;
+  border-radius: 999px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+.badge.klaar {
+  background: rgba(255,255,255,.12);
+  color: var(--wit);
+}
+.badge.nu {
+  background: var(--rood);
+  color: var(--wit);
+}
