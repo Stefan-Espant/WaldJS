@@ -68,6 +68,19 @@ function resolveOutPath(distDir: string, pattern: string, params: Record<string,
     : join(distDir, path.slice(1), 'index.html')
 }
 
+function formatSize(bytes: number): string {
+  return bytes < 1024 ? `${bytes} B` : `${(bytes / 1024).toFixed(1)} kB`
+}
+
+function logRoute(pattern: string, label: string, padTo: number): void {
+  const padded = pattern.padEnd(padTo)
+  if (!process.stdout.isTTY) {
+    console.log(`  ✓ ${pattern}  ${label}`)
+    return
+  }
+  console.log(`  \x1b[32m✓\x1b[0m ${padded}  \x1b[2m${label}\x1b[0m`)
+}
+
 function stripCanopyScripts(html: string, canopyScriptContents: Set<string>): string {
   if (canopyScriptContents.size === 0) return html
   let result = html
@@ -105,6 +118,7 @@ export async function buildPages(
   const routes = scanRoutes(pagesDir)
   const staticRoutes = routes.filter(r => r.params.length === 0)
   const dynamicRoutes = routes.filter(r => r.params.length > 0)
+  const padTo = Math.max(...routes.map(r => r.pattern.length), 0)
   const warnings: string[] = []
   let dynamicPages = 0
 
@@ -127,14 +141,9 @@ export async function buildPages(
   const canopyAssets = await buildCanopyClient(canopyEntries, distDir, config.base, config.vite)
 
   reporter.onPhase?.('Bundling SSR pages')
-  // Pass 1b — Bundle all .wald pages into an SSR build.
-  // config.vite goes first so WaldJS required settings in second arg always win
-  // (prevents user from accidentally overriding ssr: true or outDir).
   await withGrowingTree('Bundling SSR pages...', build(mergeConfig(
     config.vite ?? {},
     {
-      // _waldContentDir is read by the test mock to know where content files live.
-      // Real Vite ignores unknown top-level config keys.
       _waldContentDir: contentDir,
       base: config.base,
       plugins: [waldPlugin()],
@@ -148,7 +157,6 @@ export async function buildPages(
   )))
 
   try {
-    // Pass 2 — Pre-render each static route to an HTML file.
     reporter.onPhase?.('Rendering static pages')
     for (const route of staticRoutes) {
       const key = relative(pagesDir, route.file).replace(/\.wald$/, '')
@@ -161,6 +169,7 @@ export async function buildPages(
       const outPath = resolveOutPath(distDir, route.pattern)
       mkdirSync(dirname(outPath), { recursive: true })
       writeFileSync(outPath, html)
+      logRoute(route.pattern, formatSize(Buffer.byteLength(html)), padTo)
     }
 
     reporter.onPhase?.('Rendering dynamic pages')
@@ -181,6 +190,7 @@ export async function buildPages(
       }
 
       const paths = await mod.getStaticPaths()
+      let patternBytes = 0
       for (const { params } of paths) {
         dynamicPages++
         const rendered = stripCanopyScripts(await mod.default.render(params), canopyScriptContents)
@@ -188,7 +198,10 @@ export async function buildPages(
         const outPath = resolveOutPath(distDir, route.pattern, params)
         mkdirSync(dirname(outPath), { recursive: true })
         writeFileSync(outPath, html)
+        patternBytes += Buffer.byteLength(html)
       }
+      const pathWord = paths.length === 1 ? 'path' : 'paths'
+      logRoute(route.pattern, `${paths.length} ${pathWord}, ${formatSize(patternBytes)}`, padTo)
     }
   } finally {
     rmSync(ssrDir, { recursive: true, force: true })

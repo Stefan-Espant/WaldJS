@@ -158,6 +158,7 @@ function waldMarkRows() {
 
 export async function withGrowingTree<T>(label: string, task: Promise<T>): Promise<T> {
   if (!process.stdout.isTTY) {
+    console.log(label)
     return task
   }
 
