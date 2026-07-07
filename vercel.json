@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "node node_modules/typescript/bin/tsc -p packages/compiler/tsconfig.json && node node_modules/typescript/bin/tsc -p packages/runtime/tsconfig.json && node node_modules/typescript/bin/tsc -p packages/content/tsconfig.json && node node_modules/typescript/bin/tsc -p packages/canopy/tsconfig.json && node node_modules/typescript/bin/tsc -p packages/cli/tsconfig.json && cd marketing && node ../packages/cli/bin/wald.js build",
+  "buildCommand": "node scripts/vercel-build.mjs",
   "outputDirectory": "marketing/dist",
   "headers": [
     {
