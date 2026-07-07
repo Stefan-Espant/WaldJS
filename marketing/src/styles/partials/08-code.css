@@ -1,0 +1,55 @@
+/* ---------- code ---------- */
+.codeblok {
+  background: var(--groen-donker);
+  border: 1px solid var(--rand);
+  border-radius: 16px;
+  overflow: hidden;
+  text-align: left;
+}
+.codeblok .titel {
+  display: flex;
+  align-items: center;
+  gap: var(--byz-space-2);
+  padding: var(--byz-space-2) var(--byz-space-4);
+  min-height: 2.25rem;
+  border-bottom: 1px solid var(--rand);
+  font-family: var(--mono);
+  font-size: var(--byz-text-xs);
+  color: var(--wit-zacht);
+  box-sizing: border-box;
+}
+.codeblok .titel .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--rood);
+  opacity: .9;
+}
+.codeblok pre {
+  padding: var(--byz-space-4) var(--byz-space-5);
+  overflow-x: auto;
+  font-family: var(--mono);
+  font-size: var(--byz-text-sm);
+  line-height: 1.7;
+}
+.c-k {
+  color: #7FD8BE;
+}
+/* keywords */
+.c-s {
+  color: #FFB3BC;
+}
+/* strings */
+.c-c {
+  color: rgba(255,255,255,.45);
+  font-style: italic;
+}
+/* comments */
+.c-t {
+  color: #FF7A89;
+}
+/* tags */
+.c-p {
+  color: #A8E6CF;
+}
+/* props/attrs */

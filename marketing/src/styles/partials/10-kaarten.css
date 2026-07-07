@@ -1,0 +1,54 @@
+/* ---------- kaarten ---------- */
+/* Byzantium 12-koloms grid: 3 kaarten boven (span 4), 2 onder (span 6) */
+.kaarten {
+  display: grid;
+  grid-template-columns: repeat(12,1fr);
+  gap: var(--byz-space-5);
+}
+.kaarten .kaart {
+  grid-column: span 4;
+}
+.kaarten .kaart:nth-child(4),
+.kaarten .kaart:nth-child(5) {
+  grid-column: span 6;
+}
+@media(max-width:900px) {
+  .kaarten .kaart {
+    grid-column: span 6;
+  }
+  .kaarten .kaart:nth-child(5) {
+    grid-column: span 12;
+  }
+}
+@media(max-width:560px) {
+  .kaarten .kaart {
+    grid-column: span 12 !important;
+  }
+}
+.kaart {
+  background: var(--kaart);
+  border: 1px solid var(--rand);
+  border-radius: 18px;
+  padding: var(--byz-space-6);
+  transition: transform var(--byz-duration-normal) var(--byz-ease-bounce),border-color var(--byz-duration-normal) var(--byz-ease-default);
+}
+.kaart:hover {
+  transform: translateY(-4px);
+  border-color: var(--rood);
+}
+.kaart .icoon {
+  font-size: 1.9rem;
+  margin-bottom: 12px;
+  display: block;
+}
+.kaart h3 {
+  font-size: 1.15rem;
+  margin-bottom: 6px;
+}
+.kaart h3 span.term {
+  color: var(--rood);
+}
+.kaart p {
+  color: var(--wit-zacht);
+  font-size: .92rem;
+}

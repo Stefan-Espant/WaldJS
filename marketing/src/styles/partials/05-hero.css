@@ -1,0 +1,53 @@
+/* ---------- hero ---------- */
+header {
+  position: relative;
+  text-align: center;
+  padding: var(--byz-space-24) 6vw;
+  height: 100vh;
+  min-height: 600px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+header>* {
+  position: relative;
+  z-index: 2;
+}
+header .logo svg {
+  width: min(300px,60vw);
+  height: auto;
+  filter: drop-shadow(0 12px 40px rgba(0,0,0,.35));
+}
+header h1 {
+  font-size: clamp(2.2rem,5vw,3.6rem);
+  font-weight: 800;
+  line-height: 1.15;
+  margin: 28px auto 16px;
+  max-width: 800px;
+  text-transform: uppercase;
+  letter-spacing: .02em;
+}
+header h1 em {
+  font-family: "grafolita-script",var(--font);
+  font-style: normal;
+  font-weight: 400;
+  text-transform: none;
+  color: var(--rood);
+  font-size: 1.2em;
+  line-height: 1.3;
+  display: inline-block;
+  margin-top: .1em;
+}
+header p.sub {
+  font-size: clamp(1.05rem,2vw,1.3rem);
+  color: var(--wit-zacht);
+  max-width: 45rem;
+  margin: 0 auto 34px;
+}
+header .cta {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+}

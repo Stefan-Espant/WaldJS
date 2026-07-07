@@ -1,0 +1,37 @@
+/* ---------- FAQ ---------- */
+.faq {
+  max-width: 760px;
+  margin: 0 auto;
+}
+.faq details {
+  background: var(--kaart);
+  border: 1px solid var(--rand);
+  border-radius: 14px;
+  margin-bottom: 12px;
+  padding: 18px 22px;
+  transition: border-color .2s;
+}
+.faq details:hover {
+  border-color: var(--rood);
+}
+.faq summary {
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 1rem;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.faq summary::before {
+  content: "🌱";
+  transition: transform .25s;
+}
+.faq details[open] summary::before {
+  transform: rotate(90deg) scale(1.15);
+}
+.faq details p {
+  color: var(--wit-zacht);
+  margin-top: var(--byz-space-3);
+  font-size: var(--byz-text-sm);
+}

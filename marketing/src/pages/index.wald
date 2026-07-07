@@ -32,10 +32,11 @@ import Footer from '../components/Footer.wald'
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%23023B2D'/><path d='M32 6 L45 27 H39 L50 45 H14 L25 27 H19 Z' fill='white'/><rect x='28.5' y='45' width='7' height='11' rx='2.5' fill='%23FF3347'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://use.typekit.net/jsq2abh.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
 <link rel="stylesheet" href="/css/site.css">
 </head>
 <body>
@@ -60,8 +61,8 @@ import Footer from '../components/Footer.wald'
 <Faq />
 <Changelog />
 <Footer />
-<script src="/js/site.js"></script>
-<script src="/js/forest.js"></script>
-<script src="/js/animations.js"></script>
+<script src="/js/site.js" defer></script>
+<script src="/js/forest.js" defer></script>
+<script src="/js/animations.js" defer></script>
 </body>
 </html>

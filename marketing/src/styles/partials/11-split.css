@@ -1,0 +1,35 @@
+/* ---------- split ---------- */
+/* Byzantium 12-koloms grid: twee helften van span 6 */
+.split {
+  display: grid;
+  grid-template-columns: repeat(12,1fr);
+  gap: var(--byz-space-12);
+  align-items: center;
+}
+.split>* {
+  grid-column: span 6;
+}
+.split .tekst h2 {
+  font-size: clamp(1.5rem,2.8vw,2.1rem);
+  font-weight: 800;
+  margin-bottom: 14px;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+}
+.split .tekst h2 .tag {
+  display: block;
+  color: var(--rood);
+  font-size: .8rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.split .tekst p {
+  color: var(--wit-zacht);
+  margin-bottom: 12px;
+}
+@media(max-width:820px) {
+  .split>* {
+    grid-column: span 12;
+  }
+}

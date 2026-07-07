@@ -1,0 +1,23 @@
+/* ---------- kopieerknop ---------- */
+.codeblok .titel .kopieer {
+  margin-left: auto;
+  background: none;
+  border: 1px solid var(--rand);
+  color: var(--wit-zacht);
+  font-family: var(--font);
+  font-size: .72rem;
+  font-weight: 700;
+  padding: 3px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all .2s;
+}
+.codeblok .titel .kopieer:hover {
+  border-color: var(--rood);
+  color: var(--wit);
+}
+.codeblok .titel .kopieer.ok {
+  background: var(--rood);
+  border-color: var(--rood);
+  color: var(--wit);
+}

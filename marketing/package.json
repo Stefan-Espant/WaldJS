@@ -3,8 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "wald grow",
-    "build": "wald build",
+    "build:css": "node scripts/build-css.js dist",
+    "dev": "node scripts/build-css.js public && wald grow",
+    "build": "wald build && node scripts/build-css.js dist",
     "test": "vitest run"
   },
   "dependencies": {

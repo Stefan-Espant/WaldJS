@@ -1,0 +1,68 @@
+/* ---------- benchmarks ---------- */
+.bench {
+  background: rgba(1,48,36,.72);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--rand);
+  border-radius: 24px;
+  padding: var(--byz-space-16) 6vw;
+  max-width: 1150px;
+  margin: 0 auto;
+  box-shadow: var(--byz-shadow-lg);
+}
+.bench-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
+  gap: var(--byz-space-8);
+  margin-top: var(--byz-space-10);
+}
+.staafgroep h3 {
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+.staafgroep .metric {
+  color: var(--wit-zacht);
+  font-size: .82rem;
+  margin-bottom: 16px;
+  display: block;
+}
+.staaf {
+  margin-bottom: 14px;
+}
+.staaf .label {
+  display: flex;
+  justify-content: space-between;
+  font-size: .85rem;
+  margin-bottom: 5px;
+}
+.staaf .label b {
+  font-weight: 700;
+}
+.staaf .label .waarde {
+  font-family: var(--mono);
+  color: var(--wit-zacht);
+}
+.balk {
+  height: 12px;
+  background: rgba(255,255,255,.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.balk i {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: rgba(255,255,255,.35);
+}
+.staaf.wald .balk i {
+  background: var(--rood);
+}
+.staaf.wald .label b {
+  color: var(--rood);
+}
+.bench .disclaimer {
+  margin-top: 32px;
+  font-size: .78rem;
+  color: rgba(255,255,255,.45);
+  text-align: center;
+}

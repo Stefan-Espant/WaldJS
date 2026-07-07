@@ -1,0 +1,103 @@
+/* ---------- footer ---------- */
+.footer-bos {
+  line-height: 0;
+  margin-top: 90px;
+}
+.footer-bos svg {
+  width: 100%;
+  height: 72px;
+  display: block;
+}
+footer {
+  background: var(--groen-donker);
+  padding: var(--byz-space-16) 6vw var(--byz-space-8);
+  position: relative;
+  overflow: hidden;
+}
+.footer-grid {
+  max-width: 1150px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: var(--byz-space-12);
+  position: relative;
+  z-index: 2;
+}
+.footer-merk svg {
+  height: 70px;
+  width: auto;
+  margin-bottom: 16px;
+}
+.footer-merk p {
+  color: var(--wit-zacht);
+  font-size: .9rem;
+  max-width: 320px;
+}
+.footer-grid h4 {
+  font-size: var(--byz-text-xs);
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  color: var(--rood);
+  margin-bottom: var(--byz-space-4);
+}
+.footer-grid ul {
+  list-style: none;
+}
+.footer-grid li {
+  margin-bottom: 11px;
+}
+.footer-grid .kolom a {
+  color: var(--wit-zacht);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: var(--byz-text-sm);
+  transition: color var(--byz-duration-normal) var(--byz-ease-default),padding-left var(--byz-duration-normal) var(--byz-ease-default);
+}
+.footer-grid .kolom a:hover {
+  color: var(--wit);
+  padding-left: 4px;
+}
+.gh-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.gh-link svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+  flex: none;
+}
+.footer-onder {
+  max-width: 1150px;
+  margin: var(--byz-space-12) auto 0;
+  padding-top: var(--byz-space-6);
+  border-top: 1px solid var(--rand);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--byz-space-3);
+  flex-wrap: wrap;
+  color: rgba(255,255,255,.45);
+  font-size: var(--byz-text-xs);
+  position: relative;
+  z-index: 2;
+}
+@media(max-width:760px) {
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .footer-onder {
+    justify-content: center;
+    text-align: center;
+  }
+}
+@media(max-width:760px) {
+  nav ul li.verberg {
+    display: none;
+  }
+  header {
+    padding-top: 60px;
+  }
+}
