@@ -227,7 +227,7 @@ td code{font-family:var(--mono);font-size:.82rem;color:#FFB3BC;background:rgba(0
 
 /* ---------- groeibalk (scroll-voortgang) ---------- */
 #groeibalk{position:fixed;top:0;left:0;height:4px;width:0%;z-index:var(--byz-z-toast);background:linear-gradient(90deg,var(--groen-licht),#7FD8BE);border-radius:0 99px 99px 0}
-#groeiblad{position:fixed;top:-2px;left:0;z-index:calc(var(--byz-z-toast) + 1);font-size:13px;transform:translateX(-50%) rotate(24deg);pointer-events:none;opacity:0}
+#groeiblad{display:none}
 
 /* ---------- cursor-vuurvliegje ---------- */
 #cursorvlieg{position:fixed;left:0;top:0;width:12px;height:12px;border-radius:50%;pointer-events:none;z-index:var(--byz-z-tooltip);opacity:0;transition:opacity var(--byz-duration-slower) var(--byz-ease-default);background:radial-gradient(circle,#FFE9C0 0%,rgba(255,205,135,.55) 45%,rgba(255,205,135,0) 70%);box-shadow:0 0 14px 5px rgba(255,215,150,.45)}
@@ -345,6 +345,18 @@ footer{background:var(--groen-donker);padding:var(--byz-space-16) 6vw var(--byz-
   }
 
   .bench{padding:48px 18px;border-radius:18px}
+  .pkg{justify-content:stretch}
+  .pkg span{
+    width:100%;
+    border-radius:18px;
+    padding:12px 16px;
+    line-height:1.45;
+    overflow-wrap:anywhere;
+  }
+  .pkg span b{
+    display:block;
+    margin-bottom:2px;
+  }
   .pg-editor{min-height:280px;font-size:.78rem;padding:14px 16px}
   .pg-preview{padding:20px}
   .log-kop .datum{margin-left:0;width:100%}
