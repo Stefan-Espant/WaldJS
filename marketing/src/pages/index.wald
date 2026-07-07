@@ -30,6 +30,7 @@ import CanopyPing from '../components/CanopyPing.wald'
 <meta property="og:site_name" content="WaldJS">
 <meta name="twitter:card" content="summary">
 <meta name="theme-color" content="#023B2D">
+<meta name="robots" content="noindex,nofollow">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%23023B2D'/><path d='M32 6 L45 27 H39 L50 45 H14 L25 27 H19 Z' fill='white'/><rect x='28.5' y='45' width='7' height='11' rx='2.5' fill='%23FF3347'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
