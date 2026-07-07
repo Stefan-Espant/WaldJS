@@ -19,6 +19,7 @@
   --byz-text-xl:1.25rem;--byz-text-2xl:1.5rem;--byz-text-3xl:1.875rem;--byz-text-4xl:2.25rem;
   --byz-font-sans:'Puffin Display Soft','Baloo 2',system-ui,sans-serif; /* thema-override */
   --byz-font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --byz-font-script:'grafolita-script',cursive;
   /* motion */
   --byz-duration-fast:100ms;--byz-duration-normal:200ms;--byz-duration-slow:300ms;--byz-duration-slower:500ms;
   --byz-ease-default:cubic-bezier(.4,0,.2,1);
@@ -45,11 +46,13 @@
   --wit-zacht:rgba(255,255,255,0.72);
   --font:var(--byz-font-sans);
   --mono:var(--byz-font-mono);
+  --script:var(--byz-font-script);
 }
 *{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;overflow-x:clip}
 body{font-family:var(--font);background-color:var(--groen);color:var(--wit);line-height:1.6;overflow-x:hidden}
 ::selection{background:var(--rood);color:var(--wit)}
+h1,h2,h3,h4,header p.sub,.sectiekop p{text-wrap:balance}
 
 /* ---------- taal ---------- */
 [data-lang="nl"] .en{display:none !important}
@@ -83,7 +86,7 @@ header{position:relative;text-align:center;padding:var(--byz-space-24) 6vw;heigh
 header>*{position:relative;z-index:2}
 header .logo svg{width:min(300px,60vw);height:auto;filter:drop-shadow(0 12px 40px rgba(0,0,0,.35))}
 header h1{font-size:clamp(2.2rem,5vw,3.6rem);font-weight:800;line-height:1.15;margin:28px auto 16px;max-width:800px;text-transform:uppercase;letter-spacing:.02em}
-header h1 em{font-style:normal;color:var(--rood)}
+header h1 em{font-style:normal;color:var(--rood);font-family:var(--script);font-weight:400;font-size:1rem;text-transform:none;letter-spacing:normal}
 header p.sub{font-size:clamp(1.05rem,2vw,1.3rem);color:var(--wit-zacht);max-width:640px;margin:0 auto 34px}
 header .cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
 
@@ -140,7 +143,7 @@ svg.varen.rechts{right:1.5vw;bottom:-10px;transform:scaleX(-1)}
 .split .tekst h2{font-size:clamp(1.5rem,2.8vw,2.1rem);font-weight:800;margin-bottom:14px;text-transform:uppercase;letter-spacing:.03em}
 .split .tekst h2 .tag{display:block;color:var(--rood);font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
 .split .tekst p{color:var(--wit-zacht);margin-bottom:12px}
-@media(max-width:820px){.split>*{grid-column:span 12}}
+@media(max-width:820px){.split{grid-template-columns:minmax(0,1fr)}.split>*{grid-column:auto}}
 
 /* ---------- tabellen ---------- */
 table{width:100%;border-collapse:collapse;background:var(--kaart);border-radius:16px;overflow:hidden}
@@ -315,9 +318,10 @@ footer{background:var(--groen-donker);padding:var(--byz-space-16) 6vw var(--byz-
     line-height:1.08;
     margin:18px auto 12px;
   }
+  header h1 em{font-size:.9rem}
   header p.sub{font-size:1rem;margin-bottom:24px}
   header .cta{gap:10px}
-  .gh-stats{margin-top:1.35rem;gap:.75rem}
+  .gh-stats{margin-top:2.75rem;gap:.85rem .75rem}
   .gh-stats span{width:auto}
   .btn{width:100%;max-width:280px;text-align:center;padding:10px 18px}
   .terminal{width:100%;margin-top:42px}
@@ -334,14 +338,14 @@ footer{background:var(--groen-donker);padding:var(--byz-space-16) 6vw var(--byz-
   .codeblok pre{padding:14px 16px;font-size:.78rem}
   .codeblok .titel{padding:8px 12px}
 
-  table.vergelijk{
+  table{
     display:block;
     overflow-x:auto;
     -webkit-overflow-scrolling:touch;
     white-space:nowrap;
   }
-  table.vergelijk th,
-  table.vergelijk td{
+  table th,
+  table td{
     padding:10px 12px;
     font-size:.78rem;
   }
