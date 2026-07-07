@@ -1,15 +1,24 @@
 import { createServer, mergeConfig } from 'vite'
 import { createServer as createHttpServer } from 'node:http'
 import { defineCommand } from 'citty'
-import ora from 'ora'
 import { waldPlugin } from '../vite-plugin.js'
 import { loadWaldConfig } from '../config.js'
 import { matchRoute, scanRoutes, type Route } from '../router/index.js'
 import { maybeWrap, hoistScripts } from '../shell.js'
+import { withGrowingTree } from '../growing-tree.js'
 import { join } from 'node:path'
 
 type ViteLike = {
   ssrLoadModule: (file: string) => Promise<{ default: { render: (props?: Record<string, unknown>) => Promise<string> } }>
+}
+
+function printGrowReady(port: number, cwd: string, base: string) {
+  console.log(`  Local:   http://localhost:${port}${base === '/' ? '' : base}`)
+  console.log(`  Root:    ${cwd}`)
+  if (base !== '/') {
+    console.log(`  Base:    ${base}`)
+  }
+  console.log('  Stop:    Ctrl+C')
 }
 
 export async function handleRequest(
@@ -31,13 +40,11 @@ export const growCommand = defineCommand({
     const cwd = process.cwd()
     const port = 7233
     const pagesDir = join(cwd, 'src', 'pages')
-    const routes = scanRoutes(pagesDir)
 
     const config = await loadWaldConfig(cwd)
-    const spinner = ora('Starting dev server...').start()
 
     // config.vite goes first so WaldJS critical settings in second arg always win
-    const vite = await createServer(mergeConfig(
+    const vite = await withGrowingTree('Starting dev server...', createServer(mergeConfig(
       config.vite ?? {},
       {
         base: config.base,
@@ -45,10 +52,11 @@ export const growCommand = defineCommand({
         appType: 'custom',
         plugins: [waldPlugin()],
       },
-    ))
+    )))
 
     const server = createHttpServer(async (req, res) => {
       const url = req.url ?? '/'
+      const routes = scanRoutes(pagesDir)
       const match = matchRoute(routes, url)
 
       if (!match) {
@@ -67,22 +75,18 @@ export const growCommand = defineCommand({
         res.writeHead(200, { 'Content-Type': 'text/html' })
         res.end(full)
       } catch (e) {
-        vite.ssrFixStacktrace(e as Error)
+        const error = e as Error
+        vite.ssrFixStacktrace(error)
+        console.error(`[waldjs] Render failed for ${url}`)
+        console.error(error.stack ?? String(error))
         res.writeHead(500, { 'Content-Type': 'text/plain' })
-        res.end(String(e))
-      }
-    })
-
-    // Attach Vite's middleware to the http server for HMR
-    server.on('request', (req, res) => {
-      if (req.url?.startsWith('/@') || req.url?.startsWith('/node_modules')) {
-        vite.middlewares(req, res, () => {})
+        res.end(String(error))
       }
     })
 
     server.listen(port, () => {
-      spinner.succeed(`WaldJS dev server running at http://localhost:${port}`)
-      console.log('\n  Press Ctrl+C to stop')
+      console.log('WaldJS dev server running')
+      printGrowReady(port, cwd, config.base)
     })
 
     process.on('SIGINT', async () => {

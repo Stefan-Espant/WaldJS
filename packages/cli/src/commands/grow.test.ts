@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { handleRequest } from './grow.js'
 
 describe('handleRequest', () => {
@@ -42,5 +42,16 @@ describe('handleRequest', () => {
 
     await handleRequest(routes, '/blog/hello-world', fakeVite as any)
     expect(capturedProps[0]).toEqual({ slug: 'hello-world' })
+  })
+
+  it('rethrows render errors from ssrLoadModule', async () => {
+    const routes = [{ pattern: '/about', file: '/pages/about.wald', params: [] }]
+    const fakeVite = {
+      ssrLoadModule: vi.fn(async () => {
+        throw new Error('boom')
+      }),
+    }
+
+    await expect(handleRequest(routes, '/about', fakeVite as any)).rejects.toThrow('boom')
   })
 })

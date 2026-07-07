@@ -107,6 +107,7 @@ class Scanner {
     this.advance() // consume <
     const tag = this.scanIdentifier()
     const attrs = this.scanAttributes()
+    const canopy = /^[A-Z]/.test(tag) ? this.extractCanopy(tag, attrs, openPos) : undefined
 
     if (this.pos >= this.source.length) {
       const { line, column } = offsetToLineCol(this.source, openPos)
@@ -117,7 +118,7 @@ class Scanner {
       this.advance() // /
       this.advance() // >
       if (/^[A-Z]/.test(tag)) {
-        return { type: 'component', name: tag, attrs, children: [] }
+        return { type: 'component', name: tag, attrs, children: [], canopy }
       }
       return { type: 'element', tag, attrs, children: [] }
     }
@@ -139,14 +140,39 @@ class Scanner {
     }
 
     if (/^[A-Z]/.test(tag)) {
-      return { type: 'component', name: tag, attrs, children }
+      return { type: 'component', name: tag, attrs, children, canopy }
     }
     return { type: 'element', tag, attrs, children }
   }
 
-  private scanIdentifier(): string {
+  private extractCanopy(tag: string, attrs: AttributeNode[], openPos: number): ComponentNode['canopy'] {
+    let canopy: ComponentNode['canopy']
+
+    for (let index = attrs.length - 1; index >= 0; index--) {
+      const attr = attrs[index]
+      if (!attr.name.startsWith('canopy:')) continue
+      const strategy = attr.name.slice('canopy:'.length)
+
+      if (strategy !== 'load' && strategy !== 'idle' && strategy !== 'visible') {
+        const { line, column } = offsetToLineCol(this.source, openPos)
+        throw new WaldError(
+          `${attr.name} is not valid on <${tag}> — use canopy:load, canopy:idle or canopy:visible`,
+          line,
+          column,
+        )
+      }
+
+      canopy = { strategy }
+      attrs.splice(index, 1)
+    }
+
+    return canopy
+  }
+
+  private scanIdentifier(allowColon = false): string {
     let id = ''
-    while (this.pos < this.source.length && /[\w-]/.test(this.current)) {
+    const pattern = allowColon ? /[\w:-]/ : /[\w-]/
+    while (this.pos < this.source.length && pattern.test(this.current)) {
       id += this.advance()
     }
     return id
@@ -168,7 +194,7 @@ class Scanner {
   }
 
   private scanAttribute(): AttributeNode | null {
-    const name = this.scanIdentifier()
+    const name = this.scanIdentifier(true)
     if (!name) {
       this.advance()
       return null

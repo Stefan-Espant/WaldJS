@@ -120,6 +120,17 @@ describe('scanTemplate — elements', () => {
       children: [],
     }])
   })
+
+  it('extracts canopy strategy from component attrs', () => {
+    const nodes = scanTemplate('<Counter canopy:load initial={3} />')
+    expect(nodes).toEqual([{
+      type: 'component',
+      name: 'Counter',
+      attrs: [{ type: 'attribute', name: 'initial', value: { type: 'expression', code: '3' } }],
+      children: [],
+      canopy: { strategy: 'load' },
+    }])
+  })
 })
 
 describe('scanTemplate — void elements', () => {
@@ -225,6 +236,10 @@ describe('scanTemplate — errors', () => {
 
   it('throws WaldError for unclosed element tag', () => {
     expect(() => scanTemplate('<div')).toThrow(WaldError)
+  })
+
+  it('throws WaldError for an invalid canopy strategy', () => {
+    expect(() => scanTemplate('<Counter canopy:soon />')).toThrow(/canopy:soon is not valid/)
   })
 
   it('unclosed tag error includes the tag name and points to <', () => {

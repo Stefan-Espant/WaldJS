@@ -133,6 +133,12 @@ function renderComponent(node: ComponentNode): string {
         : `${attr.name}: (${attr.value.code})`
     )
     .join(', ')
+  const propsObj = `{ ${props} }`
+
+  if (node.canopy) {
+    const src = `wald:canopy:${node.name}`
+    return `\${new SafeHtml('<wald-canopy data-src="${src}" data-strategy="${node.canopy.strategy}" data-props=\\'' + JSON.stringify(${propsObj}) + '\\'>' + await ${node.name}.render(${propsObj}) + '</wald-canopy>')}`
+  }
 
   if (node.children.length > 0) {
     const childrenHtml = renderNodes(node.children)
@@ -142,7 +148,7 @@ function renderComponent(node: ComponentNode): string {
     return `\${new SafeHtml(await ${node.name}.render({ ${propsWithPond} }))}`
   }
 
-  return `\${new SafeHtml(await ${node.name}.render({ ${props} }))}`
+  return `\${new SafeHtml(await ${node.name}.render(${propsObj}))}`
 }
 
 function escapeTemplateLiteral(text: string): string {

@@ -45,6 +45,9 @@ export type ComponentNode = {
   name: string
   attrs: AttributeNode[]
   children: TemplateNode[]
+  canopy?: {
+    strategy: 'load' | 'idle' | 'visible'
+  }
 }
 
 export type ScriptNode = {

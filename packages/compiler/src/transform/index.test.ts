@@ -89,6 +89,26 @@ describe('transform', () => {
     expect(output).toContain('await Button.render(')
   })
 
+  it('renders canopy components as wald-canopy wrappers', () => {
+    const ast: WaldDocument = {
+      type: 'document',
+      frontmatter: { type: 'frontmatter', code: '' },
+      template: [{
+        type: 'component',
+        name: 'Counter',
+        attrs: [{ type: 'attribute', name: 'initial', value: { type: 'expression', code: '3' } }],
+        children: [],
+        canopy: { strategy: 'visible' },
+      }],
+    }
+
+    const output = transform(ast)
+    expect(output).toContain('<wald-canopy data-src="wald:canopy:Counter"')
+    expect(output).toContain('data-strategy="visible"')
+    expect(output).toContain('JSON.stringify({ initial: (3) })')
+    expect(output).toContain("await Counter.render({ initial: (3) }) + '</wald-canopy>'")
+  })
+
   it('hoists export function to module level before export default', () => {
     const ast: WaldDocument = {
       type: 'document',

@@ -14,6 +14,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@waldjs/canopy": "workspace:*",
     "@waldjs/compiler": "workspace:*",
     "@waldjs/content": "workspace:*",
     "@waldjs/runtime": "workspace:*",

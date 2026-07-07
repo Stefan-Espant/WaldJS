@@ -17,6 +17,27 @@ vi.mock('vite', async (importOriginal) => {
       const { readFileSync: fsRead, writeFileSync: fsWrite, mkdirSync: fsMkdir } = await import('node:fs')
       const { join: pJoin, dirname: pDirname, resolve: pResolve } = await import('node:path')
 
+      if (cfg.build.ssr === false) {
+        const outDir: string = cfg.build.outDir
+        const inputs: Record<string, string> = cfg.build.rollupOptions.input
+        fsMkdir(pJoin(outDir, 'assets'), { recursive: true })
+
+        const bundle: Record<string, any> = {}
+        for (const key of Object.keys(inputs)) {
+          const fileName = `assets/${key}-testhash.js`
+          fsWrite(pJoin(outDir, fileName), 'export default function() {}')
+          bundle[fileName] = { type: 'chunk', isEntry: true, name: key, fileName }
+        }
+
+        for (const plugin of cfg.plugins ?? []) {
+          if (typeof plugin?.generateBundle === 'function') {
+            await plugin.generateBundle({}, bundle)
+          }
+        }
+
+        return
+      }
+
       const ssrDir: string = cfg.build.outDir
       const inputs: Record<string, string> = cfg.build.rollupOptions.input
       const contentDir: string | undefined = cfg._waldContentDir
@@ -82,7 +103,7 @@ vi.mock('./check.js', () => ({
   runCheck: vi.fn(),
 }))
 
-import { buildPages, buildCommand } from './build.js'
+import { buildPages, buildCommand, formatBuildSummary } from './build.js'
 
 let tmpDir: string
 
@@ -108,6 +129,22 @@ describe('buildPages', () => {
     expect(html).toContain('<!DOCTYPE html>')
   })
 
+  it('returns build stats for summary output', async () => {
+    const pagesDir = join(tmpDir, 'src', 'pages')
+    const distDir = join(tmpDir, 'dist')
+    mkdirSync(pagesDir, { recursive: true })
+    writeFileSync(join(pagesDir, 'index.wald'), '<p>home</p>')
+
+    const stats = await buildPages(pagesDir, makeConfig(distDir))
+
+    expect(stats.staticRoutes).toBe(1)
+    expect(stats.dynamicRoutes).toBe(0)
+    expect(stats.dynamicPages).toBe(0)
+    expect(stats.warnings).toEqual([])
+    expect(stats.canopyEntries).toBe(0)
+    expect(stats.copiedPublic).toBe(false)
+  })
+
   it('generates dist/about/index.html from about.wald', async () => {
     const pagesDir = join(tmpDir, 'src', 'pages')
     const distDir = join(tmpDir, 'dist')
@@ -129,6 +166,23 @@ describe('buildPages', () => {
     await buildPages(pagesDir, makeConfig(distDir))
 
     expect(existsSync(join(distDir, 'blog', '[slug]', 'index.html'))).toBe(false)
+  })
+
+  it('reports warnings through the reporter instead of printing inline', async () => {
+    const pagesDir = join(tmpDir, 'src', 'pages')
+    const distDir = join(tmpDir, 'dist')
+    mkdirSync(join(pagesDir, 'blog'), { recursive: true })
+    writeFileSync(join(pagesDir, 'blog', '[slug].wald'), '<h1>Post</h1>')
+
+    const reported: string[] = []
+    const stats = await buildPages(pagesDir, makeConfig(distDir), undefined, undefined, {
+      onWarning(warning) {
+        reported.push(warning)
+      },
+    })
+
+    expect(reported).toContain('Skipping dynamic route /blog/:slug — no getStaticPaths() export')
+    expect(stats.warnings).toContain('Skipping dynamic route /blog/:slug — no getStaticPaths() export')
   })
 
   it('copies public/ to dist/ when it exists', async () => {
@@ -320,6 +374,79 @@ describe('buildPages', () => {
 
     expect(existsSync(join(tmpDir, '.wald-ssr'))).toBe(false)
   })
+
+  it('replaces canopy placeholder data-src with the real asset URL and injects the runtime script', async () => {
+    const pagesDir = join(tmpDir, 'src', 'pages')
+    const componentsDir = join(tmpDir, 'src', 'components')
+    const distDir = join(tmpDir, 'dist')
+    mkdirSync(pagesDir, { recursive: true })
+    mkdirSync(componentsDir, { recursive: true })
+
+    writeFileSync(
+      join(componentsDir, 'Counter.wald'),
+      [
+        '---',
+        'const { initial } = $$props',
+        '---',
+        '<button>{initial}</button>',
+        '<script>export default function(root) { root.dataset.ready = "yes" }</script>',
+      ].join('\n')
+    )
+
+    writeFileSync(
+      join(pagesDir, 'index.wald'),
+      ["---", "import Counter from '../components/Counter.wald'", '---', '<Counter canopy:load initial={3} />'].join('\n')
+    )
+
+    await buildPages(pagesDir, makeConfig(distDir))
+
+    const html = readFileSync(join(distDir, 'index.html'), 'utf8')
+    expect(html).not.toContain('wald:canopy:Counter')
+    expect(html).toContain('data-src="/assets/counter-testhash.js"')
+    expect(html).toContain('<script type="module" src="/assets/wald-canopy-testhash.js"></script>')
+  })
+
+  it('does not hoist the inline script of a component used with canopy', async () => {
+    const pagesDir = join(tmpDir, 'src', 'pages')
+    const componentsDir = join(tmpDir, 'src', 'components')
+    const distDir = join(tmpDir, 'dist')
+    mkdirSync(pagesDir, { recursive: true })
+    mkdirSync(componentsDir, { recursive: true })
+
+    writeFileSync(
+      join(componentsDir, 'Counter.wald'),
+      [
+        '---',
+        'const { initial } = $$props',
+        '---',
+        '<button>{initial}</button>',
+        '<script>export default function(root) { root.dataset.ready = "yes" }</script>',
+      ].join('\n')
+    )
+
+    writeFileSync(
+      join(pagesDir, 'index.wald'),
+      ["---", "import Counter from '../components/Counter.wald'", '---', '<Counter canopy:load initial={3} />'].join('\n')
+    )
+
+    await buildPages(pagesDir, makeConfig(distDir))
+
+    const html = readFileSync(join(distDir, 'index.html'), 'utf8')
+    expect(html).not.toContain('export default function(root) { root.dataset.ready = "yes" }')
+  })
+
+  it('does not inject the canopy runtime script when no page uses canopy', async () => {
+    const pagesDir = join(tmpDir, 'src', 'pages')
+    const distDir = join(tmpDir, 'dist')
+    mkdirSync(pagesDir, { recursive: true })
+    writeFileSync(join(pagesDir, 'index.wald'), '<p>Hello</p>')
+
+    await buildPages(pagesDir, makeConfig(distDir))
+
+    const html = readFileSync(join(distDir, 'index.html'), 'utf8')
+    expect(html).not.toContain('wald-canopy')
+    expect(html).not.toContain('<script type="module" src="/assets/wald-canopy-testhash.js"></script>')
+  })
 })
 
 describe('build --check', () => {
@@ -345,5 +472,24 @@ describe('build --check', () => {
       // real build may fail, but we only care that runCheck was not called
     }
     expect(runCheck).not.toHaveBeenCalled()
+  })
+})
+
+describe('formatBuildSummary', () => {
+  it('renders compact summary lines', () => {
+    expect(formatBuildSummary({
+      staticRoutes: 2,
+      dynamicRoutes: 1,
+      dynamicPages: 3,
+      warnings: ['one'],
+      canopyEntries: 4,
+      copiedPublic: true,
+    }, 'dist')).toEqual([
+      '  Output:   dist/',
+      '  Pages:    2 static routes',
+      '  Dynamic:  1 route -> 3 pages',
+      '  Canopy:   4 islands',
+      '  Warnings: 1',
+    ])
   })
 })

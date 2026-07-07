@@ -1,4 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
+import { join } from 'node:path'
+import { tmpdir } from 'node:os'
+import { writeFileSync } from 'node:fs'
 import { waldPlugin } from './vite-plugin.js'
 import type { Plugin } from 'vite'
 
@@ -90,6 +93,56 @@ describe('vite-plugin-wald-content', () => {
 
   it('returns undefined for other virtual ids in load', async () => {
     const code = await callHook('vite-plugin-wald-content', 'load', '\0other:module')
+    expect(code).toBeUndefined()
+  })
+})
+
+describe('vite-plugin-wald-canopy-script', () => {
+  it('resolves .wald?canopy-script ids to a virtual module', async () => {
+    const result = await callHook(
+      'vite-plugin-wald-canopy-script',
+      'resolveId',
+      '/abs/Counter.wald?canopy-script',
+      undefined,
+      {}
+    )
+    expect(result).toBe('\0/abs/Counter.wald?canopy-script')
+  })
+
+  it('returns undefined for ids without the canopy-script suffix', async () => {
+    const result = await callHook('vite-plugin-wald-canopy-script', 'resolveId', '/abs/Counter.wald', undefined, {})
+    expect(result).toBeUndefined()
+  })
+
+  it('loads only the raw script body from a .wald file', async () => {
+    const tmpFile = join(tmpdir(), `wald-canopy-plugin-test-${Date.now()}.wald`)
+    writeFileSync(
+      tmpFile,
+      [
+        '---',
+        'const count = 0',
+        '---',
+        '<button>{count}</button>',
+        '<script type="module">export default function(root) { root.dataset.ready = "yes" }</script>',
+      ].join('\n')
+    )
+
+    const code = await callHook('vite-plugin-wald-canopy-script', 'load', `\0${tmpFile}?canopy-script`)
+    expect(code).toContain('export default function(root)')
+    expect(code).not.toContain('<script')
+    expect(code).not.toContain('</script>')
+  })
+
+  it('returns a no-op default export when a component has no script block', async () => {
+    const tmpFile = join(tmpdir(), `wald-canopy-plugin-test-noscript-${Date.now()}.wald`)
+    writeFileSync(tmpFile, ['---', '---', '<p>Static</p>'].join('\n'))
+
+    const code = await callHook('vite-plugin-wald-canopy-script', 'load', `\0${tmpFile}?canopy-script`)
+    expect(code).toBe('export default function() {}')
+  })
+
+  it('returns undefined for unrelated virtual ids', async () => {
+    const code = await callHook('vite-plugin-wald-canopy-script', 'load', '\0other:module')
     expect(code).toBeUndefined()
   })
 })
