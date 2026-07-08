@@ -505,7 +505,7 @@ describe('formatBuildSummary', () => {
       '  Output:   dist/',
       '  Pages:    2 static routes',
       '  Dynamic:  1 route -> 3 pages',
-      '  Canopy:   4 islands',
+      '  Canopy:   4 canopies',
       '  Warnings: 1',
     ])
   })

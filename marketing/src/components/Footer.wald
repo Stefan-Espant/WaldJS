@@ -43,6 +43,5 @@
   </div>
   <div class="footer-onder">
     <span>© 2026 WaldJS · <span class="nl">Geplant met liefde</span><span class="en">Planted with love</span> 🌱</span>
-    <span><span class="nl">Gebouwd als pnpm-monorepo met Turborepo</span><span class="en">Built as a pnpm monorepo with Turborepo</span></span>
   </div>
 </footer>

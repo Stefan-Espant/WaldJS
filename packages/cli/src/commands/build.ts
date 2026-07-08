@@ -13,7 +13,7 @@ import { runCheck } from './check.js'
 
 export type BuildPhase =
   | 'Scanning routes'
-  | 'Scanning canopy islands'
+  | 'Scanning canopies'
   | 'Bundling canopy client'
   | 'Bundling SSR pages'
   | 'Rendering static pages'
@@ -113,7 +113,7 @@ export async function buildPages(
 
   const srcDir = dirname(pagesDir)
   const assetsDir = join(srcDir, 'assets')
-  reporter.onPhase?.('Scanning canopy islands')
+  reporter.onPhase?.('Scanning canopies')
   const { entries: canopyEntries, warnings: canopyWarnings } = scanCanopyEntries(srcDir)
   for (const warning of canopyWarnings) {
     warnings.push(warning)
@@ -225,7 +225,7 @@ export function formatBuildSummary(stats: BuildStats, outDir: string): string[] 
     `  Output:   ${outDir}/`,
     `  Pages:    ${pluralize(stats.staticRoutes, 'static route')}`,
     `  Dynamic:  ${pluralize(stats.dynamicRoutes, 'route')} -> ${pluralize(stats.dynamicPages, 'page')}`,
-    `  Canopy:   ${pluralize(stats.canopyEntries, 'island')}`,
+    `  Canopy:   ${pluralize(stats.canopyEntries, 'canopy', 'canopies')}`,
     `  Warnings: ${stats.warnings.length}`,
   ]
 }
