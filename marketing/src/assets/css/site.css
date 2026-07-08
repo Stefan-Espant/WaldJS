@@ -86,7 +86,7 @@ header{position:relative;text-align:center;padding:var(--byz-space-24) 6vw;heigh
 header>*{position:relative;z-index:2}
 header .logo svg{width:min(300px,60vw);height:auto;filter:drop-shadow(0 12px 40px rgba(0,0,0,.35))}
 header h1{font-size:clamp(2.2rem,5vw,3.6rem);font-weight:800;line-height:1.15;margin:28px auto 16px;max-width:800px;text-transform:uppercase;letter-spacing:.02em}
-header h1 em{font-style:normal;color:var(--rood);font-family:var(--script);font-weight:400;font-size:1rem;text-transform:none;letter-spacing:normal}
+header h1 em{font-style:normal;color:var(--rood);font-family:var(--script);font-weight:400;font-size:4rem;text-transform:none;letter-spacing:normal}
 header p.sub{font-size:clamp(1.05rem,2vw,1.3rem);color:var(--wit-zacht);max-width:640px;margin:0 auto 34px}
 header .cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
 
@@ -94,7 +94,7 @@ header .cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
 section{padding:var(--byz-space-24) 6vw;max-width:1150px;margin:0 auto;position:relative}
 section.vol{max-width:none;padding-left:0;padding-right:0}
 .sectiekop{text-align:center;margin-bottom:var(--byz-space-16)}
-.sectiekop .tag{color:var(--rood);font-weight:800;text-transform:uppercase;letter-spacing:.12em;font-size:var(--byz-text-xs)}
+.sectiekop .tag{color:var(--rood);font-family:var(--script);font-weight:400;text-transform:none;letter-spacing:normal;font-size:1.2rem}
 .sectiekop h2{font-size:clamp(1.7rem,3.4vw,2.5rem);font-weight:800;margin-top:8px;text-transform:uppercase;letter-spacing:.03em}
 .sectiekop p{color:var(--wit-zacht);max-width:600px;margin:12px auto 0}
 .sectiekop::after{content:"";display:block;width:140px;height:24px;margin:20px auto 0;opacity:.9;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 140 24'><path d='M8 12 H132' stroke='%23FF3347' stroke-width='1.6' stroke-linecap='round' fill='none'/><g fill='%237FD8BE'><ellipse cx='34' cy='7' rx='8' ry='3.2' transform='rotate(-28 34 7)'/><ellipse cx='54' cy='17' rx='8' ry='3.2' transform='rotate(28 54 17)'/><ellipse cx='72' cy='6' rx='8' ry='3.2' transform='rotate(-28 72 6)'/><ellipse cx='90' cy='18' rx='8' ry='3.2' transform='rotate(28 90 18)'/><ellipse cx='108' cy='7' rx='8' ry='3.2' transform='rotate(-28 108 7)'/></g></svg>") no-repeat center/contain}
@@ -141,7 +141,7 @@ svg.varen.rechts{right:1.5vw;bottom:-10px;transform:scaleX(-1)}
 .split{display:grid;grid-template-columns:repeat(12,1fr);gap:var(--byz-space-12);align-items:center}
 .split>*{grid-column:span 6}
 .split .tekst h2{font-size:clamp(1.5rem,2.8vw,2.1rem);font-weight:800;margin-bottom:14px;text-transform:uppercase;letter-spacing:.03em}
-.split .tekst h2 .tag{display:block;color:var(--rood);font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
+.split .tekst h2 .tag{display:block;color:var(--rood);font-family:var(--script);font-weight:400;font-size:1.2rem;letter-spacing:normal;text-transform:none;margin-bottom:8px}
 .split .tekst p{color:var(--wit-zacht);margin-bottom:12px}
 @media(max-width:820px){.split{grid-template-columns:minmax(0,1fr)}.split>*{grid-column:auto}}
 
@@ -318,7 +318,7 @@ footer{background:var(--groen-donker);padding:var(--byz-space-16) 6vw var(--byz-
     line-height:1.08;
     margin:18px auto 12px;
   }
-  header h1 em{font-size:.9rem}
+  header h1 em{font-size:clamp(2.6rem,12vw,3.4rem)}
   header p.sub{font-size:1rem;margin-bottom:24px}
   header .cta{gap:10px}
   .gh-stats{margin-top:2.75rem;gap:.85rem .75rem}
@@ -331,6 +331,7 @@ footer{background:var(--groen-donker);padding:var(--byz-space-16) 6vw var(--byz-
   .sectiekop{margin-bottom:42px}
   .sectiekop h2{font-size:1.55rem;line-height:1.14}
   .sectiekop p{font-size:.95rem}
+  .sectiekop .tag,.split .tekst h2 .tag{font-size:1.05rem}
 
   .qs-grid,.bench-grid{grid-template-columns:minmax(0,1fr)}
   .split{gap:32px}
