@@ -4,6 +4,8 @@ A content-first web framework for building fast, static-first websites. Write `.
 
 > **Status:** Early development. Phases 0–2b and 4a–4b are complete. Phase 3 (client-side hydration) is next.
 
+<img width="1954" height="1254" alt="Scherm­afbeelding 2026-07-08 om 07 40 00" src="https://github.com/user-attachments/assets/eb33ec5d-85ef-469e-85c4-ba08326f30b2" />
+
 ---
 
 ## Quick start
