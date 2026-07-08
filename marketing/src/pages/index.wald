@@ -31,12 +31,12 @@ import CanopyPing from '../components/CanopyPing.wald'
 <meta name="twitter:card" content="summary">
 <meta name="theme-color" content="#023B2D">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%23023B2D'/><path d='M32 6 L45 27 H39 L50 45 H14 L25 27 H19 Z' fill='white'/><rect x='28.5' y='45' width='7' height='11' rx='2.5' fill='%23FF3347'/></svg>">
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-D1PCWHP7YN"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-SR1VDF9DJK"></script>
 <script>
 window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
-gtag('config', 'G-D1PCWHP7YN');
+gtag('config', 'G-SR1VDF9DJK');
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
