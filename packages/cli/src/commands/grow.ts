@@ -1,6 +1,7 @@
 import { createServer, mergeConfig } from 'vite'
 import { createServer as createHttpServer } from 'node:http'
 import { defineCommand } from 'citty'
+import sirv from 'sirv'
 import { waldPlugin } from '../vite-plugin.js'
 import { loadWaldConfig } from '../config.js'
 import { matchRoute, scanRoutes, type Route } from '../router/index.js'
@@ -40,6 +41,8 @@ export const growCommand = defineCommand({
     const cwd = process.cwd()
     const port = 7233
     const pagesDir = join(cwd, 'src', 'pages')
+    const publicDir = join(cwd, 'public')
+    const srcDir = join(cwd, 'src')
 
     const config = await loadWaldConfig(cwd)
 
@@ -53,9 +56,23 @@ export const growCommand = defineCommand({
         plugins: [waldPlugin()],
       },
     )))
+    const servePublic = sirv(publicDir, { dev: true })
+    const serveSrc = sirv(srcDir, { dev: true })
 
     const server = createHttpServer(async (req, res) => {
       const url = req.url ?? '/'
+
+      if (url.startsWith('/assets/')) {
+        serveSrc(req, res, () => {
+          res.writeHead(404, { 'Content-Type': 'text/plain' })
+          res.end('Asset not found')
+        })
+        return
+      }
+
+      servePublic(req, res, () => {})
+      if (res.writableEnded) return
+
       const routes = scanRoutes(pagesDir)
       const match = matchRoute(routes, url)
 
