@@ -8,9 +8,11 @@
   </div>
   <div class="changelog">
     <div class="log-kaart">
-      <div class="log-kop"><span class="versie aankomend">v0.7.0</span><h3>Forest</h3><span class="datum"><span class="nl">onder constructie</span><span class="en">under construction</span> 🚧</span></div>
+      <div class="log-kop"><span class="versie">v0.7.0</span><h3>Forest</h3><span class="datum">juli 2026</span></div>
       <ul>
-        <li><span class="nl">Deployment-adapters — je bos uitplanten naar elke host</span><span class="en">Deployment adapters — transplant your forest to any host</span></li>
+        <li><span class="nl">Deployment-adapters voor static, Netlify, Cloudflare Pages en Vercel</span><span class="en">Deployment adapters for static, Netlify, Cloudflare Pages and Vercel</span></li>
+        <li><span class="nl"><code style="font-family:var(--mono);font-size:.85em">adapter</code> in <code style="font-family:var(--mono);font-size:.85em">wald.config.ts</code> met host-specifieke output en post-build bestanden</span><span class="en"><code style="font-family:var(--mono);font-size:.85em">adapter</code> in <code style="font-family:var(--mono);font-size:.85em">wald.config.ts</code> with host-specific output and post-build files</span></li>
+        <li><span class="nl">CLI-buildsummary toont nu ook welke adapter je bos gebruikt</span><span class="en">The CLI build summary now shows which adapter your forest uses</span></li>
       </ul>
     </div>
     <div class="log-kaart">

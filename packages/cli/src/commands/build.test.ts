@@ -3,6 +3,7 @@ import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, existsSync } from 
 import { join, resolve, dirname } from 'node:path'
 import { tmpdir } from 'node:os'
 import type { WaldConfig } from '../config.js'
+import { staticAdapter, vercelAdapter } from '../adapters.js'
 import { runCheck } from './check.js'
 
 // Mock vite.build() — simulates what Vite SSR would do by compiling .wald files
@@ -108,7 +109,7 @@ import { buildPages, buildCommand, formatBuildSummary } from './build.js'
 let tmpDir: string
 
 function makeConfig(distDir: string): Required<WaldConfig> {
-  return { outDir: distDir, base: '/', vite: {} }
+  return { outDir: distDir, base: '/', vite: {}, adapter: staticAdapter() }
 }
 
 beforeEach(() => {
@@ -144,6 +145,7 @@ describe('buildPages', () => {
     expect(stats.canopyEntries).toBe(0)
     expect(stats.copiedPublic).toBe(false)
     expect(stats.copiedAssets).toBe(false)
+    expect(stats.adapterName).toBe('static')
   })
 
   it('generates dist/about/index.html from about.wald', async () => {
@@ -213,6 +215,21 @@ describe('buildPages', () => {
 
     expect(existsSync(join(distDir, 'assets', 'js', 'site.js'))).toBe(true)
     expect(stats.copiedAssets).toBe(true)
+  })
+
+  it('runs the configured adapter after building', async () => {
+    const pagesDir = join(tmpDir, 'src', 'pages')
+    const distDir = join(tmpDir, '.vercel', 'output', 'static')
+    mkdirSync(pagesDir, { recursive: true })
+    writeFileSync(join(pagesDir, 'index.wald'), '<p>home</p>')
+
+    const config = makeConfig(distDir)
+    config.adapter = vercelAdapter()
+
+    await buildPages(pagesDir, config)
+
+    expect(existsSync(join(tmpDir, '.vercel', 'output', 'config.json'))).toBe(true)
+    expect(existsSync(join(distDir, 'index.html'))).toBe(true)
   })
 
   it('renders a static route that uses getCollection from wald:content', async () => {
@@ -501,11 +518,13 @@ describe('formatBuildSummary', () => {
       canopyEntries: 4,
       copiedPublic: true,
       copiedAssets: true,
+      adapterName: 'vercel',
     }, 'dist')).toEqual([
       '  Output:   dist/',
       '  Pages:    2 static routes',
       '  Dynamic:  1 route -> 3 pages',
       '  Canopy:   4 canopies',
+      '  Adapter:  vercel',
       '  Warnings: 1',
     ])
   })

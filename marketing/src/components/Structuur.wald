@@ -26,14 +26,14 @@
       <h2><span class="tag"><span class="nl">Structuur &amp; config</span><span class="en">Structure &amp; config</span></span>
         <span class="nl">Overzichtelijk als een aangeplant bos</span>
         <span class="en">As orderly as a planted forest</span></h2>
-      <p><span class="nl">Configureren kan met een optionele <b>wald.config.ts</b> in de projectroot — <b>outDir</b>, <b>base</b> voor sub-directory-deploys, en een <b>vite</b>-blok dat rechtstreeks naar Vite gaat (plugins, resolve, etc.). Zonder config gebruikt WaldJS verstandige standaardwaarden.</span>
-      <span class="en">Configure via an optional <b>wald.config.ts</b> in your project root — <b>outDir</b>, <b>base</b> for sub-directory deploys, and a <b>vite</b> block passed straight to Vite (plugins, resolve, etc.). Without a config file WaldJS uses sensible defaults.</span></p>
+      <p><span class="nl">Configureren kan met een optionele <b>wald.config.ts</b> in de projectroot — <b>adapter</b>, <b>outDir</b>, <b>base</b> voor sub-directory-deploys, en een <b>vite</b>-blok dat rechtstreeks naar Vite gaat (plugins, resolve, etc.). Zonder config gebruikt WaldJS verstandige standaardwaarden.</span>
+      <span class="en">Configure via an optional <b>wald.config.ts</b> in your project root — <b>adapter</b>, <b>outDir</b>, <b>base</b> for sub-directory deploys, and a <b>vite</b> block passed straight to Vite (plugins, resolve, etc.). Without a config file WaldJS uses sensible defaults.</span></p>
       <div class="codeblok" style="margin-top:18px">
         <div class="titel"><span class="dot"></span>wald.config.ts</div>
-        <pre><span class="c-k">import</span> &#123; defineConfig &#125; <span class="c-k">from</span> <span class="c-s">'@waldjs/cli'</span>
+        <pre><span class="c-k">import</span> &#123; defineConfig, vercelAdapter &#125; <span class="c-k">from</span> <span class="c-s">'@waldjs/cli'</span>
 
 <span class="c-k">export default</span> defineConfig(&#123;
-  outDir: <span class="c-s">'dist'</span>,
+  adapter: vercelAdapter(),
   base: <span class="c-s">'/'</span>,
   vite: &#123; plugins: [] &#125;,
 &#125;)</pre>

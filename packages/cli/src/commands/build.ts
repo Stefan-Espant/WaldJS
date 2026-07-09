@@ -20,6 +20,7 @@ export type BuildPhase =
   | 'Rendering dynamic pages'
   | 'Copying public assets'
   | 'Copying source assets'
+  | 'Applying adapter'
 
 export type BuildStats = {
   staticRoutes: number
@@ -29,6 +30,7 @@ export type BuildStats = {
   canopyEntries: number
   copiedPublic: boolean
   copiedAssets: boolean
+  adapterName: string
 }
 
 type BuildReporter = {
@@ -97,7 +99,8 @@ export async function buildPages(
   contentDir?: string,
   reporter: BuildReporter = {},
 ): Promise<BuildStats> {
-  const distDir = config.outDir
+  const rootDir = resolve(pagesDir, '..', '..')
+  const distDir = resolve(rootDir, config.outDir)
   reporter.onPhase?.('Scanning routes')
   const routes = scanRoutes(pagesDir)
   const staticRoutes = routes.filter(r => r.params.length === 0)
@@ -205,6 +208,18 @@ export async function buildPages(
     copiedAssets = true
   }
 
+  reporter.onPhase?.('Applying adapter')
+  await config.adapter.adapt?.({
+    rootDir,
+    outDir: distDir,
+    outDirRelative: config.outDir,
+    base: config.base,
+    staticRoutes: staticRoutes.length,
+    dynamicRoutes: dynamicRoutes.length,
+    dynamicPages,
+    canopyEntries: canopyEntries.size,
+  })
+
   return {
     staticRoutes: staticRoutes.length,
     dynamicRoutes: dynamicRoutes.length,
@@ -213,6 +228,7 @@ export async function buildPages(
     canopyEntries: canopyEntries.size,
     copiedPublic,
     copiedAssets,
+    adapterName: config.adapter.name,
   }
 }
 
@@ -226,6 +242,7 @@ export function formatBuildSummary(stats: BuildStats, outDir: string): string[] 
     `  Pages:    ${pluralize(stats.staticRoutes, 'static route')}`,
     `  Dynamic:  ${pluralize(stats.dynamicRoutes, 'route')} -> ${pluralize(stats.dynamicPages, 'page')}`,
     `  Canopy:   ${pluralize(stats.canopyEntries, 'canopy', 'canopies')}`,
+    `  Adapter:  ${stats.adapterName}`,
     `  Warnings: ${stats.warnings.length}`,
   ]
 }
