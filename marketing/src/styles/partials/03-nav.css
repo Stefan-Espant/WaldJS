@@ -6,64 +6,74 @@ nav {
   right: 0;
   z-index: var(--byz-z-sticky);
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: auto 1fr auto auto;
   align-items: center;
   gap: var(--byz-space-5);
   padding: var(--byz-space-3) 6vw;
-  background:
-    linear-gradient(180deg,
-      rgba(0, 13, 9, .96) 0%,
-      rgba(0, 23, 17, .74) 52%,
-      rgba(1, 39, 29, 0) 100%);
+  background: transparent;
   border-bottom: none;
-  transition: background var(--byz-duration-slower) var(--byz-ease-default);
+  transition: background var(--byz-duration-slower) var(--byz-ease-default)
 }
+
+/* overdag: donkere glasbalk zodat witte links & logo leesbaar blijven */
 body.dag nav {
-  background:
-    linear-gradient(180deg,
-      rgba(13, 63, 49, .92) 0%,
-      rgba(26, 92, 71, .66) 52%,
-      rgba(26, 92, 71, 0) 100%);
+  background: rgba(2, 59, 45, .78);
+  backdrop-filter: blur(0.75rem);
+  -webkit-backdrop-filter: blur(0.75rem)
 }
+
 nav .brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 0.625rem;
   text-decoration: none;
-  justify-self: center;
+  justify-self: start
 }
+
 nav .brand svg {
-  width: 100px;
-  height: 100px;
+  width: 6.25rem;
+  height: 6.25rem
 }
+
 nav ul {
   display: flex;
   gap: var(--byz-space-6);
   list-style: none;
-  align-items: center;
+  align-items: center
 }
+
 nav ul.links-kant {
-  justify-content: flex-start;
+  justify-content: center
 }
+
 nav ul.rechts-kant {
-  justify-content: flex-end;
+  justify-content: flex-end
 }
+
 nav ul a {
   color: var(--wit-zacht);
   text-decoration: none;
   font-weight: 600;
   font-size: var(--byz-text-sm);
-  transition: color var(--byz-duration-normal) var(--byz-ease-default);
+  transition: color var(--byz-duration-normal) var(--byz-ease-default)
 }
+
 nav ul a:hover {
-  color: var(--wit);
+  color: var(--wit)
 }
+
 .lang-switch {
   display: flex;
-  border: 1.5px solid var(--rand);
-  border-radius: 999px;
+  border: 0.0938rem solid rgba(255, 255, 255, .12);
+  border-radius: 999rem;
   overflow: hidden;
+  background: linear-gradient(180deg, rgba(255, 255, 255, .08), rgba(255, 255, 255, .03));
+  box-shadow:
+    inset 0 0.0625rem 0 rgba(255, 255, 255, .14),
+    0 0.25rem 0 rgba(0, 0, 0, .16),
+    0 0.625rem 1.125rem rgba(0, 0, 0, .12);
 }
+
 .lang-switch button {
   background: none;
   border: none;
@@ -71,33 +81,121 @@ nav ul a:hover {
   font-family: var(--font);
   font-weight: 700;
   font-size: .8rem;
-  padding: 5px 12px;
+  padding: 0.3125rem 0.75rem;
   cursor: pointer;
+  transition:
+    transform var(--byz-duration-fast) var(--byz-ease-out),
+    background var(--byz-duration-fast) var(--byz-ease-out),
+    color var(--byz-duration-fast) var(--byz-ease-out),
+    box-shadow var(--byz-duration-fast) var(--byz-ease-out);
 }
-.lang-switch button.actief {
-  background: var(--rood);
+
+.lang-switch button:hover {
   color: var(--wit);
+  background: rgba(255, 255, 255, .06)
 }
+
+.lang-switch button:focus-visible {
+  outline: none;
+  position: relative;
+  z-index: 1;
+  box-shadow:
+    inset 0 0 0 0.0625rem rgba(255, 255, 255, .24),
+    0 0 0 0.1875rem rgba(127, 216, 190, .28),
+    0 0 0 0.375rem rgba(255, 51, 71, .22);
+}
+
+.lang-switch button.actief {
+  background: linear-gradient(180deg, #FF5B6C 0%, #FF3347 58%, #D91A31 100%);
+  color: var(--wit);
+  box-shadow:
+    inset 0 0.0625rem 0 rgba(255, 255, 255, .26),
+    inset 0 -0.125rem 0 rgba(120, 0, 18, .22);
+}
+
 .btn {
   display: inline-block;
-  background: var(--rood);
+  position: relative;
+  background: linear-gradient(180deg, #FF5B6C 0%, #FF3347 58%, #D91A31 100%);
   color: var(--wit);
   text-decoration: none;
   font-weight: 700;
   padding: var(--byz-space-2) var(--byz-space-5);
-  border-radius: 999px;
-  transition: transform var(--byz-duration-fast) var(--byz-ease-out), box-shadow var(--byz-duration-fast) var(--byz-ease-out);
-  box-shadow: 0 4px 18px rgba(255,51,71,.35);
+  border-radius: 999rem;
+  border: 0.0625rem solid rgba(255, 255, 255, .16);
+  transition:
+    transform var(--byz-duration-fast) var(--byz-ease-out),
+    box-shadow var(--byz-duration-fast) var(--byz-ease-out),
+    filter var(--byz-duration-fast) var(--byz-ease-out);
+  box-shadow:
+    inset 0 0.0625rem 0 rgba(255, 255, 255, .28),
+    inset 0 -0.1875rem 0 rgba(120, 0, 18, .25),
+    0 0.375rem 0 rgba(122, 10, 24, .55),
+    0 0.75rem 1.5rem rgba(255, 51, 71, .32);
 }
+
+.btn::before {
+  content: "";
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  top: 8%;
+  height: 46%;
+  border-radius: 999rem;
+  background: linear-gradient(180deg, rgba(255, 255, 255, .34), rgba(255, 255, 255, 0));
+  pointer-events: none;
+}
+
 .btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 26px rgba(255,51,71,.45);
+  transform: translateY(-0.3125rem) scale(1.02);
+  box-shadow:
+    inset 0 0.0625rem 0 rgba(255, 255, 255, .32),
+    inset 0 -0.1875rem 0 rgba(120, 0, 18, .22),
+    0 0.6875rem 0 rgba(122, 10, 24, .55),
+    0 1.5rem 2.375rem rgba(255, 51, 71, .42);
+  filter: saturate(1.08) brightness(1.03);
 }
+
+.btn:active {
+  transform: translateY(0.125rem);
+  box-shadow:
+    inset 0 0.125rem 0.25rem rgba(120, 0, 18, .22),
+    inset 0 0.0625rem 0 rgba(255, 255, 255, .16),
+    0 0.1875rem 0 rgba(122, 10, 24, .45),
+    0 0.5rem 1rem rgba(255, 51, 71, .28);
+}
+
+.btn:focus-visible {
+  outline: none;
+  transform: translateY(-0.25rem) scale(1.02);
+  box-shadow:
+    inset 0 0.0625rem 0 rgba(255, 255, 255, .28),
+    inset 0 -0.1875rem 0 rgba(120, 0, 18, .25),
+    0 0.625rem 0 rgba(122, 10, 24, .55),
+    0 1.375rem 2.125rem rgba(255, 51, 71, .36),
+    0 0 0 0.25rem rgba(127, 216, 190, .26),
+    0 0 0 0.5rem rgba(255, 51, 71, .2);
+}
+
 .btn.ghost {
-  background: transparent;
-  border: 2px solid var(--wit);
-  box-shadow: none;
+  background: linear-gradient(180deg, rgba(255, 255, 255, .14), rgba(255, 255, 255, .05));
+  border: 0.125rem solid rgba(255, 255, 255, .7);
+  box-shadow:
+    inset 0 0.0625rem 0 rgba(255, 255, 255, .22),
+    0 0.25rem 0 rgba(255, 255, 255, .08),
+    0 0.75rem 1.5rem rgba(0, 0, 0, .16);
 }
+
 .btn.ghost:hover {
-  background: rgba(255,255,255,.08);
+  transform: translateY(-0.3125rem) scale(1.02);
+  background: linear-gradient(180deg, rgba(255, 255, 255, .2), rgba(255, 255, 255, .08));
+  box-shadow:
+    inset 0 0.0625rem 0 rgba(255, 255, 255, .28),
+    0 0.625rem 0 rgba(255, 255, 255, .08),
+    0 1.375rem 2.125rem rgba(0, 0, 0, .24);
+  filter: brightness(1.05);
+}
+
+.btn.ghost:focus-visible {
+  transform: translateY(-0.25rem) scale(1.02);
 }

@@ -1,21 +1,30 @@
 /* ---------- footer ---------- */
 .footer-bos {
   line-height: 0;
-  margin-top: 90px;
+  margin-top: 5.625rem
 }
+
 .footer-bos svg {
   width: 100%;
-  height: 72px;
-  display: block;
+  height: 4.5rem;
+  display: block
 }
+
 footer {
-  background: var(--groen-donker);
+  background:
+    radial-gradient(circle at top center, rgba(127, 216, 190, .08), transparent 32%),
+    linear-gradient(180deg, rgba(8, 56, 44, .96), rgba(1, 39, 29, 1));
   padding: var(--byz-space-16) 6vw var(--byz-space-8);
   position: relative;
   overflow: hidden;
+  border-top: 0.0625rem solid rgba(255, 255, 255, .08);
+  box-shadow:
+    inset 0 0.0625rem 0 rgba(255, 255, 255, .05),
+    0 -0.5rem 1.5rem rgba(0, 0, 0, .16);
 }
+
 .footer-grid {
-  max-width: 1150px;
+  max-width: 71.875rem;
   margin: 0 auto;
   display: grid;
   grid-template-columns: 1.4fr 1fr 1fr;
@@ -23,81 +32,131 @@ footer {
   position: relative;
   z-index: 2;
 }
-.footer-merk svg {
-  height: 70px;
-  width: auto;
-  margin-bottom: 16px;
+
+.footer-grid .kolom,
+.footer-merk {
+  background: linear-gradient(180deg, rgba(255, 255, 255, .06), rgba(255, 255, 255, .025));
+  border: 0.0625rem solid rgba(255, 255, 255, .08);
+  border-radius: 1.125rem;
+  padding: 1.375rem 1.5rem;
+  box-shadow:
+    inset 0 0.0625rem 0 rgba(255, 255, 255, .08),
+    0 0.375rem 0 rgba(0, 0, 0, .14),
+    0 1rem 1.75rem rgba(0, 0, 0, .16);
+  transition: transform .2s, box-shadow .2s, border-color .2s;
 }
+
+.footer-grid .kolom:hover,
+.footer-merk:hover {
+  transform: translateY(-0.1875rem);
+  border-color: rgba(255, 51, 71, .24);
+  box-shadow:
+    inset 0 0.0625rem 0 rgba(255, 255, 255, .1),
+    0 0.5rem 0 rgba(90, 16, 28, .12),
+    0 1.25rem 2rem rgba(0, 0, 0, .18);
+}
+
+.footer-merk svg {
+  height: 4.375rem;
+  width: auto;
+  margin-bottom: 1rem
+}
+
 .footer-merk p {
   color: var(--wit-zacht);
   font-size: .9rem;
-  max-width: 320px;
+  max-width: 20rem
 }
+
 .footer-grid h4 {
   font-size: var(--byz-text-xs);
   text-transform: uppercase;
   letter-spacing: .14em;
   color: var(--rood);
-  margin-bottom: var(--byz-space-4);
+  margin-bottom: var(--byz-space-4)
 }
+
 .footer-grid ul {
-  list-style: none;
+  list-style: none
 }
+
 .footer-grid li {
-  margin-bottom: 11px;
+  margin-bottom: 0.6875rem
 }
+
 .footer-grid .kolom a {
   color: var(--wit-zacht);
   text-decoration: none;
   font-weight: 600;
   font-size: var(--byz-text-sm);
-  transition: color var(--byz-duration-normal) var(--byz-ease-default),padding-left var(--byz-duration-normal) var(--byz-ease-default);
+  transition:
+    color var(--byz-duration-normal) var(--byz-ease-default),
+    padding-left var(--byz-duration-normal) var(--byz-ease-default),
+    text-shadow var(--byz-duration-normal) var(--byz-ease-default);
 }
+
 .footer-grid .kolom a:hover {
   color: var(--wit);
-  padding-left: 4px;
+  padding-left: 0.25rem;
+  text-shadow: 0 0 0.75rem rgba(127, 216, 190, .18);
 }
+
+.footer-grid .kolom a:focus-visible {
+  outline: none;
+  color: var(--wit);
+  border-radius: 0.5rem;
+  box-shadow:
+    0 0 0 0.1875rem rgba(127, 216, 190, .22),
+    0 0 0 0.375rem rgba(255, 51, 71, .14);
+}
+
 .gh-link {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem
 }
+
 .gh-link svg {
-  width: 16px;
-  height: 16px;
+  width: 1rem;
+  height: 1rem;
   fill: currentColor;
-  flex: none;
+  flex: none
 }
+
 .footer-onder {
-  max-width: 1150px;
+  max-width: 71.875rem;
   margin: var(--byz-space-12) auto 0;
-  padding-top: var(--byz-space-6);
-  border-top: 1px solid var(--rand);
+  padding: var(--byz-space-6) 1.25rem 0;
+  border-top: 0.0625rem solid rgba(255, 255, 255, .08);
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: var(--byz-space-3);
   flex-wrap: wrap;
-  color: rgba(255,255,255,.45);
+  color: rgba(255, 255, 255, .45);
   font-size: var(--byz-text-xs);
   position: relative;
   z-index: 2;
 }
-@media(max-width:760px) {
+
+@media(max-width:47.5rem) {
   .footer-grid {
     grid-template-columns: 1fr;
-    gap: 32px;
+    gap: 2rem
   }
+
   .footer-onder {
     justify-content: center;
-    text-align: center;
+    text-align: center
   }
 }
-@media(max-width:760px) {
+
+@media(max-width:47.5rem) {
   nav ul li.verberg {
-    display: none;
+    display: none
   }
+
   header {
-    padding-top: 60px;
+    padding-top: 3.75rem
   }
 }

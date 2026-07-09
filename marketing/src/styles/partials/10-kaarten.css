@@ -2,53 +2,84 @@
 /* Byzantium 12-koloms grid: 3 kaarten boven (span 4), 2 onder (span 6) */
 .kaarten {
   display: grid;
-  grid-template-columns: repeat(12,1fr);
-  gap: var(--byz-space-5);
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--byz-space-5)
 }
+
 .kaarten .kaart {
-  grid-column: span 4;
+  grid-column: span 4
 }
+
 .kaarten .kaart:nth-child(4),
 .kaarten .kaart:nth-child(5) {
-  grid-column: span 6;
+  grid-column: span 6
 }
-@media(max-width:900px) {
+
+@media(max-width:56.25rem) {
   .kaarten .kaart {
-    grid-column: span 6;
+    grid-column: span 6
   }
+
   .kaarten .kaart:nth-child(5) {
-    grid-column: span 12;
+    grid-column: span 12
   }
 }
-@media(max-width:560px) {
+
+@media(max-width:35rem) {
   .kaarten .kaart {
-    grid-column: span 12 !important;
+    grid-column: span 12 !important
   }
 }
+
 .kaart {
-  background: var(--kaart);
-  border: 1px solid var(--rand);
-  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, .09), rgba(255, 255, 255, .045));
+  border: 0.0625rem solid rgba(255, 255, 255, .12);
+  border-radius: 1.125rem;
   padding: var(--byz-space-6);
-  transition: transform var(--byz-duration-normal) var(--byz-ease-bounce),border-color var(--byz-duration-normal) var(--byz-ease-default);
+  box-shadow:
+    inset 0 0.0625rem 0 rgba(255, 255, 255, .12),
+    0 0.3125rem 0 rgba(0, 0, 0, .12),
+    0 0.875rem 1.75rem rgba(0, 0, 0, .16);
+  transition:
+    transform var(--byz-duration-normal) var(--byz-ease-bounce),
+    border-color var(--byz-duration-normal) var(--byz-ease-default),
+    box-shadow var(--byz-duration-normal) var(--byz-ease-default);
 }
+
 .kaart:hover {
-  transform: translateY(-4px);
+  transform: translateY(-0.3125rem);
   border-color: var(--rood);
+  box-shadow:
+    inset 0 0.0625rem 0 rgba(255, 255, 255, .16),
+    0 0.4375rem 0 rgba(90, 16, 28, .18),
+    0 1.125rem 2rem rgba(0, 0, 0, .2);
 }
+
+.kaart:focus-within {
+  border-color: #7FD8BE;
+  box-shadow:
+    inset 0 0.0625rem 0 rgba(255, 255, 255, .16),
+    0 0.4375rem 0 rgba(10, 82, 64, .26),
+    0 1.125rem 2rem rgba(0, 0, 0, .2),
+    0 0 0 0.25rem rgba(127, 216, 190, .18);
+}
+
 .kaart .icoon {
   font-size: 1.9rem;
-  margin-bottom: 12px;
-  display: block;
+  margin-bottom: 0.75rem;
+  display: block
 }
+
 .kaart h3 {
   font-size: 1.15rem;
-  margin-bottom: 6px;
+  margin-bottom: 0.375rem
 }
+
 .kaart h3 span.term {
-  color: var(--rood);
+  color: var(--rood)
 }
+
 .kaart p {
   color: var(--wit-zacht);
-  font-size: .92rem;
+  font-size: .92rem
 }

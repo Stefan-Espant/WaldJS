@@ -5,14 +5,15 @@
   width: 100vw;
   height: 100vh;
   display: block;
-  z-index: 0;
+  z-index: 0
 }
+
 #scrim {
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background: radial-gradient(ellipse at 50% 40%, rgba(1,30,23,.62), rgba(1,25,19,.9));
+  background: radial-gradient(ellipse at 50% 40%, rgba(1, 30, 23, .62), rgba(1, 25, 19, .9));
   opacity: 0;
-  transition: opacity .25s linear;
+  transition: opacity .25s linear
 }

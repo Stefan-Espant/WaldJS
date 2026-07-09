@@ -1,6 +1,6 @@
 /* ---------- quick start ---------- */
 .qs-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit,minmax(320px,1fr));
-  gap: var(--byz-space-6);
+  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+  gap: var(--byz-space-6)
 }

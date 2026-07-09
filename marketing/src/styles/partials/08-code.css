@@ -1,55 +1,105 @@
 /* ---------- code ---------- */
 .codeblok {
-  background: var(--groen-donker);
-  border: 1px solid var(--rand);
-  border-radius: 16px;
+  position: relative;
+  background:
+    linear-gradient(180deg, rgba(10, 61, 48, .98), rgba(1, 39, 29, .98)),
+    var(--groen-donker);
+  border: 0.0625rem solid rgba(255, 255, 255, .12);
+  border-radius: 1.125rem;
   overflow: hidden;
   text-align: left;
+  box-shadow:
+    inset 0 0.0625rem 0 rgba(255, 255, 255, .08),
+    inset 0 -0.0625rem 0 rgba(0, 0, 0, .28),
+    0 0.4375rem 0 rgba(0, 0, 0, .18),
+    0 1.125rem 2.125rem rgba(0, 0, 0, .22);
+  transition: transform .25s, box-shadow .25s, border-color .25s;
 }
+
+.codeblok::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, .06), rgba(255, 255, 255, 0) 24%);
+  pointer-events: none;
+}
+
+.codeblok:hover {
+  transform: translateY(-0.1875rem);
+  border-color: rgba(255, 51, 71, .32);
+  box-shadow:
+    inset 0 0.0625rem 0 rgba(255, 255, 255, .1),
+    inset 0 -0.0625rem 0 rgba(0, 0, 0, .28),
+    0 0.5625rem 0 rgba(90, 16, 28, .16),
+    0 1.375rem 2.375rem rgba(0, 0, 0, .26);
+}
+
+.codeblok:focus-within {
+  border-color: #7FD8BE;
+  box-shadow:
+    inset 0 0.0625rem 0 rgba(255, 255, 255, .1),
+    inset 0 -0.0625rem 0 rgba(0, 0, 0, .28),
+    0 0.5625rem 0 rgba(10, 82, 64, .24),
+    0 1.375rem 2.375rem rgba(0, 0, 0, .26),
+    0 0 0 0.25rem rgba(127, 216, 190, .16);
+}
+
 .codeblok .titel {
   display: flex;
   align-items: center;
   gap: var(--byz-space-2);
   padding: var(--byz-space-2) var(--byz-space-4);
-  min-height: 2.25rem;
-  border-bottom: 1px solid var(--rand);
+  border-bottom: 0.0625rem solid rgba(255, 255, 255, .08);
+  background: linear-gradient(180deg, rgba(255, 255, 255, .08), rgba(255, 255, 255, .02));
   font-family: var(--mono);
   font-size: var(--byz-text-xs);
   color: var(--wit-zacht);
-  box-sizing: border-box;
+  box-shadow: inset 0 0.0625rem 0 rgba(255, 255, 255, .08);
 }
+
 .codeblok .titel .dot {
-  width: 10px;
-  height: 10px;
+  width: 0.625rem;
+  height: 0.625rem;
   border-radius: 50%;
-  background: var(--rood);
-  opacity: .9;
+  background: radial-gradient(circle at 35% 35%, #FF8A96 0%, #FF3347 58%, #B01225 100%);
+  opacity: .95;
+  box-shadow: 0 0 0.5rem rgba(255, 51, 71, .4);
 }
+
 .codeblok pre {
   padding: var(--byz-space-4) var(--byz-space-5);
   overflow-x: auto;
   font-family: var(--mono);
   font-size: var(--byz-text-sm);
   line-height: 1.7;
+  background:
+    radial-gradient(circle at top left, rgba(127, 216, 190, .06), transparent 28%),
+    linear-gradient(180deg, rgba(255, 255, 255, .015), rgba(255, 255, 255, 0));
 }
+
 .c-k {
-  color: #7FD8BE;
+  color: #7FD8BE
 }
+
 /* keywords */
 .c-s {
-  color: #FFB3BC;
+  color: #FFB3BC
 }
+
 /* strings */
 .c-c {
-  color: rgba(255,255,255,.45);
-  font-style: italic;
+  color: rgba(255, 255, 255, .45);
+  font-style: italic
 }
+
 /* comments */
 .c-t {
-  color: #FF7A89;
+  color: #FF7A89
 }
+
 /* tags */
 .c-p {
-  color: #A8E6CF;
+  color: #A8E6CF
 }
+
 /* props/attrs */

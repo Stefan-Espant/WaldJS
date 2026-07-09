@@ -1,16 +1,44 @@
 /* ---------- GitHub-stats ---------- */
 .gh-stats {
   display: none;
-  gap: var(--byz-space-5);
+  gap: 1rem 1.5rem;
   justify-content: center;
   flex-wrap: wrap;
-  margin-top: var(--byz-space-8);
+  margin-top: var(--byz-space-10);
   color: var(--wit-zacht);
-  font-size: var(--byz-text-sm);
+  font-size: var(--byz-text-sm)
 }
+
 .gh-stats.zichtbaar {
-  display: flex;
+  display: flex
 }
+
+.gh-stats span {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  padding: .28rem .65rem;
+  border-radius: 999rem;
+  background: linear-gradient(180deg, rgba(255, 255, 255, .12), rgba(1, 39, 29, .42));
+  border: 0.0625rem solid rgba(255, 255, 255, .1);
+  backdrop-filter: blur(0.5rem);
+  -webkit-backdrop-filter: blur(0.5rem);
+  box-shadow:
+    inset 0 0.0625rem 0 rgba(255, 255, 255, .12),
+    0 0.25rem 0 rgba(0, 0, 0, .14),
+    0 0.625rem 1.25rem rgba(0, 0, 0, .12);
+  transition: transform .2s, box-shadow .2s, border-color .2s;
+}
+
+.gh-stats span:hover {
+  transform: translateY(-0.125rem);
+  border-color: rgba(255, 51, 71, .36);
+  box-shadow:
+    inset 0 0.0625rem 0 rgba(255, 255, 255, .16),
+    0 0.375rem 0 rgba(90, 16, 28, .14),
+    0 0.875rem 1.5rem rgba(0, 0, 0, .16);
+}
+
 .gh-stats b {
-  color: var(--wit);
+  color: var(--wit)
 }

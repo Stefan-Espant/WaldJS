@@ -1,17 +1,20 @@
 /* ---------- vergelijking ---------- */
 .vergelijk td:nth-child(n+2),
 .vergelijk th:nth-child(n+2) {
-  text-align: center;
+  text-align: center
 }
+
 .vergelijk .ja {
   color: #7FD8BE;
-  font-weight: 800;
+  font-weight: 800
 }
+
 .vergelijk .nee {
-  color: rgba(255,255,255,.35);
+  color: rgba(255, 255, 255, .35)
 }
+
 .vergelijk .deels {
   color: var(--rood);
   font-weight: 700;
-  font-size: .8rem;
+  font-size: .8rem
 }

@@ -1,5 +1,6 @@
 /* Deze partials leven in ./partials/ — pas ze daar aan.
    Dit bestand importeert ze alleen, in laad-volgorde. */
+@import "./partials/00-fonts.css";
 @import "./partials/00-tokens.css";
 @import "./partials/01-base.css";
 @import "./partials/02-taal.css";
@@ -29,3 +30,4 @@
 @import "./partials/26-vergelijking.css";
 @import "./partials/27-changelog-groeidagboek.css";
 @import "./partials/28-footer.css";
+@import "./partials/29-mobiel.css";

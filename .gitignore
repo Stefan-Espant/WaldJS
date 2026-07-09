@@ -6,3 +6,4 @@ dist/
 .DS_Store
 .turbo/
 marketing/public/css/site.css
+marketing/src/assets/css/site.css

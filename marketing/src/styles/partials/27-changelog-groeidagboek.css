@@ -1,66 +1,118 @@
 /* ---------- changelog / groeidagboek ---------- */
 .changelog {
-  max-width: 760px;
+  max-width: 47.5rem;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 1.125rem
 }
+
 .log-kaart {
-  background: var(--kaart);
-  border: 1px solid var(--rand);
-  border-radius: 18px;
-  padding: 24px 28px;
-  transition: border-color .2s;
+  background: linear-gradient(180deg, rgba(255, 255, 255, .09), rgba(255, 255, 255, .045));
+  border: 0.0625rem solid rgba(255, 255, 255, .12);
+  border-radius: 1.125rem;
+  padding: 1.5rem 1.75rem;
+  box-shadow:
+    inset 0 0.0625rem 0 rgba(255, 255, 255, .12),
+    0 0.3125rem 0 rgba(0, 0, 0, .12),
+    0 0.875rem 1.625rem rgba(0, 0, 0, .16);
+  transition: border-color .2s, transform .2s, box-shadow .2s;
 }
+
 .log-kaart:hover {
   border-color: var(--rood);
+  transform: translateY(-0.125rem);
+  box-shadow:
+    inset 0 0.0625rem 0 rgba(255, 255, 255, .16),
+    0 0.4375rem 0 rgba(90, 16, 28, .16),
+    0 1.125rem 2rem rgba(0, 0, 0, .2);
 }
+
+.log-kaart:focus-within {
+  border-color: #7FD8BE;
+  box-shadow:
+    inset 0 0.0625rem 0 rgba(255, 255, 255, .16),
+    0 0.4375rem 0 rgba(10, 82, 64, .2),
+    0 1.125rem 2rem rgba(0, 0, 0, .2),
+    0 0 0 0.25rem rgba(127, 216, 190, .18);
+}
+
 .log-kop {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 0.75rem;
   flex-wrap: wrap;
-  margin-bottom: 10px;
+  margin-bottom: 0.625rem
 }
+
 .log-kop .versie {
-  background: var(--rood);
+  display: inline-block;
+  position: relative;
+  background: linear-gradient(180deg, #FF6676 0%, #FF3347 58%, #D91A31 100%);
   color: var(--wit);
   font-weight: 700;
   font-size: .78rem;
-  padding: 3px 12px;
-  border-radius: 999px;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999rem;
   font-family: var(--mono);
+  border: 0.0625rem solid rgba(255, 255, 255, .14);
+  box-shadow:
+    inset 0 0.0625rem 0 rgba(255, 255, 255, .28),
+    inset 0 -0.125rem 0 rgba(120, 0, 18, .24),
+    0 0.1875rem 0 rgba(122, 10, 24, .42),
+    0 0.5rem 1rem rgba(255, 51, 71, .24);
 }
+
+.log-kop .versie::before {
+  content: "";
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  top: 10%;
+  height: 44%;
+  border-radius: 999rem;
+  background: linear-gradient(180deg, rgba(255, 255, 255, .34), rgba(255, 255, 255, 0));
+  pointer-events: none;
+}
+
 .log-kop .versie.aankomend {
-  background: transparent;
-  border: 1.5px dashed var(--rood);
+  background: linear-gradient(180deg, rgba(255, 255, 255, .12), rgba(255, 255, 255, .04));
+  border: 0.0938rem dashed rgba(255, 51, 71, .72);
   color: var(--rood);
+  box-shadow:
+    inset 0 0.0625rem 0 rgba(255, 255, 255, .16),
+    0 0.1875rem 0 rgba(90, 16, 28, .12),
+    0 0.5rem 1rem rgba(0, 0, 0, .12);
 }
+
 .log-kop h3 {
   font-size: 1.02rem;
   text-transform: uppercase;
-  letter-spacing: .03em;
+  letter-spacing: .03em
 }
+
 .log-kop .datum {
   margin-left: auto;
-  color: rgba(255,255,255,.4);
-  font-size: .8rem;
+  color: rgba(255, 255, 255, .4);
+  font-size: .8rem
 }
+
 .log-kaart ul {
   list-style: none;
   color: var(--wit-zacht);
-  font-size: var(--byz-text-sm);
+  font-size: var(--byz-text-sm)
 }
+
 .log-kaart li {
-  padding-left: 22px;
+  padding-left: 1.375rem;
   position: relative;
-  margin-bottom: 6px;
+  margin-bottom: 0.375rem
 }
+
 .log-kaart li::before {
   content: "🌱";
   position: absolute;
   left: 0;
   font-size: .72rem;
-  top: 3px;
+  top: 0.1875rem
 }

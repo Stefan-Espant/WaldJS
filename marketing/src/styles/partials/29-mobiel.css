@@ -1,0 +1,213 @@
+/* ---------- mobiel (<=430px) ---------- */
+@media(max-width:26.875rem) {
+  nav {
+    grid-template-columns: auto 1fr auto auto;
+    gap: 0.5rem;
+    padding: 0.625rem 0.875rem;
+  }
+
+  nav .brand {
+    justify-self: start
+  }
+
+  nav .brand svg {
+    width: 4.125rem;
+    height: 4.125rem
+  }
+
+  nav ul {
+    gap: 0.5rem
+  }
+
+  nav ul.links-kant {
+    display: none
+  }
+
+  nav ul.rechts-kant {
+    justify-content: flex-end
+  }
+
+  nav ul.rechts-kant li:nth-child(1),
+  nav ul.rechts-kant li:nth-child(2),
+  nav ul.rechts-kant li:last-child {
+    display: none
+  }
+
+  .hamburger {
+    display: block;
+    justify-self: end;
+    padding: 0.25rem 0.5rem;
+    font-size: 1.45rem
+  }
+
+  .dagnacht {
+    width: 2rem;
+    height: 2rem;
+    font-size: .92rem
+  }
+
+  .lang-switch button {
+    font-size: .72rem;
+    padding: 0.25rem 0.5rem
+  }
+
+  header {
+    min-height: 38.75rem;
+    height: auto;
+    padding: 5.75rem 1.125rem 3.375rem;
+  }
+
+  header .logo svg {
+    width: min(13.75rem, 68vw)
+  }
+
+  header h1 {
+    font-size: clamp(1.85rem, 10vw, 2.45rem);
+    line-height: 1.08;
+    margin: 1.125rem auto 0.75rem;
+  }
+
+  header h1 em {
+    font-size: clamp(2.6rem, 12vw, 3.4rem)
+  }
+
+  header p.sub {
+    font-size: 1rem;
+    margin-bottom: 1.5rem
+  }
+
+  header .cta {
+    gap: 0.625rem
+  }
+
+  .gh-stats {
+    margin-top: 2.75rem;
+    gap: .85rem .75rem
+  }
+
+  .gh-stats span {
+    width: auto
+  }
+
+  .btn {
+    width: 100%;
+    max-width: 17.5rem;
+    text-align: center;
+    padding: 0.625rem 1.125rem
+  }
+
+  .terminal {
+    width: 100%;
+    margin-top: 2.625rem
+  }
+
+  section {
+    padding: 4.5rem 1.125rem
+  }
+
+  section.vol {
+    padding-left: 1.125rem;
+    padding-right: 1.125rem
+  }
+
+  .sectiekop {
+    margin-bottom: 2.625rem
+  }
+
+  .sectiekop h2 {
+    font-size: 1.55rem;
+    line-height: 1.14
+  }
+
+  .sectiekop p {
+    font-size: .95rem
+  }
+
+  .sectiekop .tag,
+  .split .tekst h2 .tag {
+    font-size: 1.05rem
+  }
+
+  .qs-grid,
+  .bench-grid {
+    grid-template-columns: minmax(0, 1fr)
+  }
+
+  .split {
+    gap: 2rem
+  }
+
+  .kaart,
+  .cli-kaart,
+  .log-kaart,
+  .faq details {
+    padding: 1.25rem
+  }
+
+  .codeblok pre {
+    padding: 0.875rem 1rem;
+    font-size: .78rem
+  }
+
+  .codeblok .titel {
+    padding: 0.5rem 0.75rem
+  }
+
+  table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+  }
+
+  table th,
+  table td {
+    padding: 0.625rem 0.75rem;
+    font-size: .78rem;
+  }
+
+  .bench {
+    padding: 3rem 1.125rem;
+    border-radius: 1.125rem
+  }
+
+  .pkg {
+    justify-content: stretch
+  }
+
+  .pkg span {
+    width: 100%;
+    border-radius: 1.125rem;
+    padding: 0.75rem 1rem;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+  }
+
+  .pkg span b {
+    display: block;
+    margin-bottom: 0.125rem;
+  }
+
+  .pg-editor {
+    min-height: 17.5rem;
+    font-size: .78rem;
+    padding: 0.875rem 1rem
+  }
+
+  .pg-preview {
+    padding: 1.25rem
+  }
+
+  .log-kop .datum {
+    margin-left: 0;
+    width: 100%
+  }
+
+  .footer-bos {
+    margin-top: 2.5rem
+  }
+
+  footer {
+    padding: 3rem 1.125rem 2rem
+  }
+}

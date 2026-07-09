@@ -1,19 +1,32 @@
 * {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
+  box-sizing: border-box
 }
+
 html {
   scroll-behavior: smooth;
+  overflow-x: clip
 }
+
 body {
   font-family: var(--font);
   background-color: var(--groen);
   color: var(--wit);
   line-height: 1.6;
-  overflow-x: hidden;
+  overflow-x: hidden
 }
+
 ::selection {
   background: var(--rood);
-  color: var(--wit);
+  color: var(--wit)
+}
+
+h1,
+h2,
+h3,
+h4,
+header p.sub,
+.sectiekop p {
+  text-wrap: balance
 }
