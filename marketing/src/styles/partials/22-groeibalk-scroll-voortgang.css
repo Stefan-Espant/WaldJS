@@ -1,0 +1,21 @@
+/* ---------- groeibalk (scroll-voortgang) ---------- */
+#groeibalk {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 4px;
+  width: 0%;
+  z-index: var(--byz-z-toast);
+  background: linear-gradient(90deg,var(--groen-licht),#7FD8BE);
+  border-radius: 0 99px 99px 0;
+}
+#groeiblad {
+  position: fixed;
+  top: -2px;
+  left: 0;
+  z-index: calc(var(--byz-z-toast) + 1);
+  font-size: 13px;
+  transform: translateX(-50%) rotate(24deg);
+  pointer-events: none;
+  opacity: 0;
+}

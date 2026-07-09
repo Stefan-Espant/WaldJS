@@ -1,0 +1,31 @@
+/* Deze partials leven in ./partials/ — pas ze daar aan.
+   Dit bestand importeert ze alleen, in laad-volgorde. */
+@import "./partials/00-tokens.css";
+@import "./partials/01-base.css";
+@import "./partials/02-taal.css";
+@import "./partials/03-nav.css";
+@import "./partials/04-vaste-3d-achtergrond.css";
+@import "./partials/05-hero.css";
+@import "./partials/06-secties.css";
+@import "./partials/07-varens-botanische-decoratie.css";
+@import "./partials/08-code.css";
+@import "./partials/09-quick-start.css";
+@import "./partials/10-kaarten.css";
+@import "./partials/11-split.css";
+@import "./partials/12-tabellen.css";
+@import "./partials/13-benchmarks.css";
+@import "./partials/14-roadmap.css";
+@import "./partials/15-cli.css";
+@import "./partials/16-packages.css";
+@import "./partials/17-hamburger-mobiel-menu.css";
+@import "./partials/18-github-stats.css";
+@import "./partials/19-faq.css";
+@import "./partials/20-kopieerknop.css";
+@import "./partials/21-terminal-in-hero.css";
+@import "./partials/22-groeibalk-scroll-voortgang.css";
+@import "./partials/23-cursor-vuurvliegje.css";
+@import "./partials/24-dag-nacht-knop.css";
+@import "./partials/25-playground.css";
+@import "./partials/26-vergelijking.css";
+@import "./partials/27-changelog-groeidagboek.css";
+@import "./partials/28-footer.css";

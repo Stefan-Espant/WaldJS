@@ -1,0 +1,33 @@
+/* ---------- CLI ---------- */
+/* Byzantium 12-koloms grid: 2×2 — elk commando span 6 */
+.cli-grid {
+  display: grid;
+  grid-template-columns: repeat(12,1fr);
+  gap: var(--byz-space-4);
+  max-width: 820px;
+  margin: 0 auto;
+}
+.cli-kaart {
+  grid-column: span 6;
+  background: var(--groen-donker);
+  border: 1px solid var(--rand);
+  border-radius: 16px;
+  padding: var(--byz-space-5);
+  box-shadow: var(--byz-shadow-sm);
+}
+@media(max-width:560px) {
+  .cli-kaart {
+    grid-column: span 12;
+  }
+}
+.cli-kaart code {
+  font-family: var(--mono);
+  color: var(--rood);
+  font-weight: 600;
+  font-size: .95rem;
+}
+.cli-kaart p {
+  color: var(--wit-zacht);
+  font-size: .88rem;
+  margin-top: 8px;
+}

@@ -1,0 +1,16 @@
+/* ---------- GitHub-stats ---------- */
+.gh-stats {
+  display: none;
+  gap: var(--byz-space-5);
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: var(--byz-space-8);
+  color: var(--wit-zacht);
+  font-size: var(--byz-text-sm);
+}
+.gh-stats.zichtbaar {
+  display: flex;
+}
+.gh-stats b {
+  color: var(--wit);
+}

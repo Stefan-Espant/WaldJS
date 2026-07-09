@@ -1,0 +1,52 @@
+/* ---------- hamburger & mobiel menu ---------- */
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--wit);
+  font-size: 1.7rem;
+  cursor: pointer;
+  padding: 4px 10px;
+  justify-self: start;
+}
+#mobielmenu {
+  position: fixed;
+  inset: 0;
+  background: rgba(1,32,25,.97);
+  z-index: var(--byz-z-modal);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--byz-space-8);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--byz-duration-slow) var(--byz-ease-default);
+}
+#mobielmenu.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+#mobielmenu a {
+  color: var(--wit);
+  text-decoration: none;
+  font-size: 1.35rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+#mobielmenu .sluit {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  background: none;
+  border: none;
+  color: var(--wit);
+  font-size: 2rem;
+  cursor: pointer;
+}
+@media(max-width:760px) {
+  .hamburger {
+    display: block;
+  }
+}

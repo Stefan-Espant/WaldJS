@@ -1,0 +1,15 @@
+/* ---------- dag/nacht-knop ---------- */
+.dagnacht {
+  background: none;
+  border: 1.5px solid var(--rand);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  font-size: 1.05rem;
+  line-height: 1;
+  transition: border-color .2s;
+}
+.dagnacht:hover {
+  border-color: var(--rood);
+}

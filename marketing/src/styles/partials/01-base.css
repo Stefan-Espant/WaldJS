@@ -1,0 +1,19 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html {
+  scroll-behavior: smooth;
+}
+body {
+  font-family: var(--font);
+  background-color: var(--groen);
+  color: var(--wit);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+::selection {
+  background: var(--rood);
+  color: var(--wit);
+}

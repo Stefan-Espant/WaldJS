@@ -1,0 +1,71 @@
+:root {
+  /* ============================================================
+     Byzantium design tokens — thema: "WaldJS forest"
+     https://byzantium.steefan.nl/tokens
+     ============================================================ */
+  /* brand-schaal (thema-override: WaldJS-rood) */
+  --byz-brand-100: #FFD6DB;
+  --byz-brand-200: #FFA8B1;
+  --byz-brand-300: #FF6B7A;
+  --byz-brand-400: #FF3347;
+  --byz-brand-500: #E01D32;
+  --byz-brand-600: #B01225;
+  /* spacing */
+  --byz-space-1: .25rem;
+  --byz-space-2: .5rem;
+  --byz-space-3: .75rem;
+  --byz-space-4: 1rem;
+  --byz-space-5: 1.25rem;
+  --byz-space-6: 1.5rem;
+  --byz-space-8: 2rem;
+  --byz-space-10: 2.5rem;
+  --byz-space-12: 3rem;
+  --byz-space-16: 4rem;
+  --byz-space-20: 5rem;
+  --byz-space-24: 6rem;
+  /* typografie */
+  --byz-text-xs: .75rem;
+  --byz-text-sm: .875rem;
+  --byz-text-base: 1rem;
+  --byz-text-lg: 1.125rem;
+  --byz-text-xl: 1.25rem;
+  --byz-text-2xl: 1.5rem;
+  --byz-text-3xl: 1.875rem;
+  --byz-text-4xl: 2.25rem;
+  --byz-font-sans: 'puffin-display-soft',ui-rounded,-apple-system,'Segoe UI',system-ui,sans-serif;
+  /* thema-override */
+  --byz-font-mono: 'JetBrains Mono',ui-monospace,monospace;
+  /* motion */
+  --byz-duration-fast: 100ms;
+  --byz-duration-normal: 200ms;
+  --byz-duration-slow: 300ms;
+  --byz-duration-slower: 500ms;
+  --byz-ease-default: cubic-bezier(.4,0,.2,1);
+  --byz-ease-out: cubic-bezier(0,0,.2,1);
+  --byz-ease-bounce: cubic-bezier(.34,1.56,.64,1);
+  /* schaduwen */
+  --byz-shadow-sm: 0 1px 2px rgba(0,0,0,.25);
+  --byz-shadow-md: 0 4px 12px rgba(0,0,0,.3);
+  --byz-shadow-lg: 0 12px 32px rgba(0,0,0,.4);
+  --byz-shadow-xl: 0 24px 64px rgba(0,0,0,.5);
+  /* z-index */
+  --byz-z-base: 0;
+  --byz-z-raised: 10;
+  --byz-z-sticky: 1020;
+  --byz-z-overlay: 1030;
+  --byz-z-modal: 1100;
+  --byz-z-toast: 1200;
+  --byz-z-tooltip: 1453;
+  /* == thema-aliassen (WaldJS) == */
+  --wit: #FFFFFF;
+  --rood: var(--byz-brand-400);
+  --groen: #023B2D;
+  --groen-donker: #01271D;
+  --groen-diep: #013024;
+  --groen-licht: #0A5240;
+  --kaart: rgba(255,255,255,0.055);
+  --rand: rgba(255,255,255,0.12);
+  --wit-zacht: rgba(255,255,255,0.72);
+  --font: var(--byz-font-sans);
+  --mono: var(--byz-font-mono);
+}

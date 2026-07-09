@@ -1,0 +1,30 @@
+/* ---------- tabellen ---------- */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--kaart);
+  border-radius: 16px;
+  overflow: hidden;
+}
+th,
+td {
+  padding: var(--byz-space-3) var(--byz-space-4);
+  text-align: left;
+  border-bottom: 1px solid var(--rand);
+  font-size: var(--byz-text-sm);
+}
+th {
+  background: var(--groen-donker);
+  font-weight: 700;
+}
+tr:last-child td {
+  border-bottom: none;
+}
+td code {
+  font-family: var(--mono);
+  font-size: .82rem;
+  color: #FFB3BC;
+  background: rgba(0,0,0,.25);
+  padding: 2px 8px;
+  border-radius: 6px;
+}

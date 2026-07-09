@@ -1,0 +1,28 @@
+/* ---------- terminal in hero ---------- */
+.terminal {
+  width: min(480px,88vw);
+  margin: var(--byz-space-20) auto 0;
+  box-shadow: var(--byz-shadow-xl);
+  text-align: left;
+}
+.terminal pre {
+  min-height: 118px;
+}
+.term-cursor::after {
+  content: "▊";
+  animation: knipper 1s steps(1) infinite;
+  color: var(--rood);
+}
+@keyframes knipper {
+  50% {
+    opacity: 0;
+  }
+}
+.term-uit {
+  color: var(--wit-zacht);
+}
+.plant-hint {
+  margin-top: 18px;
+  font-size: .8rem;
+  color: rgba(255,255,255,.45);
+}

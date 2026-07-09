@@ -13,9 +13,11 @@ type ViteLike = {
   ssrLoadModule: (file: string) => Promise<{ default: { render: (props?: Record<string, unknown>) => Promise<string> } }>
 }
 
-function printGrowReady(port: number, cwd: string, base: string) {
+function printGrowReady(port: number, cwd: string, base: string, routeCount: number, staticCount: number, dynamicCount: number, ms: number) {
+  console.log(`\n✔ Dev server ready in ${ms}ms`)
   console.log(`  Local:   http://localhost:${port}${base === '/' ? '' : base}`)
   console.log(`  Root:    ${cwd}`)
+  console.log(`  Routes:  ${routeCount} found (${staticCount} static, ${dynamicCount} dynamic)`)
   if (base !== '/') {
     console.log(`  Base:    ${base}`)
   }
@@ -43,10 +45,13 @@ export const growCommand = defineCommand({
     const pagesDir = join(cwd, 'src', 'pages')
     const publicDir = join(cwd, 'public')
     const srcDir = join(cwd, 'src')
+    const routes = scanRoutes(pagesDir)
+    const staticCount = routes.filter(r => r.params.length === 0).length
+    const dynamicCount = routes.length - staticCount
 
     const config = await loadWaldConfig(cwd)
+    const start = Date.now()
 
-    // config.vite goes first so WaldJS critical settings in second arg always win
     const vite = await withGrowingTree('Starting dev server...', createServer(mergeConfig(
       config.vite ?? {},
       {
@@ -77,7 +82,6 @@ export const growCommand = defineCommand({
       const match = matchRoute(routes, url)
 
       if (!match) {
-        // Let Vite handle non-page requests (HMR, assets)
         vite.middlewares(req, res, () => {
           res.writeHead(404, { 'Content-Type': 'text/plain' })
           res.end('Page not found')
@@ -102,8 +106,7 @@ export const growCommand = defineCommand({
     })
 
     server.listen(port, () => {
-      console.log('WaldJS dev server running')
-      printGrowReady(port, cwd, config.base)
+      printGrowReady(port, cwd, config.base, routes.length, staticCount, dynamicCount, Date.now() - start)
     })
 
     process.on('SIGINT', async () => {
