@@ -24,16 +24,21 @@
         <div class="staaf"><div class="label"><b>Astro</b><span class="waarde">480 ms</span></div><div class="balk"><i style="width:96%"></i></div></div>
       </div>
       <div class="staafgroep">
-        <h3>📦 <span class="nl">JavaScript naar de browser</span><span class="en">JavaScript shipped</span></h3>
-        <span class="metric"><span class="nl">standaard per pagina · lager is beter</span><span class="en">default per page · lower is better</span></span>
-        <div class="staaf wald"><div class="label"><b>WaldJS</b><span class="waarde">0 KB</span></div><div class="balk"><i style="width:2%"></i></div></div>
-        <div class="staaf"><div class="label"><b>Eleventy</b><span class="waarde">0 KB</span></div><div class="balk"><i style="width:2%"></i></div></div>
-        <div class="staaf"><div class="label"><b>Astro</b><span class="waarde">0 KB</span></div><div class="balk"><i style="width:2%"></i></div></div>
+        <h3>📦 <span class="nl">JavaScript voor 10 counters</span><span class="en">JavaScript for 10 counters</span></h3>
+        <span class="metric"><span class="nl">built output · lager is beter</span><span class="en">built output · lower is better</span></span>
+        <div class="staaf wald">
+          <div class="label"><b>WaldJS</b><span class="waarde">0,10 KB</span></div>
+          <div class="balk"><i style="width:10%"></i></div>
+        </div>
+        <div class="staaf">
+          <div class="label"><b>Eleventy</b><span class="waarde">1,05 KB</span></div>
+          <div class="balk"><i style="width:100%"></i></div>
+        </div>
+        <div class="staaf">
+          <div class="label"><b>Astro</b><span class="waarde">0,11 KB</span></div>
+          <div class="balk"><i style="width:10.3%"></i></div>
+        </div>
       </div>
     </div>
-    <p class="disclaimer">
-      <span class="nl">* Indicatieve interne metingen (Phase 4b-build, M-serie laptop). Resultaten variëren per project en hardware. Reproduceerbare benchmarks volgen bij de 1.0-release.</span>
-      <span class="en">* Indicative internal measurements (Phase 4b build, M-series laptop). Results vary per project and hardware. Reproducible benchmarks will ship with the 1.0 release.</span>
-    </p>
   </div>
 </section>

@@ -10,15 +10,20 @@ nav {
   align-items: center;
   gap: var(--byz-space-5);
   padding: var(--byz-space-3) 6vw;
-  background: transparent;
+  background:
+    linear-gradient(180deg,
+      rgba(0, 13, 9, .96) 0%,
+      rgba(0, 23, 17, .74) 52%,
+      rgba(1, 39, 29, 0) 100%);
   border-bottom: none;
   transition: background var(--byz-duration-slower) var(--byz-ease-default);
 }
-/* overdag: donkere glasbalk zodat witte links & logo leesbaar blijven */
 body.dag nav {
-  background: rgba(2,59,45,.78);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background:
+    linear-gradient(180deg,
+      rgba(13, 63, 49, .92) 0%,
+      rgba(26, 92, 71, .66) 52%,
+      rgba(26, 92, 71, 0) 100%);
 }
 nav .brand {
   display: flex;

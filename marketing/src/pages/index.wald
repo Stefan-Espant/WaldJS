@@ -41,13 +41,12 @@ gtag('config', 'G-SR1VDF9DJK');
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<<<<<<< HEAD
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://use.typekit.net/jsq2abh.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
-<link rel="stylesheet" href="/css/site.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<link rel="stylesheet" href="/assets/css/site.css">
 </head>
 <body>
 <canvas id="bos3d" aria-hidden="true"></canvas>
@@ -71,10 +70,9 @@ gtag('config', 'G-SR1VDF9DJK');
 <Faq />
 <Changelog />
 <Footer />
-<<<<<<< HEAD
 <CanopyPing canopy:load />
-<script src="/assets/js/site.js" defer></script>
-<script src="/assets/js/forest.js" defer></script>
-<script src="/assets/js/animations.js" defer></script>
+<script src="/assets/js/site.js"></script>
+<script src="/assets/js/forest.js"></script>
+<script src="/assets/js/animations.js"></script>
 </body>
 </html>

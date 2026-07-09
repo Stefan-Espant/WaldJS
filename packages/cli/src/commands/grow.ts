@@ -64,45 +64,52 @@ export const growCommand = defineCommand({
     const servePublic = sirv(publicDir, { dev: true })
     const serveSrc = sirv(srcDir, { dev: true })
 
-    const server = createHttpServer(async (req, res) => {
+    const server = createHttpServer((req, res) => {
       const url = req.url ?? '/'
 
       if (url.startsWith('/assets/')) {
         serveSrc(req, res, () => {
-          res.writeHead(404, { 'Content-Type': 'text/plain' })
-          res.end('Asset not found')
+          if (!res.headersSent && !res.writableEnded) {
+            res.writeHead(404, { 'Content-Type': 'text/plain' })
+            res.end('Asset not found')
+          }
         })
         return
       }
 
-      servePublic(req, res, () => {})
-      if (res.writableEnded) return
+      servePublic(req, res, async () => {
+        if (res.headersSent || res.writableEnded) return
 
-      const routes = scanRoutes(pagesDir)
-      const match = matchRoute(routes, url)
+        const routes = scanRoutes(pagesDir)
+        const match = matchRoute(routes, url)
 
-      if (!match) {
-        vite.middlewares(req, res, () => {
-          res.writeHead(404, { 'Content-Type': 'text/plain' })
-          res.end('Page not found')
-        })
-        return
-      }
+        if (!match) {
+          vite.middlewares(req, res, () => {
+            if (!res.headersSent && !res.writableEnded) {
+              res.writeHead(404, { 'Content-Type': 'text/plain' })
+              res.end('Page not found')
+            }
+          })
+          return
+        }
 
-      try {
-        const mod = await vite.ssrLoadModule(match.route.file)
-        const html = await mod.default.render(match.params)
-        const full = hoistScripts(maybeWrap(html))
-        res.writeHead(200, { 'Content-Type': 'text/html' })
-        res.end(full)
-      } catch (e) {
-        const error = e as Error
-        vite.ssrFixStacktrace(error)
-        console.error(`[waldjs] Render failed for ${url}`)
-        console.error(error.stack ?? String(error))
-        res.writeHead(500, { 'Content-Type': 'text/plain' })
-        res.end(String(error))
-      }
+        try {
+          const mod = await vite.ssrLoadModule(match.route.file)
+          const html = await mod.default.render(match.params)
+          const full = hoistScripts(maybeWrap(html))
+          res.writeHead(200, { 'Content-Type': 'text/html' })
+          res.end(full)
+        } catch (e) {
+          const error = e as Error
+          vite.ssrFixStacktrace(error)
+          console.error(`[waldjs] Render failed for ${url}`)
+          console.error(error.stack ?? String(error))
+          if (!res.headersSent && !res.writableEnded) {
+            res.writeHead(500, { 'Content-Type': 'text/plain' })
+            res.end(String(error))
+          }
+        }
+      })
     })
 
     server.listen(port, () => {

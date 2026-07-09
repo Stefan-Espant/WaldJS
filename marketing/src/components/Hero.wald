@@ -24,8 +24,8 @@
       </defs>
   </svg>
   <h1>
-    <div class="nl">Plant je site.<em>Laat hem groeien.</em></div>
-    <div class="en">Plant your site.<em>Watch it grow.</em></div>
+    <div class="nl">Plant je site.<br><em>Laat hem groeien.</em></div>
+    <div class="en">Plant your site.<br><em>Watch it grow.</em></div>
   </h1>
   <p class="sub">
     <span class="nl">WaldJS is een content-first webframework voor razendsnelle, statische websites. Schrijf <code style="font-family:var(--mono);font-size:.9em">.wald</code>-bestanden — deels frontmatter, deels HTML-template — en WaldJS compileert ze tot een statische site.</span>

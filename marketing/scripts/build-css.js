@@ -4,18 +4,18 @@
 // developers — dit is het enige gegenereerde artefact, nooit gecommit.
 //
 // Doel hangt af van het argument:
-//   node scripts/build-css.js dist    -> dist/css/site.css (na `wald build`, productie)
-//   node scripts/build-css.js public  -> public/css/site.css (vóór `wald grow`, want Vite's
-//                                        dev-server serveert statische bestanden uit public/)
+//   node scripts/build-css.js dist    -> dist/assets/css/site.css (na `wald build`, productie)
+//   node scripts/build-css.js public  -> src/assets/css/site.css (vóór `wald grow`, want WaldJS
+//                                        serveert /assets/* uit src/assets/)
 
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const target = process.argv[2] === 'public' ? 'public' : 'dist'
+const target = process.argv[2] === 'public' ? 'src' : 'dist'
 const stylesDir = path.join(__dirname, '..', 'src', 'styles')
-const outDir = path.join(__dirname, '..', target, 'css')
+const outDir = path.join(__dirname, '..', target, 'assets', 'css')
 const entry = path.join(stylesDir, 'site.css')
 
 function resolveImports(filePath, seen = new Set()) {
@@ -39,9 +39,10 @@ function minify(css) {
 
 const bundled = resolveImports(entry)
 const minified = minify(bundled)
+const output = target === 'src' ? bundled : minified
 
 fs.mkdirSync(outDir, { recursive: true })
-fs.writeFileSync(path.join(outDir, 'site.css'), minified + '\n')
+fs.writeFileSync(path.join(outDir, 'site.css'), output + '\n')
 
-const kb = (Buffer.byteLength(minified) / 1024).toFixed(1)
-console.log(`css gebundeld: ${kb} kB -> ${target}/css/site.css`)
+const kb = (Buffer.byteLength(output) / 1024).toFixed(1)
+console.log(`css gebundeld: ${kb} kB -> ${target}/assets/css/site.css`)
