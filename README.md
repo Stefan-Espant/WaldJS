@@ -2,7 +2,7 @@
 
 A content-first web framework for building fast, static-first websites. Write `.wald` files — part Markdown frontmatter, part HTML template — and WaldJS compiles them into a static site.
 
-> **Status:** Early development. Phases 0–4b are complete. Phase 4c (deployment adapters) is next.
+> **Status:** Early development. All planned phases (0–4c) are complete.
 
 <img width="1954" height="1254" alt="Scherm­afbeelding 2026-07-08 om 07 40 00" src="https://github.com/user-attachments/assets/eb33ec5d-85ef-469e-85c4-ba08326f30b2" />
 
@@ -221,6 +221,27 @@ export default defineConfig({
 
 All options are optional. Without a config file WaldJS uses the defaults above.
 
+### Deployment adapters
+
+Pick an adapter to tailor the build output to your host. The default is `staticAdapter()` — plain static files that work anywhere:
+
+```ts
+import { defineConfig, netlifyAdapter } from '@waldjs/cli'
+
+export default defineConfig({
+  adapter: netlifyAdapter(),
+})
+```
+
+| Adapter | Output |
+|---|---|
+| `staticAdapter()` | Plain static files (default) |
+| `netlifyAdapter()` | Adds a `_headers` file with cache rules |
+| `cloudflarePagesAdapter()` | Adds a `_headers` file with cache rules |
+| `vercelAdapter()` | Builds to `.vercel/output/` with a `config.json` (Build Output API v3) |
+
+Write your own with `defineAdapter({ name, adapt({ outDir }) { … } })`.
+
 ---
 
 ## CLI commands
@@ -304,4 +325,4 @@ Phases:
 - **Phase 3 — Canopy:** Client-side hydration ✅
 - **Phase 4a — Forest:** Vite plugin (`vite-plugin-wald`) ✅
 - **Phase 4b — Forest:** `wald.config.ts` + Vite SSR build pipeline ✅
-- **Phase 4c — Forest:** Deployment adapters 🚧
+- **Phase 4c — Forest:** Deployment adapters ✅
