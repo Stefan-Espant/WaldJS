@@ -19,10 +19,15 @@ export function maybeWrap(html: string): string {
     : wrapHtml(html)
 }
 
+const NO_HOIST_ATTR = /\sdata-wald-no-hoist(?=[\s=/>])/i
+
 export function hoistScripts(html: string): string {
   const seen = new Set<string>()
   const collected: string[] = []
-  const stripped = html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, (match) => {
+  const stripped = html.replace(/(<script\b[^>]*>)[\s\S]*?<\/script>/gi, (match, openTag: string) => {
+    // Scripts marked with data-wald-no-hoist stay exactly where the author put them
+    // (e.g. an early inline script in <head> that must run before first paint).
+    if (NO_HOIST_ATTR.test(openTag)) return match
     if (!seen.has(match)) {
       seen.add(match)
       collected.push(match)
