@@ -4,6 +4,7 @@
     grid-template-columns: auto 1fr auto auto;
     gap: 0.5rem;
     padding: 0.625rem 0.875rem;
+      background-image: linear-gradient(180deg, rgba(2, 59, 45, .78), rgba(2, 59, 45, 0));
   }
 
   nav .brand {

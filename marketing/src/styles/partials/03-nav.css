@@ -12,14 +12,20 @@ nav {
   padding: var(--byz-space-3) 6vw;
   background: transparent;
   border-bottom: none;
-  transition: background var(--byz-duration-slower) var(--byz-ease-default)
+  transition: background var(--byz-duration-slower) var(--byz-ease-default);
+  -webkit-transition: background var(--byz-duration-slower) var(--byz-ease-default);
+  -moz-transition: background var(--byz-duration-slower) var(--byz-ease-default);
+  -ms-transition: background var(--byz-duration-slower) var(--byz-ease-default);
+  -o-transition: background var(--byz-duration-slower) var(--byz-ease-default);
+  background-image: linear-gradient(180deg, rgba(2, 59, 45, .78), rgba(2, 59, 45, 0));
 }
 
 /* overdag: donkere glasbalk zodat witte links & logo leesbaar blijven */
 body.dag nav {
   background: rgba(2, 59, 45, .78);
   backdrop-filter: blur(0.75rem);
-  -webkit-backdrop-filter: blur(0.75rem)
+  -webkit-backdrop-filter: blur(0.75rem);
+  background-image: linear-gradient(180deg, rgba(2, 59, 45, .78), rgba(2, 59, 45, 0));
 }
 
 nav .brand {
