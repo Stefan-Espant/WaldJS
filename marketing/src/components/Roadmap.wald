@@ -10,9 +10,9 @@
     <li class="done"><b>Phase 1 — Seed <span class="badge klaar">✓</span></b><span class="oms">CLI: plant, grow, build, preview</span></li>
     <li class="done"><b>Phase 2a — Sapling <span class="badge klaar">✓</span></b><span class="oms">Content collections + getStaticPaths()</span></li>
     <li class="done"><b>Phase 2b — Branches <span class="badge klaar">✓</span></b><span class="oms"><span class="nl">Componenten + layouts</span><span class="en">Components + layouts</span></span></li>
-    <li class="bezig"><b>Phase 3 — Canopy <span class="badge nu"><span class="nl">NU BEZIG</span><span class="en">IN PROGRESS</span></span></b><span class="oms">Client-side hydration</span></li>
+    <li class="done"><b>Phase 3 — Canopy <span class="badge klaar">✓</span></b><span class="oms">Client-side hydration</span></li>
     <li class="done"><b>Phase 4a — Forest <span class="badge klaar">✓</span></b><span class="oms">Vite-plugin (vite-plugin-wald)</span></li>
     <li class="done"><b>Phase 4b — Forest <span class="badge klaar">✓</span></b><span class="oms">wald.config.ts + Vite SSR build-pipeline</span></li>
-    <li><b>Phase 4c — Forest</b><span class="oms"><span class="nl">Deployment-adapters</span><span class="en">Deployment adapters</span></span></li>
+    <li class="bezig"><b>Phase 4c — Forest <span class="badge nu"><span class="nl">NU BEZIG</span><span class="en">IN PROGRESS</span></span></b><span class="oms"><span class="nl">Deployment-adapters</span><span class="en">Deployment adapters</span></span></li>
   </ul>
 </section>

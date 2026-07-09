@@ -2,7 +2,7 @@
 
 A content-first web framework for building fast, static-first websites. Write `.wald` files — part Markdown frontmatter, part HTML template — and WaldJS compiles them into a static site.
 
-> **Status:** Early development. Phases 0–2b and 4a–4b are complete. Phase 3 (client-side hydration) is next.
+> **Status:** Early development. Phases 0–4b are complete. Phase 4c (deployment adapters) is next.
 
 <img width="1954" height="1254" alt="Scherm­afbeelding 2026-07-08 om 07 40 00" src="https://github.com/user-attachments/assets/eb33ec5d-85ef-469e-85c4-ba08326f30b2" />
 
@@ -191,7 +191,7 @@ WaldJS uses a forest metaphor throughout:
 | **Roots** | The compiler that transforms `.wald` files |
 | **Trees** | Pages — `.wald` files in `src/pages/` |
 | **Branches** | Components — reusable `.wald` files |
-| **Canopies** | Client-side hydration *(coming in Phase 3)* |
+| **Canopies** | Client-side hydration — islands via `canopy:load`, `canopy:idle` and `canopy:visible` |
 
 ---
 
@@ -203,6 +203,7 @@ WaldJS uses a forest metaphor throughout:
 | `@waldjs/compiler` | Compiles `.wald` files to JavaScript modules |
 | `@waldjs/runtime` | Runtime helpers — `createTree`, `renderTemplate` |
 | `@waldjs/content` | Content collection reader — `readCollection`, `readEntry` |
+| `@waldjs/canopy` | The `<wald-canopy>` element that hydrates islands client-side |
 
 ---
 
@@ -222,7 +223,7 @@ Phases:
 - **Phase 1 — Seed:** CLI (`plant`, `grow`, `build`, `preview`) ✅
 - **Phase 2a — Sapling:** Content collections + `getStaticPaths()` ✅
 - **Phase 2b — Branches:** Components + layouts ✅
-- **Phase 3 — Canopy:** Client-side hydration 🚧
+- **Phase 3 — Canopy:** Client-side hydration ✅
 - **Phase 4a — Forest:** Vite plugin (`vite-plugin-wald`) ✅
 - **Phase 4b — Forest:** `wald.config.ts` + Vite SSR build pipeline ✅
-- **Phase 4c — Forest:** Deployment adapters
+- **Phase 4c — Forest:** Deployment adapters 🚧

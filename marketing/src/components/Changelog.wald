@@ -8,17 +8,25 @@
   </div>
   <div class="changelog">
     <div class="log-kaart">
+      <div class="log-kop"><span class="versie aankomend">v0.7.0</span><h3>Forest</h3><span class="datum"><span class="nl">onder constructie</span><span class="en">under construction</span> 🚧</span></div>
+      <ul>
+        <li><span class="nl">Deployment-adapters — je bos uitplanten naar elke host</span><span class="en">Deployment adapters — transplant your forest to any host</span></li>
+      </ul>
+    </div>
+    <div class="log-kaart">
+      <div class="log-kop"><span class="versie">v0.6.0</span><h3>Canopy</h3><span class="datum">juli 2026</span></div>
+      <ul>
+        <li><span class="nl">Client-side hydration — interactieve eilandjes in je statische bos</span><span class="en">Client-side hydration — interactive islands in your static forest</span></li>
+        <li><span class="nl">Canopy-directives: <code style="font-family:var(--mono);font-size:.85em">canopy:load</code>, <code style="font-family:var(--mono);font-size:.85em">canopy:idle</code> en <code style="font-family:var(--mono);font-size:.85em">canopy:visible</code></span><span class="en">Canopy directives: <code style="font-family:var(--mono);font-size:.85em">canopy:load</code>, <code style="font-family:var(--mono);font-size:.85em">canopy:idle</code> and <code style="font-family:var(--mono);font-size:.85em">canopy:visible</code></span></li>
+        <li><span class="nl">Het <code style="font-family:var(--mono);font-size:.85em">&lt;wald-canopy&gt;</code>-element laadt islands als ES-modules — de rest blijft 0 KB JavaScript</span><span class="en">The <code style="font-family:var(--mono);font-size:.85em">&lt;wald-canopy&gt;</code> element loads islands as ES modules — the rest stays 0 KB JavaScript</span></li>
+      </ul>
+    </div>
+    <div class="log-kaart">
       <div class="log-kop"><span class="versie">v0.5.1</span><h3>Forest Polish</h3><span class="datum">juli 2026</span></div>
       <ul>
         <li><span class="nl">Marketing-site opgefrist met een branded favicon en scherpere CTA-states</span><span class="en">Refreshed the marketing site with a branded favicon and sharper CTA states</span></li>
         <li><span class="nl">3D-depth toegevoegd aan knoppen, kaarten, terminals en footer</span><span class="en">Added 3D depth to buttons, cards, terminals and the footer</span></li>
         <li><span class="nl">Dev-server serveert nu ook <code style="font-family:var(--mono);font-size:.85em">src/assets</code> correct tijdens <code style="font-family:var(--mono);font-size:.85em">wald grow</code></span><span class="en">The dev server now correctly serves <code style="font-family:var(--mono);font-size:.85em">src/assets</code> during <code style="font-family:var(--mono);font-size:.85em">wald grow</code></span></li>
-      </ul>
-    </div>
-    <div class="log-kaart">
-      <div class="log-kop"><span class="versie aankomend">v0.6.0</span><h3>Canopy</h3><span class="datum"><span class="nl">onder constructie</span><span class="en">under construction</span> 🚧</span></div>
-      <ul>
-        <li><span class="nl">Client-side hydration — interactieve eilandjes in je statische bos</span><span class="en">Client-side hydration — interactive islands in your static forest</span></li>
       </ul>
     </div>
     <div class="log-kaart">
