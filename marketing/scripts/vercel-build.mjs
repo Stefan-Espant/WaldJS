@@ -30,3 +30,9 @@ execFileSync(node, [join(root, 'packages', 'cli', 'bin', 'wald.js'), 'build'], {
   cwd: marketingDir,
   stdio: 'inherit',
 })
+
+// De CSS-bundel is een build-artefact (niet in git) — bundel de partials naar dist.
+execFileSync(node, [join(marketingDir, 'scripts', 'build-css.js'), 'dist'], {
+  cwd: marketingDir,
+  stdio: 'inherit',
+})
