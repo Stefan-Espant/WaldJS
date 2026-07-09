@@ -126,6 +126,83 @@ const post = await getEntry('blog', $$props.slug)
 
 ---
 
+## Components & layouts
+
+Any `.wald` file can be imported and used as a component. Props are passed as attributes; children land in the `pond` prop:
+
+```wald
+---
+import Layout from '../layouts/Layout.wald'
+const title = "Hello World"
+---
+<Layout title={title}>
+  <p>Welcome to your forest.</p>
+</Layout>
+```
+
+The layout reads its props (including the children) from `$$props`:
+
+```wald
+---
+const { title, pond } = $$props
+---
+<html>
+  <head><title>{title}</title></head>
+  <body>
+    {pond}
+  </body>
+</html>
+```
+
+---
+
+## Canopy islands
+
+Pages ship 0 KB JavaScript by default. To make a component interactive, give it a `<script>` block that exports a default function and mount it with a `canopy:*` directive:
+
+```wald
+---
+const { start = 0 } = $$props
+---
+<button>Clicked {start} times</button>
+<script>
+export default function (root, props) {
+  let count = props.start
+  const button = root.querySelector('button')
+  button.addEventListener('click', () => {
+    button.textContent = `Clicked ${++count} times`
+  })
+}
+</script>
+```
+
+```wald
+---
+import Counter from '../components/Counter.wald'
+---
+<Counter start={0} canopy:visible />
+```
+
+The component is server-rendered as usual, wrapped in a `<wald-canopy>` element, and its script is loaded as an ES module when the strategy fires:
+
+| Directive | Loads |
+|---|---|
+| `canopy:load` | Immediately on page load |
+| `canopy:idle` | When the browser is idle (`requestIdleCallback`) |
+| `canopy:visible` | When the island scrolls into view (`IntersectionObserver`) |
+
+Only pages that use islands load the canopy runtime — everything else stays static.
+
+### Script hoisting
+
+Plain `<script>` blocks in templates are hoisted to the end of `<body>` and deduplicated across components. Add `data-wald-no-hoist` to keep a script exactly where you wrote it — for example an inline script in `<head>` that must run before first paint:
+
+```html
+<script data-wald-no-hoist>/* runs before first paint */</script>
+```
+
+---
+
 ## Config file
 
 Create a `wald.config.ts` in your project root to configure the build:
@@ -153,6 +230,7 @@ wald plant <name>   # Create a new project
 wald grow           # Start the dev server (http://localhost:7233)
 wald build          # Build to dist/ (Vite SSR + static pre-render)
 wald preview        # Preview the build (http://localhost:4321)
+wald check          # Type-check .wald and .ts files
 ```
 
 ---
