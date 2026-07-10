@@ -4,8 +4,6 @@ A content-first web framework for building fast, static-first websites. Write `.
 
 > **Status:** Early development. All planned phases (0–4c) are complete.
 
-<img width="1624" height="970" alt="Scherm­afbeelding 2026-07-10 om 11 12 09" src="https://github.com/user-attachments/assets/59eab973-51f2-44d7-8079-7b1626cae77a" />
-
 ---
 
 ## Quick start
