@@ -1,6 +1,14 @@
 {
   "name": "@waldjs/cli",
   "version": "0.1.0",
+  "description": "CLI for WaldJS — plant, grow, build, preview",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Stefan-Espant/WaldJS.git",
+    "directory": "packages/cli"
+  },
+  "author": "Stefan van der Kort",
   "private": false,
   "type": "module",
   "bin": {
@@ -8,6 +16,13 @@
   },
   "exports": {
     ".": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "bin"
+  ],
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "build": "tsc",

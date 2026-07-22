@@ -1,6 +1,14 @@
 {
   "name": "@waldjs/compiler",
   "version": "0.1.0",
+  "description": "Parser and transform compiler for .wald files",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Stefan-Espant/WaldJS.git",
+    "directory": "packages/compiler"
+  },
+  "author": "Stefan van der Kort",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -9,6 +17,12 @@
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
     }
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "build": "tsc",

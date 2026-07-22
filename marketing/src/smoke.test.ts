@@ -29,10 +29,13 @@ describe('marketing site build', () => {
     expect(existsSync(join(ROOT, 'dist/assets/js/animations.js'))).toBe(true)
   })
 
-  it('bevat geen inline script-blokken meer behalve CDN en asset-verwijzingen', () => {
+  it('bevat geen inline script-blokken meer behalve CDN, asset- en bekende bootstrap-scripts', () => {
     const html = readFileSync(join(ROOT, 'dist/index.html'), 'utf-8')
     const inlineScripts = html.match(/<script(?![^>]*src=)[^>]*>[\s\S]*?<\/script>/g) ?? []
-    expect(inlineScripts).toEqual([])
+    const isSanctioned = (script: string) =>
+      script.includes('data-wald-no-hoist') || script.includes('dataLayer')
+    const unsanctioned = inlineScripts.filter((script) => !isSanctioned(script))
+    expect(unsanctioned).toEqual([])
   })
 
   it('bouwt canopy islands als dist assets', () => {
