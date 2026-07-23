@@ -23,6 +23,7 @@ function newestMtime(dir) {
 }
 
 function distIsStale() {
+  if (!existsSync(srcDir)) return false
   if (!existsSync(distEntry)) return true
   return newestMtime(srcDir) > statSync(distEntry).mtimeMs
 }

@@ -141,7 +141,7 @@ export async function buildPages(
   const canopyAssets = await buildCanopyClient(canopyEntries, distDir, config.base, config.vite)
 
   reporter.onPhase?.('Bundling SSR pages')
-  await withGrowingTree('Bundling SSR pages...', build(mergeConfig(
+  const ssrResult = await withGrowingTree('Bundling SSR pages...', build(mergeConfig(
     config.vite ?? {},
     {
       _waldContentDir: contentDir,
@@ -156,11 +156,25 @@ export async function buildPages(
     } as any,
   )))
 
+  const entryFileNames = new Map<string, string>()
+  const ssrOutputs = Array.isArray(ssrResult) ? ssrResult : [ssrResult]
+  for (const result of ssrOutputs) {
+    if (!result) continue
+    for (const chunk of (result as any).output ?? []) {
+      if (chunk.type === 'chunk' && chunk.isEntry && chunk.facadeModuleId) {
+        entryFileNames.set(resolve(chunk.facadeModuleId), chunk.fileName)
+      }
+    }
+  }
+
+  const resolveModulePath = (routeFile: string, key: string) =>
+    resolve(join(ssrDir, entryFileNames.get(resolve(routeFile)) ?? key + '.js'))
+
   try {
     reporter.onPhase?.('Rendering static pages')
     for (const route of staticRoutes) {
       const key = relative(pagesDir, route.file).replace(/\.wald$/, '')
-      const modulePath = resolve(join(ssrDir, key + '.js'))
+      const modulePath = resolveModulePath(route.file, key)
       const mod = await import(modulePath) as {
         default: { render: (props?: Record<string, unknown>) => Promise<string> }
       }
@@ -175,7 +189,7 @@ export async function buildPages(
     reporter.onPhase?.('Rendering dynamic pages')
     for (const route of dynamicRoutes) {
       const key = relative(pagesDir, route.file).replace(/\.wald$/, '')
-      const modulePath = resolve(join(ssrDir, key + '.js'))
+      const modulePath = resolveModulePath(route.file, key)
 
       const mod = await import(modulePath) as {
         default: { render: (props?: Record<string, unknown>) => Promise<string> }
