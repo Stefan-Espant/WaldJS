@@ -1,5 +1,13 @@
 # @waldjs/cli
 
+## 0.2.0
+
+### Minor Changes
+
+- 68defc0: `wald plant` now automatically installs dependencies (detecting npm/pnpm/yarn/bun via the invoking package manager) and prints the matching `dev` command, instead of always suggesting `pnpm install` regardless of how it was invoked.
+
+  Also adds the `create-wald` package, so `npm create wald@latest my-forest` works as a shorter alias for `npx @waldjs/cli plant my-forest`.
+
 ## 0.1.1
 
 ### Patch Changes
