@@ -12,20 +12,20 @@ A content-first web framework for building fast, static-first websites. Write `.
 ## Quick start
 
 ```bash
-npx @waldjs/cli plant my-forest
+npm create wald@latest my-forest
 cd my-forest
-npm install
 npm run dev
 ```
 
 Or with pnpm:
 
 ```bash
-pnpm dlx @waldjs/cli plant my-forest
+pnpm create wald my-forest
 cd my-forest
-pnpm install
 pnpm dev
 ```
+
+`create wald` scaffolds the project and installs dependencies for you — no separate install step needed.
 
 ---
 

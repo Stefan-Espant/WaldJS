@@ -1,0 +1,25 @@
+{
+  "name": "create-wald",
+  "version": "0.1.0",
+  "description": "Scaffold a new WaldJS project",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Stefan-Espant/WaldJS.git",
+    "directory": "packages/create-wald"
+  },
+  "author": "Stefan van der Kort",
+  "type": "module",
+  "bin": {
+    "create-wald": "./bin/create-wald.js"
+  },
+  "files": [
+    "bin"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@waldjs/cli": "workspace:*"
+  }
+}

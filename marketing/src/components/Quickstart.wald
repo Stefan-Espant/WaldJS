@@ -10,17 +10,15 @@
     <div class="codeblok">
       <div class="titel"><span class="dot"></span>npm</div>
       <pre><span class="c-c"># <span class="nl">Nieuw project planten</span><span class="en">Plant a new project</span></span>
-npx @waldjs/cli plant my-forest
+npm create wald@latest my-forest
 cd my-forest
-npm install
 npm run dev</pre>
     </div>
     <div class="codeblok">
       <div class="titel"><span class="dot"></span>pnpm</div>
       <pre><span class="c-c"># <span class="nl">Of met pnpm</span><span class="en">Or with pnpm</span></span>
-pnpm dlx @waldjs/cli plant my-forest
+pnpm create wald my-forest
 cd my-forest
-pnpm install
 pnpm dev</pre>
     </div>
   </div>

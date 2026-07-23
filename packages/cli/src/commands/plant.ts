@@ -1,7 +1,26 @@
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { join, basename } from 'node:path'
+import { spawnSync } from 'node:child_process'
 import { defineCommand } from 'citty'
 import ora from 'ora'
+
+type PackageManager = 'npm' | 'pnpm' | 'yarn' | 'bun'
+
+function detectPackageManager(): PackageManager {
+  const userAgent = process.env.npm_config_user_agent ?? ''
+  if (userAgent.startsWith('pnpm')) return 'pnpm'
+  if (userAgent.startsWith('yarn')) return 'yarn'
+  if (userAgent.startsWith('bun')) return 'bun'
+  return 'npm'
+}
+
+function installCommand(pm: PackageManager): [string, string[]] {
+  return [pm, ['install']]
+}
+
+function devCommand(pm: PackageManager): string {
+  return pm === 'npm' ? 'npm run dev' : `${pm} dev`
+}
 
 export async function scaffold(targetDir: string): Promise<void> {
   const name = basename(targetDir)
@@ -164,8 +183,21 @@ export const plantCommand = defineCommand({
     const spinner = ora(`Creating ${args.name}...`).start()
     await scaffold(targetDir)
     spinner.succeed(`Created ${args.name}`)
-    console.log(`\n  cd ${args.name}`)
-    console.log(`  pnpm install`)
-    console.log(`  pnpm dev`)
+
+    const pm = detectPackageManager()
+    const [cmd, cmdArgs] = installCommand(pm)
+    const installSpinner = ora(`Installing dependencies with ${pm}...`).start()
+    const result = spawnSync(cmd, cmdArgs, { cwd: targetDir, stdio: 'ignore', shell: process.platform === 'win32' })
+
+    if (result.status === 0) {
+      installSpinner.succeed('Installed dependencies')
+      console.log(`\n  cd ${args.name}`)
+      console.log(`  ${devCommand(pm)}`)
+    } else {
+      installSpinner.fail(`Could not install dependencies automatically`)
+      console.log(`\n  cd ${args.name}`)
+      console.log(`  ${cmd} ${cmdArgs.join(' ')}`)
+      console.log(`  ${devCommand(pm)}`)
+    }
   },
 })
