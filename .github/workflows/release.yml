@@ -27,7 +27,15 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      - run: pnpm build
+
+      - name: DEBUG raw publish
+        run: pnpm --filter "@waldjs/runtime" --filter "@waldjs/content" --filter "@waldjs/cli" --filter "@waldjs/canopy" --filter "@waldjs/compiler" publish --access public --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.WALDJS_KEY_2 }}
+
       - name: Create Version PR or publish to npm
+        if: false
         uses: changesets/action@v1
         with:
           version: pnpm run version
