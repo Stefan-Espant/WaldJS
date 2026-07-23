@@ -10,7 +10,7 @@
     <div class="codeblok">
       <div class="titel"><span class="dot"></span>npm</div>
       <pre><span class="c-c"># <span class="nl">Nieuw project planten</span><span class="en">Plant a new project</span></span>
-npm create wald@latest my-forest
+npx @waldjs/cli plant my-forest
 cd my-forest
 npm install
 npm run dev</pre>
