@@ -32,7 +32,7 @@ jobs:
       - name: DEBUG raw publish
         run: pnpm --filter "@waldjs/runtime" --filter "@waldjs/content" --filter "@waldjs/cli" --filter "@waldjs/canopy" --filter "@waldjs/compiler" publish --access public --no-git-checks
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.WALDJS_KEY_2 }}
+          NODE_AUTH_TOKEN: ${{ secrets.WALDJS_KEY_3 }}
 
       - name: Create Version PR or publish to npm
         if: false
