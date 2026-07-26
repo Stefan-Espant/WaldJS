@@ -88,4 +88,13 @@ describe('scaffold', () => {
     expect(content).toContain('.btn')
     expect(content).toContain('.card')
   })
+
+  it('creates src/components/TreeMark.wald with an inline SVG', async () => {
+    const base = mkdtempSync(join(tmpdir(), 'wald-plant-'))
+    const dir = join(base, 'my-forest')
+    await scaffold(dir)
+    const content = readFileSync(join(dir, 'src', 'components', 'TreeMark.wald'), 'utf8')
+    expect(content).toContain('<svg')
+    expect(content).toContain('#FF3347')
+  })
 })

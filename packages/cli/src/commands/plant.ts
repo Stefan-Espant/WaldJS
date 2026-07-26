@@ -300,6 +300,20 @@ export async function scaffold(targetDir: string): Promise<void> {
   )
 
   writeFileSync(
+    join(targetDir, 'src', 'components', 'TreeMark.wald'),
+    [
+      '---',
+      '---',
+      '<svg class="tree-mark" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">',
+      '  <polygon points="12,2 6,10 18,10" fill="#FF3347" />',
+      '  <polygon points="12,7 5,16 19,16" fill="#FF3347" />',
+      '  <rect x="11" y="16" width="2" height="5" fill="#FF3347" />',
+      '</svg>',
+      '',
+    ].join('\n')
+  )
+
+  writeFileSync(
     join(targetDir, 'src', 'layouts', 'Layout.wald'),
     [
       '---',
