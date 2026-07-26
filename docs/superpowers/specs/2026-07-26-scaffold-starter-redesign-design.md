@@ -29,7 +29,7 @@ All three scaffolded pages share the same chrome (navbar with logo + Home/Blog l
 
 2. **Blog index** (`src/pages/blog/index.wald`)
    - Same navbar/footer chrome.
-   - List of posts rendered as `Card` instances (same visual language as the home feature row), sourced from `getCollection('blog')` (unchanged from today's scaffold logic — only the presentation changes).
+   - List of posts, visually matching the `.card` look used in the home feature row, sourced from `getCollection('blog')` (unchanged from today's scaffold logic — only the presentation changes). Built via string concatenation (`posts.map(...).join('')`), not by invoking the `Card` component in a loop — see note under Technical approach below.
 
 3. **Blog post** (`src/pages/blog/[slug].wald`)
    - Same chrome, quiet reading layout: title, date, body content. No card treatment here — this page is about readability, not showcasing.
@@ -39,7 +39,8 @@ All three scaffolded pages share the same chrome (navbar with logo + Home/Blog l
 - **One stylesheet**: `src/styles/global.css`, written by `scaffold()` alongside the other generated files, linked from `Layout.wald`'s `<head>`. Not a partials system — a single file is the right amount of structure for a starter project someone is about to heavily edit.
 - **Fonts**: a Google Fonts `<link>` for Baloo 2 in `Layout.wald`'s `<head>`, weights 500/700/800 (matches what the mockups used).
 - **Logo**: new `src/components/TreeMark.wald` (or inlined directly in `Layout.wald` — implementation plan decides), a small SVG, no props needed.
-- **`Card.wald`**: gains an optional `icon` prop (a short string/emoji is enough — no icon library) rendered above the title. Existing `title`/`body` props unchanged, so it stays a single reusable component for both the home feature row and the blog list. WaldJS has no component-scoped CSS mechanism (confirmed: no `<style>`/scoping support in the compiler) — styling is plain global classes, same as the marketing site's own approach, so `global.css` targeting `.card` etc. works directly with no extra plumbing.
+- **`Card.wald`**: gains an optional `icon` prop (a short string/emoji is enough — no icon library) rendered above the title. Used three times as a literal `<Card icon=... title=... body=... />` tag in the home page's feature row — that's static, not data-driven, so direct component usage works fine there. WaldJS has no component-scoped CSS mechanism (confirmed: no `<style>`/scoping support in the compiler) — styling is plain global classes, same as the marketing site's own approach, so `global.css` targeting `.card` etc. works directly with no extra plumbing.
+- **List rendering constraint**: WaldJS templates cannot embed a component tag (e.g. `<Card />`) inside a `.map()` callback — there is no JSX transform for that. The existing scaffold and the marketing site both confirm the supported pattern is building an HTML string directly: `posts.map(p => '<div>...' + p.data.title + '...</div>').join('')`. The blog index list uses this pattern with markup matching `.card`'s classes, not the `Card` component itself.
 - **`Counter.wald`**: behavior untouched (the existing vanilla-JS click handler already works and is explicitly the "here's an interactive island" demo) — only gets the pill visual treatment via new CSS classes.
 - **`Layout.wald`**: gains a real navbar (logo + nav links to `/` and `/blog`) and a minimal footer ("Built with WaldJS", no links needed beyond that — this is the user's project, not ours). Currently it only renders `{pond}` with no chrome at all.
 
