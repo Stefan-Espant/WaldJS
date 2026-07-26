@@ -77,4 +77,15 @@ describe('scaffold', () => {
     expect(content).toContain('addEventListener')
     expect(content).toContain('</script>')
   })
+
+  it('creates src/assets/css/global.css with the brand color tokens', async () => {
+    const base = mkdtempSync(join(tmpdir(), 'wald-plant-'))
+    const dir = join(base, 'my-forest')
+    await scaffold(dir)
+    const content = readFileSync(join(dir, 'src', 'assets', 'css', 'global.css'), 'utf8')
+    expect(content).toContain('#FF3347')
+    expect(content).toContain('#023B2D')
+    expect(content).toContain('.btn')
+    expect(content).toContain('.card')
+  })
 })
