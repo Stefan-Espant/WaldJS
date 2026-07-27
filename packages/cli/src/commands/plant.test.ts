@@ -97,4 +97,18 @@ describe('scaffold', () => {
     expect(content).toContain('<svg')
     expect(content).toContain('#FF3347')
   })
+
+  it('Layout.wald includes a navbar, footer, and the global stylesheet', async () => {
+    const base = mkdtempSync(join(tmpdir(), 'wald-plant-'))
+    const dir = join(base, 'my-forest')
+    await scaffold(dir)
+    const content = readFileSync(join(dir, 'src', 'layouts', 'Layout.wald'), 'utf8')
+    expect(content).toContain('/assets/css/global.css')
+    expect(content).toContain('fonts.googleapis.com')
+    expect(content).toContain('TreeMark')
+    expect(content).toContain('class="navbar"')
+    expect(content).toContain('class="site-footer"')
+    expect(content).toContain('pond')
+    expect(content).toContain('<!DOCTYPE html>')
+  })
 })
