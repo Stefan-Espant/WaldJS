@@ -143,4 +143,12 @@ describe('scaffold', () => {
     expect(content).toContain('class="post"')
     expect(content).toContain('.map(')
   })
+
+  it('blog/[slug].wald wraps content in a post-body article', async () => {
+    const base = mkdtempSync(join(tmpdir(), 'wald-plant-'))
+    const dir = join(base, 'my-forest')
+    await scaffold(dir)
+    const content = readFileSync(join(dir, 'src', 'pages', 'blog', '[slug].wald'), 'utf8')
+    expect(content).toContain('class="post-body"')
+  })
 })

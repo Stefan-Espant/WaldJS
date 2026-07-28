@@ -453,8 +453,10 @@ export async function scaffold(targetDir: string): Promise<void> {
       "const post = await getEntry('blog', $$props.slug)",
       '---',
       '<Layout title={post.data.title}>',
-      '  <h1>{post.data.title}</h1>',
-      '  {post.body}',
+      '  <article class="post-body">',
+      '    <h1>{post.data.title}</h1>',
+      '    {post.body}',
+      '  </article>',
       '</Layout>',
       '',
     ].join('\n')
