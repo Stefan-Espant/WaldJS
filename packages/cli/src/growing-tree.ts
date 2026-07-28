@@ -157,7 +157,8 @@ function waldMarkRows() {
 }
 
 export async function withGrowingTree<T>(label: string, task: Promise<T>): Promise<T> {
-  if (!process.stdout.isTTY) {
+  const wideEnough = (process.stdout.columns ?? 0) >= CANVAS_WIDTH
+  if (!process.stdout.isTTY || !wideEnough) {
     console.log(label)
     return task
   }
