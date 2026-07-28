@@ -111,4 +111,13 @@ describe('scaffold', () => {
     expect(content).toContain('pond')
     expect(content).toContain('<!DOCTYPE html>')
   })
+
+  it('Card.wald accepts an icon prop', async () => {
+    const base = mkdtempSync(join(tmpdir(), 'wald-plant-'))
+    const dir = join(base, 'my-forest')
+    await scaffold(dir)
+    const content = readFileSync(join(dir, 'src', 'components', 'Card.wald'), 'utf8')
+    expect(content).toContain('icon')
+    expect(content).toContain('card-icon')
+  })
 })
