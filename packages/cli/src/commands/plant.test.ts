@@ -132,4 +132,15 @@ describe('scaffold', () => {
     expect((content.match(/<Card/g) ?? []).length).toBe(3)
     expect(content).toContain('<Counter')
   })
+
+  it('blog/index.wald has a page header and a styled post list', async () => {
+    const base = mkdtempSync(join(tmpdir(), 'wald-plant-'))
+    const dir = join(base, 'my-forest')
+    await scaffold(dir)
+    const content = readFileSync(join(dir, 'src', 'pages', 'blog', 'index.wald'), 'utf8')
+    expect(content).toContain('class="page-header"')
+    expect(content).toContain('class="post-list"')
+    expect(content).toContain('class="post"')
+    expect(content).toContain('.map(')
+  })
 })
