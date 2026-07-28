@@ -120,4 +120,16 @@ describe('scaffold', () => {
     expect(content).toContain('icon')
     expect(content).toContain('card-icon')
   })
+
+  it('index.wald has a hero, three feature cards, and the counter demo', async () => {
+    const base = mkdtempSync(join(tmpdir(), 'wald-plant-'))
+    const dir = join(base, 'my-forest')
+    await scaffold(dir)
+    const content = readFileSync(join(dir, 'src', 'pages', 'index.wald'), 'utf8')
+    expect(content).toContain('class="hero"')
+    expect(content).toContain('class="features"')
+    expect(content).toContain('class="counter-demo"')
+    expect((content.match(/<Card/g) ?? []).length).toBe(3)
+    expect(content).toContain('<Counter')
+  })
 })
