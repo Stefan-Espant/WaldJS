@@ -334,7 +334,7 @@ export async function scaffold(targetDir: string): Promise<void> {
       '    <nav class="navbar">',
       '      <a class="logo" href="/">',
       '        <TreeMark />',
-      '        <span>my-forest</span>',
+      `        <span>${name}</span>`,
       '      </a>',
       '      <div class="navlinks">',
       '        <a href="/">Home</a>',

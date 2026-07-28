@@ -113,6 +113,15 @@ describe('scaffold', () => {
     expect(content).toContain('<!DOCTYPE html>')
   })
 
+  it('Layout.wald navbar shows the actual project name, not a hardcoded placeholder', async () => {
+    const base = mkdtempSync(join(tmpdir(), 'wald-plant-'))
+    const dir = join(base, 'Stevas-Kookboek')
+    await scaffold(dir)
+    const content = readFileSync(join(dir, 'src', 'layouts', 'Layout.wald'), 'utf8')
+    expect(content).toContain('Stevas-Kookboek')
+    expect(content).not.toContain('>my-forest<')
+  })
+
   it('Card.wald accepts an icon prop', async () => {
     const base = mkdtempSync(join(tmpdir(), 'wald-plant-'))
     const dir = join(base, 'my-forest')
