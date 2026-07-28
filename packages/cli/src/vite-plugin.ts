@@ -1,11 +1,33 @@
 import { compile, parse, type ScriptNode } from '@waldjs/compiler'
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
+import { existsSync, readFileSync } from 'node:fs'
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import type { Plugin } from 'vite'
 import { transformWithEsbuild } from 'vite'
 
 const VIRTUAL_CONTENT_ID = '\0wald:content'
 const CANOPY_SCRIPT_SUFFIX = '.wald?canopy-script'
+const WALD_RUNTIME_PACKAGES = new Set(['@waldjs/runtime', '@waldjs/content', '@waldjs/canopy'])
+
+// Compiled .wald files unconditionally import from '@waldjs/runtime' (and
+// pages using content collections import '@waldjs/content'), but a freshly
+// scaffolded project has no node_modules of its own until `npm install`
+// runs — and even then, hoisting isn't guaranteed to land these at the
+// project root. The CLI always ships with its own copies of these packages
+// as its own dependencies, so resolve them relative to the CLI's install
+// location instead of assuming anything about the target project's layout.
+// Mirrors checker.ts's resolveRuntimeTypes() walk for the same reason.
+function resolveWaldPackage(pkgId: string): string | undefined {
+  const name = pkgId.split('/')[1]
+  let dir = dirname(fileURLToPath(import.meta.url))
+  while (true) {
+    const candidate = join(dir, 'node_modules', '@waldjs', name, 'dist', 'index.js')
+    if (existsSync(candidate)) return candidate
+    const parent = dirname(dir)
+    if (parent === dir) return undefined
+    dir = parent
+  }
+}
 
 export function waldPlugin(): Plugin[] {
   return [
@@ -14,6 +36,7 @@ export function waldPlugin(): Plugin[] {
 
       resolveId(id) {
         if (id.endsWith('.wald')) return id
+        if (WALD_RUNTIME_PACKAGES.has(id)) return resolveWaldPackage(id)
       },
 
       async transform(code, id) {

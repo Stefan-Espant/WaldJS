@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { existsSync, readFileSync, mkdtempSync } from 'node:fs'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
+import { execFileSync } from 'node:child_process'
 import { scaffold } from './plant.js'
 
 describe('scaffold', () => {
@@ -151,4 +152,20 @@ describe('scaffold', () => {
     const content = readFileSync(join(dir, 'src', 'pages', 'blog', '[slug].wald'), 'utf8')
     expect(content).toContain('class="post-body"')
   })
+
+  it('scaffolds a project that builds successfully with the real wald CLI', async () => {
+    const base = mkdtempSync(join(tmpdir(), 'wald-plant-e2e-'))
+    const dir = join(base, 'my-forest')
+    await scaffold(dir)
+
+    const cliBin = join(__dirname, '..', '..', 'bin', 'wald.js')
+    execFileSync(process.execPath, [cliBin, 'build'], { cwd: dir, stdio: 'pipe' })
+
+    const html = readFileSync(join(dir, 'dist', 'index.html'), 'utf8')
+    expect(html).toContain('/assets/css/global.css')
+    expect(html).toContain('class="hero"')
+
+    expect(existsSync(join(dir, 'dist', 'assets', 'css', 'global.css'))).toBe(true)
+    expect(existsSync(join(dir, 'dist', 'blog', 'hello-world', 'index.html'))).toBe(true)
+  }, 60_000)
 })
