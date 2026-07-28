@@ -165,8 +165,28 @@ describe('scaffold', () => {
     expect(html).toContain('/assets/css/global.css')
     expect(html).toContain('class="hero"')
 
+    // Counter's data-count attribute must be interpolated to the real
+    // initial value, not leak the literal template placeholder — the click
+    // handler does parseInt(el.dataset.count, 10), which silently becomes
+    // NaN if the attribute renders as the string "{initial}".
+    expect(html).toContain('data-count="3"')
+    expect(html).not.toContain('data-count="{initial}"')
+
     expect(existsSync(join(dir, 'dist', 'assets', 'css', 'global.css'))).toBe(true)
     expect(existsSync(join(dir, 'dist', 'blog', 'hello-world', 'index.html'))).toBe(true)
+
+    // The blog list and post body are built from raw HTML strings in
+    // frontmatter, so interpolating them with plain {expr} would HTML-escape
+    // the markup and leak literal tags as visible text instead of rendering
+    // it. Confirm the actual <a>/<p> tags render, not their escaped entities.
+    const blogHtml = readFileSync(join(dir, 'dist', 'blog', 'index.html'), 'utf8')
+    expect(blogHtml).toContain('<a class="post" href="/blog/hello-world">')
+    expect(blogHtml).not.toContain('&lt;a class=&quot;post&quot;')
+
+    const postHtml = readFileSync(join(dir, 'dist', 'blog', 'hello-world', 'index.html'), 'utf8')
+    expect(postHtml).toContain('class="post-body"')
+    expect(postHtml).toMatch(/<article class="post-body">[\s\S]*<p>/)
+    expect(postHtml).not.toContain('&lt;p&gt;')
   }, 60_000)
 
   it('scaffolds a project whose canopy islands build and resolve @waldjs/canopy', async () => {
