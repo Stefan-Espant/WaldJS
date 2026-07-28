@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { existsSync, readFileSync, mkdtempSync } from 'node:fs'
+import { existsSync, readFileSync, readdirSync, writeFileSync, mkdtempSync } from 'node:fs'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 import { execFileSync } from 'node:child_process'
@@ -167,5 +167,33 @@ describe('scaffold', () => {
 
     expect(existsSync(join(dir, 'dist', 'assets', 'css', 'global.css'))).toBe(true)
     expect(existsSync(join(dir, 'dist', 'blog', 'hello-world', 'index.html'))).toBe(true)
+  }, 60_000)
+
+  it('scaffolds a project whose canopy islands build and resolve @waldjs/canopy', async () => {
+    const base = mkdtempSync(join(tmpdir(), 'wald-plant-canopy-e2e-'))
+    const dir = join(base, 'my-forest')
+    await scaffold(dir)
+
+    // The scaffold's Counter usage has no canopy directive by default, so a
+    // plain build never exercises the @waldjs/canopy resolution path — patch
+    // it in so this test actually forces buildCanopyClient() to bundle a
+    // client entry and hit that resolveId branch.
+    const indexPath = join(dir, 'src', 'pages', 'index.wald')
+    const original = readFileSync(indexPath, 'utf8')
+    const withCanopy = original.replace('<Counter initial={3} />', '<Counter canopy:load initial={3} />')
+    expect(withCanopy).not.toBe(original)
+    writeFileSync(indexPath, withCanopy)
+
+    const cliBin = join(__dirname, '..', '..', 'bin', 'wald.js')
+    execFileSync(process.execPath, [cliBin, 'build'], { cwd: dir, stdio: 'pipe' })
+
+    const html = readFileSync(join(dir, 'dist', 'index.html'), 'utf8')
+    expect(html).toContain('<wald-canopy')
+    expect(html).toContain('data-strategy="load"')
+    expect(html).toContain('/assets/wald-canopy-')
+
+    const assetFiles = readdirSync(join(dir, 'dist', 'assets'))
+    expect(assetFiles.some(f => f.startsWith('wald-canopy-') && f.endsWith('.js'))).toBe(true)
+    expect(assetFiles.some(f => f.startsWith('counter-') && f.endsWith('.js'))).toBe(true)
   }, 60_000)
 })

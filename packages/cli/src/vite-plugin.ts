@@ -7,6 +7,11 @@ import { transformWithEsbuild } from 'vite'
 
 const VIRTUAL_CONTENT_ID = '\0wald:content'
 const CANOPY_SCRIPT_SUFFIX = '.wald?canopy-script'
+// These 3 packages are vendored via the CLI, not meant to be direct project
+// dependencies — a scaffolded package.json only ever lists '@waldjs/cli'.
+// Listing one here means it *always* resolves to the CLI's own co-located
+// copy below, for every project, even if a project's own node_modules has
+// something under the same name — that's intentional, not just a fallback.
 const WALD_RUNTIME_PACKAGES = new Set(['@waldjs/runtime', '@waldjs/content', '@waldjs/canopy'])
 
 // Compiled .wald files unconditionally import from '@waldjs/runtime' (and
