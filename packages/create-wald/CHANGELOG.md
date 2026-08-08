@@ -1,5 +1,12 @@
 # create-wald
 
+## 0.1.5
+
+### Patch Changes
+
+- Updated dependencies [1ee3bed]
+  - @waldjs/cli@0.3.2
+
 ## 0.1.4
 
 ### Patch Changes
