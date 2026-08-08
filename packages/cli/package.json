@@ -1,6 +1,6 @@
 {
   "name": "@waldjs/cli",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "CLI for WaldJS — plant, grow, build, preview",
   "license": "MIT",
   "repository": {
