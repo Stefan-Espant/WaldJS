@@ -447,6 +447,7 @@ export async function scaffold(targetDir: string): Promise<void> {
       '---',
       "import Layout from '../../layouts/Layout.wald'",
       "import { getCollection, getEntry } from 'wald:content'",
+      'type Props = { slug: string }',
       'export async function getStaticPaths() {',
       "  const posts = await getCollection('blog')",
       '  return posts.map(p => ({ params: { slug: p.slug } }))',

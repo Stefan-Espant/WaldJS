@@ -162,6 +162,24 @@ describe('scaffold', () => {
     expect(content).toContain('class="post-body"')
   })
 
+  it('blog/[slug].wald declares a Props type so $$props.slug type-checks', async () => {
+    const base = mkdtempSync(join(tmpdir(), 'wald-plant-'))
+    const dir = join(base, 'my-forest')
+    await scaffold(dir)
+    const content = readFileSync(join(dir, 'src', 'pages', 'blog', '[slug].wald'), 'utf8')
+    expect(content).toContain('type Props = { slug: string }')
+  })
+
+  it('scaffolds a project that passes wald check with no type errors', async () => {
+    const base = mkdtempSync(join(tmpdir(), 'wald-plant-check-'))
+    const dir = join(base, 'my-forest')
+    await scaffold(dir)
+
+    const cliBin = join(__dirname, '..', '..', 'bin', 'wald.js')
+    // Throws (failing the test) if wald check exits non-zero.
+    execFileSync(process.execPath, [cliBin, 'check'], { cwd: dir, stdio: 'pipe' })
+  }, 60_000)
+
   it('scaffolds a project that builds successfully with the real wald CLI', async () => {
     const base = mkdtempSync(join(tmpdir(), 'wald-plant-e2e-'))
     const dir = join(base, 'my-forest')
