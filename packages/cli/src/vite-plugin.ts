@@ -1,8 +1,8 @@
 import { compile, parse, type ScriptNode } from '@waldjs/compiler'
 import { existsSync, readFileSync } from 'node:fs'
-import { dirname, join } from 'node:path'
+import { dirname, join, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import type { Plugin } from 'vite'
+import type { HmrContext, Plugin } from 'vite'
 import { transformWithEsbuild } from 'vite'
 
 const VIRTUAL_CONTENT_ID = '\0wald:content'
@@ -34,6 +34,14 @@ function resolveWaldPackage(pkgId: string): string | undefined {
   }
 }
 
+// wald grow renders every page fresh per HTTP request via ssrLoadModule(), so
+// edited .wald/content modules only ever live in Vite's *ssr* module graph —
+// Vite's default HMR propagation walks the *client* graph to decide who to
+// notify, so it never reaches the browser on its own. We tell it explicitly.
+function needsFullReload(file: string): boolean {
+  return file.endsWith('.wald') || file.includes(`${sep}content${sep}`)
+}
+
 export function waldPlugin(): Plugin[] {
   return [
     {
@@ -60,6 +68,12 @@ export function waldPlugin(): Plugin[] {
             : undefined
           this.error({ message, loc })
         }
+      },
+
+      handleHotUpdate(ctx: HmrContext) {
+        if (!needsFullReload(ctx.file)) return
+        ctx.server.ws.send({ type: 'full-reload' })
+        return []
       },
     },
     {

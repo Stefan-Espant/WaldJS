@@ -54,4 +54,18 @@ describe('handleRequest', () => {
 
     await expect(handleRequest(routes, '/about', fakeVite as any)).rejects.toThrow('boom')
   })
+
+  it('runs the response through transformIndexHtml to inject the Vite HMR client', async () => {
+    const routes = [{ pattern: '/about', file: '/pages/about.wald', params: [] }]
+    const fakeVite = {
+      ssrLoadModule: async (_file: string) => ({
+        default: { render: async () => '<p>About</p>' },
+      }),
+      transformIndexHtml: async (_url: string, html: string) =>
+        html.replace('</head>', '<script type="module" src="/@vite/client"></script></head>'),
+    }
+
+    const result = await handleRequest(routes, '/about', fakeVite as any)
+    expect(result.body).toContain('<script type="module" src="/@vite/client"></script>')
+  })
 })
