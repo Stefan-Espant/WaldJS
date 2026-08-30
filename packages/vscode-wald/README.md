@@ -25,7 +25,9 @@ This extension contributes:
 
 ## Status: not published
 
-This extension is **not yet on the VS Code Marketplace**. To use it locally:
+This extension is **not yet on the VS Code Marketplace** (tracked in [#33](https://github.com/Stefan-Espant/WaldJS/issues/33)) — `package.json` is publish-ready (`private: false`, `repository`, `bugs`, `homepage`, `keywords`), but publishing itself needs a Marketplace publisher account, which only the maintainer can create. See **Publishing** below.
+
+To use it locally in the meantime:
 
 **Option A — package and install:**
 
@@ -42,6 +44,21 @@ ln -s "$(pwd)/packages/vscode-wald" ~/.vscode/extensions/waldjs.vscode-wald-0.0.
 ```
 
 Then reload VS Code and open any `.wald` file. If your workspace's `.vscode/settings.json` still maps `*.wald` to HTML via `files.associations`, remove that entry so the `wald` language takes over.
+
+## Publishing (for maintainers)
+
+One-time setup, done outside this repo:
+
+1. Create a Marketplace publisher at [marketplace.visualstudio.com/manage](https://marketplace.visualstudio.com/manage), with an id matching `publisher` in `package.json` (currently `waldjs`). This needs a Microsoft/Azure DevOps account.
+2. Generate a Personal Access Token at [dev.azure.com](https://dev.azure.com) → User settings → Personal access tokens, scoped to **Marketplace (Manage)**. Treat it like any other secret — never commit it.
+3. `npx vsce login waldjs` and paste the token when prompted (stores it locally, not in the repo).
+
+To publish a release, from `packages/vscode-wald`:
+
+```sh
+npx vsce publish            # publishes the current version
+npx vsce publish patch      # or bump patch/minor/major first, then publish
+```
 
 ## Verification
 
