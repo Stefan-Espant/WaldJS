@@ -253,9 +253,13 @@ wald grow           # Start the dev server (http://localhost:7233)
 wald build          # Build to dist/ (Vite SSR + static pre-render)
 wald preview        # Preview the build (http://localhost:4321)
 wald check          # Type-check .wald and .ts files
+wald new component <Name>   # Scaffold src/components/<Name>.wald
+wald new page <route>       # Scaffold src/pages/<route>.wald
 ```
 
 `wald grow` live-reloads the browser whenever a `.wald` page/component or a `content/` entry changes — no manual refresh needed. Reloads are full-page (the render pipeline re-runs per request; there's no partial/state-preserving hot update yet).
+
+`wald new page` understands dynamic segments — `wald new page blog/[slug]` scaffolds a typed `Props` and a `getStaticPaths()` stub, the same shape `wald plant`'s own starter uses.
 
 ---
 
