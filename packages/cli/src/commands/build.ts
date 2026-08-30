@@ -146,7 +146,17 @@ export async function buildPages(
     {
       _waldContentDir: contentDir,
       base: config.base,
-      plugins: [waldPlugin()],
+      plugins: [waldPlugin({
+        image: { outDir: join(distDir, 'assets', 'optimized'), publicPath: '/assets/optimized' },
+      })],
+      // sharp (pulled in transitively by wald:image's renderImage) ships
+      // native .node bindings loaded via dynamic require() — Rollup can't
+      // statically bundle that, so it must stay a real runtime import
+      // instead of being inlined into the SSR bundle. @waldjs/cli is
+      // external too since it's already a real dependency of every WaldJS
+      // project (see wald plant's scaffolded package.json) and pulls sharp
+      // in with it.
+      ssr: { external: ['sharp', '@waldjs/cli'] },
       build: {
         ssr: true,
         outDir: ssrDir,

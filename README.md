@@ -157,6 +157,23 @@ const { title, pond } = $$props
 
 ---
 
+## Images
+
+Import `Image` from `wald:image` to serve a responsive, optimized image instead of a plain `<img>`:
+
+```wald
+---
+import { Image } from 'wald:image'
+---
+<Image src="/assets/hero.jpg" alt="A misty forest" widths={[400, 800, 1200]} />
+```
+
+`src` points at a file under `src/assets/`, same as a plain `<img src="/assets/...">` would. `wald build` resizes the image to each requested width (`[400, 800]` by default), converts it to WebP, and writes the variants to `dist/assets/optimized/`; the rendered `<img>` gets a matching `srcset`/`sizes` plus the source's natural `width`/`height`. Formats WebP can't usefully re-encode (SVG, GIF) are copied through unprocessed instead of failing the build.
+
+`wald grow` skips optimization entirely and serves the original file as-is — resizing/converting on every dev-server request would slow down the edit-reload loop for no benefit, since only the production build's output matters for real users.
+
+---
+
 ## Canopy islands
 
 Pages ship 0 KB JavaScript by default. To make a component interactive, give it a `<script>` block that exports a default function and mount it with a `canopy:*` directive:

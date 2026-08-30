@@ -6,6 +6,7 @@ import type { HmrContext, Plugin } from 'vite'
 import { transformWithEsbuild } from 'vite'
 
 const VIRTUAL_CONTENT_ID = '\0wald:content'
+const VIRTUAL_IMAGE_ID = '\0wald:image'
 const CANOPY_SCRIPT_SUFFIX = '.wald?canopy-script'
 // These 3 packages are vendored via the CLI, not meant to be direct project
 // dependencies — a scaffolded package.json only ever lists '@waldjs/cli'.
@@ -42,7 +43,15 @@ function needsFullReload(file: string): boolean {
   return file.endsWith('.wald') || file.includes(`${sep}content${sep}`)
 }
 
-export function waldPlugin(): Plugin[] {
+export type WaldPluginOptions = {
+  // Set only by `wald build` — its presence is what tells the `wald:image`
+  // virtual module whether to actually optimize images (build) or just pass
+  // the original file through untouched (dev, via wald grow's existing
+  // /assets/* static serving).
+  image?: { outDir: string; publicPath: string }
+}
+
+export function waldPlugin(options: WaldPluginOptions = {}): Plugin[] {
   return [
     {
       name: 'vite-plugin-wald',
@@ -91,6 +100,28 @@ export function waldPlugin(): Plugin[] {
           `const contentDir = ${contentDir}`,
           `export const getCollection = (name) => _rc(name, contentDir)`,
           `export const getEntry = (collection, slug) => _re(collection, slug, contentDir)`,
+        ].join('\n')
+      },
+    },
+    {
+      name: 'vite-plugin-wald-image',
+
+      resolveId(id) {
+        if (id === 'wald:image') return VIRTUAL_IMAGE_ID
+      },
+
+      load(id) {
+        if (id !== VIRTUAL_IMAGE_ID) return
+        const context = JSON.stringify({
+          assetsDir: join(process.cwd(), 'src', 'assets'),
+          outDir: options.image?.outDir,
+          publicPath: options.image?.publicPath ?? '/assets/optimized',
+        })
+        return [
+          `import { createTree } from '@waldjs/runtime'`,
+          `import { renderImage } from '@waldjs/cli'`,
+          `const $$imageContext = ${context}`,
+          `export const Image = createTree(async ($$result, $$props) => renderImage($$props, $$imageContext))`,
         ].join('\n')
       },
     },
