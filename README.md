@@ -257,6 +257,8 @@ wald check          # Type-check .wald and .ts files
 
 `wald grow` live-reloads the browser whenever a `.wald` page/component or a `content/` entry changes — no manual refresh needed. Reloads are full-page (the render pipeline re-runs per request; there's no partial/state-preserving hot update yet).
 
+When a `.wald` file fails to compile or a page throws while rendering, `wald grow` responds with a readable HTML error page (message, file/line, code frame, and stack) instead of a bare 500 — no need to go dig through the terminal.
+
 ---
 
 ## Project structure

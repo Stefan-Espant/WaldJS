@@ -6,6 +6,7 @@ import { waldPlugin } from '../vite-plugin.js'
 import { loadWaldConfig } from '../config.js'
 import { matchRoute, scanRoutes, type Route } from '../router/index.js'
 import { maybeWrap, hoistScripts } from '../shell.js'
+import { renderErrorPage } from '../error-page.js'
 import { withGrowingTree } from '../growing-tree.js'
 import { join } from 'node:path'
 
@@ -98,13 +99,18 @@ export const growCommand = defineCommand({
           res.writeHead(status, { 'Content-Type': 'text/html' })
           res.end(body)
         } catch (e) {
-          const error = e as Error
+          const error = e as Error & { loc?: { file?: string; line?: number; column?: number } }
           vite.ssrFixStacktrace(error)
           console.error(`[waldjs] Render failed for ${url}`)
           console.error(error.stack ?? String(error))
+          if (error.loc && !error.loc.file) error.loc.file = match.route.file
           if (!res.headersSent && !res.writableEnded) {
-            res.writeHead(500, { 'Content-Type': 'text/plain' })
-            res.end(String(error))
+            let body = renderErrorPage(error)
+            if (vite.transformIndexHtml) {
+              body = await vite.transformIndexHtml(url, body)
+            }
+            res.writeHead(500, { 'Content-Type': 'text/html' })
+            res.end(body)
           }
         }
       })
