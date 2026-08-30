@@ -255,6 +255,8 @@ wald preview        # Preview the build (http://localhost:4321)
 wald check          # Type-check .wald and .ts files
 ```
 
+`wald grow` live-reloads the browser whenever a `.wald` page/component or a `content/` entry changes — no manual refresh needed. Reloads are full-page (the render pipeline re-runs per request; there's no partial/state-preserving hot update yet).
+
 ---
 
 ## Project structure

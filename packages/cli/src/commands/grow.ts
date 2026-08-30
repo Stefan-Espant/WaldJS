@@ -11,6 +11,7 @@ import { join } from 'node:path'
 
 type ViteLike = {
   ssrLoadModule: (file: string) => Promise<{ default: { render: (props?: Record<string, unknown>) => Promise<string> } }>
+  transformIndexHtml?: (url: string, html: string) => Promise<string>
 }
 
 function printGrowReady(port: number, cwd: string, base: string, routeCount: number, staticCount: number, dynamicCount: number, ms: number) {
@@ -34,7 +35,11 @@ export async function handleRequest(
 
   const mod = await vite!.ssrLoadModule(match.route.file)
   const html = await mod.default.render(match.params)
-  return { status: 200, body: hoistScripts(maybeWrap(html)) }
+  let body = hoistScripts(maybeWrap(html))
+  if (vite!.transformIndexHtml) {
+    body = await vite!.transformIndexHtml(url, body)
+  }
+  return { status: 200, body }
 }
 
 export const growCommand = defineCommand({
@@ -51,18 +56,13 @@ export const growCommand = defineCommand({
 
     const config = await loadWaldConfig(cwd)
     const start = Date.now()
-
-    const vite = await withGrowingTree('Starting dev server...', createServer(mergeConfig(
-      config.vite ?? {},
-      {
-        base: config.base,
-        server: { middlewareMode: true },
-        appType: 'custom',
-        plugins: [waldPlugin()],
-      },
-    )))
     const servePublic = sirv(publicDir, { dev: true })
     const serveSrc = sirv(srcDir, { dev: true })
+
+    // Declared before the Vite server so it can be handed to `hmr.server`
+    // below — Vite needs a live http.Server to attach its HMR websocket to
+    // when running in middlewareMode, since it isn't creating one itself.
+    let vite: Awaited<ReturnType<typeof createServer>>
 
     const server = createHttpServer((req, res) => {
       const url = req.url ?? '/'
@@ -94,11 +94,9 @@ export const growCommand = defineCommand({
         }
 
         try {
-          const mod = await vite.ssrLoadModule(match.route.file)
-          const html = await mod.default.render(match.params)
-          const full = hoistScripts(maybeWrap(html))
-          res.writeHead(200, { 'Content-Type': 'text/html' })
-          res.end(full)
+          const { status, body } = await handleRequest(routes, url, vite as unknown as ViteLike)
+          res.writeHead(status, { 'Content-Type': 'text/html' })
+          res.end(body)
         } catch (e) {
           const error = e as Error
           vite.ssrFixStacktrace(error)
@@ -111,6 +109,16 @@ export const growCommand = defineCommand({
         }
       })
     })
+
+    vite = await withGrowingTree('Starting dev server...', createServer(mergeConfig(
+      config.vite ?? {},
+      {
+        base: config.base,
+        server: { middlewareMode: true, hmr: { server } },
+        appType: 'custom',
+        plugins: [waldPlugin()],
+      },
+    )))
 
     server.listen(port, () => {
       printGrowReady(port, cwd, config.base, routes.length, staticCount, dynamicCount, Date.now() - start)

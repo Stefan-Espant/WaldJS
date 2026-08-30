@@ -72,6 +72,38 @@ describe('vite-plugin-wald', () => {
       })
     )
   })
+
+  it('sends a full-reload over the ws and clears the module list for a .wald file change', async () => {
+    const send = vi.fn()
+    const result = await callHook('vite-plugin-wald', 'handleHotUpdate', {
+      file: '/project/src/pages/index.wald',
+      server: { ws: { send } },
+      modules: ['stale-module'],
+    })
+    expect(send).toHaveBeenCalledWith({ type: 'full-reload' })
+    expect(result).toEqual([])
+  })
+
+  it('sends a full-reload for a content collection file change', async () => {
+    const send = vi.fn()
+    await callHook('vite-plugin-wald', 'handleHotUpdate', {
+      file: '/project/content/blog/hello-world.md',
+      server: { ws: { send } },
+      modules: [],
+    })
+    expect(send).toHaveBeenCalledWith({ type: 'full-reload' })
+  })
+
+  it('leaves unrelated file changes to default Vite HMR handling', async () => {
+    const send = vi.fn()
+    const result = await callHook('vite-plugin-wald', 'handleHotUpdate', {
+      file: '/project/src/assets/css/global.css',
+      server: { ws: { send } },
+      modules: [],
+    })
+    expect(send).not.toHaveBeenCalled()
+    expect(result).toBeUndefined()
+  })
 })
 
 describe('vite-plugin-wald-content', () => {
