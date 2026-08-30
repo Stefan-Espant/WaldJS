@@ -16,6 +16,10 @@
     ".": {
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
+    },
+    "./prefetch": {
+      "import": "./dist/prefetch.js",
+      "types": "./dist/prefetch.d.ts"
     }
   },
   "files": [

@@ -44,6 +44,35 @@ describe('handleRequest', () => {
     expect(capturedProps[0]).toEqual({ slug: 'hello-world' })
   })
 
+  it('injects the prefetch runtime when the rendered page uses wald:prefetch', async () => {
+    const routes = [{ pattern: '/about', file: '/pages/about.wald', params: [] }]
+    const fakeVite = {
+      ssrLoadModule: async (_file: string) => ({
+        default: {
+          render: async () => '<a href="/x" wald:prefetch="hover">x</a>',
+        },
+      }),
+    }
+
+    const result = await handleRequest(routes, '/about', fakeVite as any)
+    expect(result.body).toContain('<script>')
+    expect(result.body).toContain('wald:prefetch')
+  })
+
+  it('does not inject the prefetch runtime for a page without wald:prefetch', async () => {
+    const routes = [{ pattern: '/about', file: '/pages/about.wald', params: [] }]
+    const fakeVite = {
+      ssrLoadModule: async (_file: string) => ({
+        default: {
+          render: async () => '<a href="/x">x</a>',
+        },
+      }),
+    }
+
+    const result = await handleRequest(routes, '/about', fakeVite as any)
+    expect(result.body).not.toContain('<script>')
+  })
+
   it('rethrows render errors from ssrLoadModule', async () => {
     const routes = [{ pattern: '/about', file: '/pages/about.wald', params: [] }]
     const fakeVite = {
