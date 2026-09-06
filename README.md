@@ -202,6 +202,22 @@ Plain `<script>` blocks in templates are hoisted to the end of `<body>` and dedu
 <script data-wald-no-hoist>/* runs before first paint */</script>
 ```
 
+### Link prefetching
+
+Add `wald:prefetch` to any element with an `href` to prefetch that page's HTML before the user clicks:
+
+```wald
+<a href="/blog" wald:prefetch="visible">Read the blog</a>
+<a href="/pricing" wald:prefetch="hover">See pricing</a>
+```
+
+| Value | Prefetches when |
+|---|---|
+| `wald:prefetch="visible"` | The link scrolls into view (`IntersectionObserver`) |
+| `wald:prefetch="hover"` | The user hovers the link (`mouseenter`) |
+
+No compiler support needed — `wald:prefetch` is a plain HTML attribute, so it survives untouched like any other. A small inline runtime is added automatically to a page's HTML, but only if that page actually uses `wald:prefetch` somewhere; pages without it stay at 0 KB JS.
+
 ---
 
 ## Config file

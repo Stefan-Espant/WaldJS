@@ -8,6 +8,7 @@ import { waldPlugin } from '../vite-plugin.js'
 import { loadWaldConfig, type WaldConfig } from '../config.js'
 import { scanRoutes } from '../router/index.js'
 import { maybeWrap, hoistScripts } from '../shell.js'
+import { injectPrefetchRuntime } from '../prefetch-runtime.js'
 import { withGrowingTree } from '../growing-tree.js'
 import { runCheck } from './check.js'
 
@@ -179,7 +180,7 @@ export async function buildPages(
         default: { render: (props?: Record<string, unknown>) => Promise<string> }
       }
       const rendered = stripCanopyScripts(await mod.default.render(), canopyScriptContents)
-      const html = applyCanopyAssets(hoistScripts(maybeWrap(rendered)), canopyAssets)
+      const html = injectPrefetchRuntime(applyCanopyAssets(hoistScripts(maybeWrap(rendered)), canopyAssets))
       const outPath = resolveOutPath(distDir, route.pattern)
       mkdirSync(dirname(outPath), { recursive: true })
       writeFileSync(outPath, html)
@@ -208,7 +209,7 @@ export async function buildPages(
       for (const { params } of paths) {
         dynamicPages++
         const rendered = stripCanopyScripts(await mod.default.render(params), canopyScriptContents)
-        const html = applyCanopyAssets(hoistScripts(maybeWrap(rendered)), canopyAssets)
+        const html = injectPrefetchRuntime(applyCanopyAssets(hoistScripts(maybeWrap(rendered)), canopyAssets))
         const outPath = resolveOutPath(distDir, route.pattern, params)
         mkdirSync(dirname(outPath), { recursive: true })
         writeFileSync(outPath, html)
