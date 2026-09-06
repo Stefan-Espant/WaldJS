@@ -294,6 +294,8 @@ wald new page <route>       # Scaffold src/pages/<route>.wald
 
 `wald new page` understands dynamic segments — `wald new page blog/[slug]` scaffolds a typed `Props` and a `getStaticPaths()` stub, the same shape `wald plant`'s own starter uses.
 
+When a `.wald` file fails to compile or a page throws while rendering, `wald grow` responds with a readable HTML error page (message, file/line, code frame, and stack) instead of a bare 500 — no need to go dig through the terminal.
+
 ---
 
 ## Project structure
