@@ -97,4 +97,28 @@ describe('handleRequest', () => {
     const result = await handleRequest(routes, '/about', fakeVite as any)
     expect(result.body).toContain('<script type="module" src="/@vite/client"></script>')
   })
+
+  it('injects the component-styles link when the rendered page uses a styled component', async () => {
+    const routes = [{ pattern: '/about', file: '/pages/about.wald', params: [] }]
+    const fakeVite = {
+      ssrLoadModule: async (_file: string) => ({
+        default: { render: async () => '<div class="card" data-wald-ab12cd34>Hi</div>' },
+      }),
+    }
+
+    const result = await handleRequest(routes, '/about', fakeVite as any)
+    expect(result.body).toContain('<link rel="stylesheet" href="/assets/wald-components.css">')
+  })
+
+  it('does not inject the component-styles link for a page with no styled components', async () => {
+    const routes = [{ pattern: '/about', file: '/pages/about.wald', params: [] }]
+    const fakeVite = {
+      ssrLoadModule: async (_file: string) => ({
+        default: { render: async () => '<p>About</p>' },
+      }),
+    }
+
+    const result = await handleRequest(routes, '/about', fakeVite as any)
+    expect(result.body).not.toContain('wald-components.css')
+  })
 })
