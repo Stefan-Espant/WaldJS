@@ -122,6 +122,9 @@ function renderNode(node: TemplateNode): string {
     case 'expression': return `\${${node.code}}`
     case 'component': return renderComponent(node)
     case 'script': return `\${new SafeHtml(${JSON.stringify(node.content)})}`
+    // Never actually reached — parser/index.ts lifts every StyleNode out of
+    // the tree before it gets here. Handled for switch exhaustiveness.
+    case 'style': return ''
   }
 }
 
