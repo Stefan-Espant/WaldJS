@@ -3,14 +3,28 @@
   "displayName": "WaldJS",
   "description": "Syntax highlighting for WaldJS .wald single-file components",
   "version": "0.0.1",
-  "private": true,
+  "private": false,
   "publisher": "waldjs",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Stefan-Espant/WaldJS.git",
+    "directory": "packages/vscode-wald"
+  },
+  "bugs": {
+    "url": "https://github.com/Stefan-Espant/WaldJS/issues"
+  },
+  "homepage": "https://github.com/Stefan-Espant/WaldJS/tree/main/packages/vscode-wald#readme",
   "engines": {
     "vscode": "^1.80.0"
   },
   "categories": [
     "Programming Languages"
+  ],
+  "keywords": [
+    "wald",
+    "waldjs",
+    "syntax highlighting"
   ],
   "contributes": {
     "languages": [

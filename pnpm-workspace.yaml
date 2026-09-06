@@ -4,3 +4,4 @@ packages:
   - 'marketing'
 allowBuilds:
   esbuild: true
+  sharp: true

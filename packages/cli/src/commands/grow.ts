@@ -7,6 +7,7 @@ import { loadWaldConfig } from '../config.js'
 import { matchRoute, scanRoutes, type Route } from '../router/index.js'
 import { maybeWrap, hoistScripts } from '../shell.js'
 import { renderErrorPage } from '../error-page.js'
+import { injectPrefetchRuntime } from '../prefetch-runtime.js'
 import { withGrowingTree } from '../growing-tree.js'
 import { join } from 'node:path'
 
@@ -36,7 +37,7 @@ export async function handleRequest(
 
   const mod = await vite!.ssrLoadModule(match.route.file)
   const html = await mod.default.render(match.params)
-  let body = hoistScripts(maybeWrap(html))
+  let body = injectPrefetchRuntime(hoistScripts(maybeWrap(html)))
   if (vite!.transformIndexHtml) {
     body = await vite!.transformIndexHtml(url, body)
   }

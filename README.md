@@ -157,6 +157,23 @@ const { title, pond } = $$props
 
 ---
 
+## Images
+
+Import `Image` from `wald:image` to serve a responsive, optimized image instead of a plain `<img>`:
+
+```wald
+---
+import { Image } from 'wald:image'
+---
+<Image src="/assets/hero.jpg" alt="A misty forest" widths={[400, 800, 1200]} />
+```
+
+`src` points at a file under `src/assets/`, same as a plain `<img src="/assets/...">` would. `wald build` resizes the image to each requested width (`[400, 800]` by default), converts it to WebP, and writes the variants to `dist/assets/optimized/`; the rendered `<img>` gets a matching `srcset`/`sizes` plus the source's natural `width`/`height`. Formats WebP can't usefully re-encode (SVG, GIF) are copied through unprocessed instead of failing the build.
+
+`wald grow` skips optimization entirely and serves the original file as-is — resizing/converting on every dev-server request would slow down the edit-reload loop for no benefit, since only the production build's output matters for real users.
+
+---
+
 ## Canopy islands
 
 Pages ship 0 KB JavaScript by default. To make a component interactive, give it a `<script>` block that exports a default function and mount it with a `canopy:*` directive:
@@ -201,6 +218,22 @@ Plain `<script>` blocks in templates are hoisted to the end of `<body>` and dedu
 ```html
 <script data-wald-no-hoist>/* runs before first paint */</script>
 ```
+
+### Link prefetching
+
+Add `wald:prefetch` to any element with an `href` to prefetch that page's HTML before the user clicks:
+
+```wald
+<a href="/blog" wald:prefetch="visible">Read the blog</a>
+<a href="/pricing" wald:prefetch="hover">See pricing</a>
+```
+
+| Value | Prefetches when |
+|---|---|
+| `wald:prefetch="visible"` | The link scrolls into view (`IntersectionObserver`) |
+| `wald:prefetch="hover"` | The user hovers the link (`mouseenter`) |
+
+No compiler support needed — `wald:prefetch` is a plain HTML attribute, so it survives untouched like any other. A small inline runtime is added automatically to a page's HTML, but only if that page actually uses `wald:prefetch` somewhere; pages without it stay at 0 KB JS.
 
 ---
 
@@ -253,9 +286,13 @@ wald grow           # Start the dev server (http://localhost:7233)
 wald build          # Build to dist/ (Vite SSR + static pre-render)
 wald preview        # Preview the build (http://localhost:4321)
 wald check          # Type-check .wald and .ts files
+wald new component <Name>   # Scaffold src/components/<Name>.wald
+wald new page <route>       # Scaffold src/pages/<route>.wald
 ```
 
 `wald grow` live-reloads the browser whenever a `.wald` page/component or a `content/` entry changes — no manual refresh needed. Reloads are full-page (the render pipeline re-runs per request; there's no partial/state-preserving hot update yet).
+
+`wald new page` understands dynamic segments — `wald new page blog/[slug]` scaffolds a typed `Props` and a `getStaticPaths()` stub, the same shape `wald plant`'s own starter uses.
 
 When a `.wald` file fails to compile or a page throws while rendering, `wald grow` responds with a readable HTML error page (message, file/line, code frame, and stack) instead of a bare 500 — no need to go dig through the terminal.
 

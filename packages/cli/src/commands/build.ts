@@ -8,6 +8,7 @@ import { waldPlugin } from '../vite-plugin.js'
 import { loadWaldConfig, type WaldConfig } from '../config.js'
 import { scanRoutes } from '../router/index.js'
 import { maybeWrap, hoistScripts } from '../shell.js'
+import { injectPrefetchRuntime } from '../prefetch-runtime.js'
 import { withGrowingTree } from '../growing-tree.js'
 import { runCheck } from './check.js'
 
@@ -146,7 +147,17 @@ export async function buildPages(
     {
       _waldContentDir: contentDir,
       base: config.base,
-      plugins: [waldPlugin()],
+      plugins: [waldPlugin({
+        image: { outDir: join(distDir, 'assets', 'optimized'), publicPath: '/assets/optimized' },
+      })],
+      // sharp (pulled in transitively by wald:image's renderImage) ships
+      // native .node bindings loaded via dynamic require() — Rollup can't
+      // statically bundle that, so it must stay a real runtime import
+      // instead of being inlined into the SSR bundle. @waldjs/cli is
+      // external too since it's already a real dependency of every WaldJS
+      // project (see wald plant's scaffolded package.json) and pulls sharp
+      // in with it.
+      ssr: { external: ['sharp', '@waldjs/cli'] },
       build: {
         ssr: true,
         outDir: ssrDir,
@@ -179,7 +190,7 @@ export async function buildPages(
         default: { render: (props?: Record<string, unknown>) => Promise<string> }
       }
       const rendered = stripCanopyScripts(await mod.default.render(), canopyScriptContents)
-      const html = applyCanopyAssets(hoistScripts(maybeWrap(rendered)), canopyAssets)
+      const html = injectPrefetchRuntime(applyCanopyAssets(hoistScripts(maybeWrap(rendered)), canopyAssets))
       const outPath = resolveOutPath(distDir, route.pattern)
       mkdirSync(dirname(outPath), { recursive: true })
       writeFileSync(outPath, html)
@@ -208,7 +219,7 @@ export async function buildPages(
       for (const { params } of paths) {
         dynamicPages++
         const rendered = stripCanopyScripts(await mod.default.render(params), canopyScriptContents)
-        const html = applyCanopyAssets(hoistScripts(maybeWrap(rendered)), canopyAssets)
+        const html = injectPrefetchRuntime(applyCanopyAssets(hoistScripts(maybeWrap(rendered)), canopyAssets))
         const outPath = resolveOutPath(distDir, route.pattern, params)
         mkdirSync(dirname(outPath), { recursive: true })
         writeFileSync(outPath, html)

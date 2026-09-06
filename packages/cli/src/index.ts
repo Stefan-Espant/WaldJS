@@ -8,3 +8,5 @@ export {
   vercelAdapter,
 } from './adapters.js'
 export type { WaldAdapter, WaldAdapterContext } from './adapters.js'
+export { optimizeImage, renderImage, renderImageTag } from './image.js'
+export type { ImageContext, ImageProps, OptimizedImage } from './image.js'
