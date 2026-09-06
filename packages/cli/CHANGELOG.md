@@ -1,5 +1,19 @@
 # @waldjs/cli
 
+## 0.4.0
+
+### Minor Changes
+
+- 47d0ed8: `wald grow` now live-reloads the browser automatically when a `.wald` page/component or `content/` entry changes, instead of requiring a manual refresh. The dev server's HTTP server is now wired into Vite's HMR websocket, and pages are run through `transformIndexHtml` to inject the Vite client. Since every page is server-rendered fresh per request, reloads are full-page rather than partial/state-preserving hot updates — see [#20](https://github.com/Stefan-Espant/WaldJS/issues/20) for state-preserving component HMR as follow-up work.
+- 7883e62: Add `wald:image`'s `<Image src="..." alt="..." widths={[400, 800]} />` for responsive, optimized images. `wald build` resizes the source to each requested width, converts it to WebP, and writes the variants to `dist/assets/optimized/`, producing a matching `srcset`/`sizes` and the source's natural `width`/`height`. Formats WebP can't usefully re-encode (SVG, GIF) pass through unprocessed. `wald grow` skips processing and serves the original file directly. Adds `sharp` as a new dependency of `@waldjs/cli`.
+- ac374e0: Add `wald new component <Name>` and `wald new page <route>` to scaffold a `.wald` file in `src/components/` or `src/pages/` without hand-copying an existing one. `wald new page` recognizes dynamic segments (`wald new page blog/[slug]`) and scaffolds a typed `Props` plus a `getStaticPaths()` stub. Both refuse to overwrite an existing file.
+- ece732d: Add `wald:prefetch="hover"` / `wald:prefetch="visible"` for prefetching a linked page's HTML before the user clicks — no compiler support needed, since it's a plain HTML attribute on any element with an `href`. `wald grow` and `wald build` both inline a small runtime automatically, but only into pages that actually use the directive; pages without it stay at 0 KB JS. `@waldjs/canopy` gains a new `@waldjs/canopy/prefetch` export.
+
+### Patch Changes
+
+- Updated dependencies [ece732d]
+  - @waldjs/canopy@0.2.0
+
 ## 0.3.2
 
 ### Patch Changes
