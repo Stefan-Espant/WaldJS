@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { scanTemplate } from './scanner.js'
-import type { ScriptNode } from '../ast/types.js'
+import type { ScriptNode, StyleNode } from '../ast/types.js'
 import { WaldError } from '../errors.js'
 
 describe('scanTemplate — text', () => {
@@ -170,6 +170,30 @@ describe('scanTemplate — script', () => {
   it('handles script with type attribute', () => {
     const nodes = scanTemplate('<script type="module">export const x = 1</script>')
     expect(nodes).toEqual([{ type: 'script', content: '<script type="module">export const x = 1</script>' }])
+  })
+})
+
+describe('scanTemplate — style', () => {
+  it('scans a style block as a single node holding only its inner content', () => {
+    const nodes = scanTemplate('<style>.card { color: red }</style>')
+    expect(nodes).toEqual([{ type: 'style', content: '.card { color: red }', line: 1, column: 1 } satisfies StyleNode])
+  })
+
+  it('does not choke on braces inside the style content', () => {
+    const nodes = scanTemplate('<style>.a { color: red } .b { color: blue }</style>')
+    expect(nodes).toEqual([{ type: 'style', content: '.a { color: red } .b { color: blue }', line: 1, column: 1 }])
+  })
+
+  it('tracks the line and column of the opening tag', () => {
+    // nodes[0] is the <div></div> element, nodes[1] is the whitespace text
+    // node for the newline between the two tags, nodes[2] is the style block.
+    const nodes = scanTemplate('<div></div>\n<style>.a{color:red}</style>')
+    expect(nodes[2]).toMatchObject({ type: 'style', line: 2, column: 1 })
+  })
+
+  it('treats content after the style block as a sibling node', () => {
+    const nodes = scanTemplate('<style>.a{color:red}</style><h1>Hi</h1>')
+    expect(nodes[1]).toEqual({ type: 'element', tag: 'h1', attrs: [], children: [{ type: 'text', value: 'Hi' }] })
   })
 })
 

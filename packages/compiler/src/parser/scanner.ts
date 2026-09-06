@@ -1,4 +1,4 @@
-import type { TemplateNode, ElementNode, ComponentNode, AttributeNode, ScriptNode } from '../ast/types.js'
+import type { TemplateNode, ElementNode, ComponentNode, AttributeNode, ScriptNode, StyleNode } from '../ast/types.js'
 import { WaldError, offsetToLineCol } from '../errors.js'
 import { VOID_ELEMENTS } from '../void-elements.js'
 
@@ -40,6 +40,7 @@ class Scanner {
     }
     if (this.current === '<' && this.peek(1) !== '/') {
       if (this.isScriptTag()) return this.scanScript()
+      if (this.isStyleTag()) return this.scanStyle()
       return this.scanElement()
     }
     if (this.current === '{') {
@@ -60,6 +61,27 @@ class Scanner {
     const content = this.source.slice(this.pos, end)
     this.pos = end
     return { type: 'script', content }
+  }
+
+  private isStyleTag(): boolean {
+    const ahead = this.source.slice(this.pos + 1, this.pos + 7).toLowerCase()
+    return ahead.startsWith('style') && /[\s>/]/.test(ahead[5] ?? '>')
+  }
+
+  // Unlike scanScript (whose `content` is the whole `<script>...</script>` tag,
+  // reproduced verbatim in the HTML output), a style block is never rendered
+  // inline — parser/index.ts lifts it out to WaldDocument.styles — so this
+  // only needs to capture the CSS between the tags, not the tags themselves.
+  private scanStyle(): StyleNode {
+    const { line, column } = offsetToLineCol(this.source, this.pos)
+    const openTagEnd = this.source.indexOf('>', this.pos)
+    const contentStart = openTagEnd === -1 ? this.source.length : openTagEnd + 1
+    const closeTag = '</style>'
+    const closeIndex = this.source.toLowerCase().indexOf(closeTag, contentStart)
+    const contentEnd = closeIndex === -1 ? this.source.length : closeIndex
+    const content = this.source.slice(contentStart, contentEnd)
+    this.pos = closeIndex === -1 ? this.source.length : closeIndex + closeTag.length
+    return { type: 'style', content, line, column }
   }
 
   // <!DOCTYPE ...> and <!-- comments --> pass through as literal text.
