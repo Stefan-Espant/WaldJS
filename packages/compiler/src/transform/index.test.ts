@@ -370,6 +370,73 @@ describe('script rendering', () => {
   })
 })
 
+describe('transformWithMap — scoped styles', () => {
+  it('returns null styles and adds no attribute when the document has no styles', () => {
+    const ast: WaldDocument = {
+      type: 'document',
+      frontmatter: { type: 'frontmatter', code: '' },
+      template: [{ type: 'element', tag: 'h1', attrs: [], children: [{ type: 'text', value: 'Hi' }] }],
+      styles: null,
+    }
+    const result = transformWithMap(ast, '/src/pages/index.wald')
+    expect(result.styles).toBeNull()
+    expect(result.code).not.toContain('data-wald-')
+  })
+
+  it('stamps every element with a data-wald-<hash> attribute when styles are present', () => {
+    const ast: WaldDocument = {
+      type: 'document',
+      frontmatter: { type: 'frontmatter', code: '' },
+      template: [{
+        type: 'element',
+        tag: 'div',
+        attrs: [{ type: 'attribute', name: 'class', value: 'card' }],
+        children: [{ type: 'element', tag: 'span', attrs: [], children: [] }],
+      }],
+      styles: '.card { color: red }',
+    }
+    const result = transformWithMap(ast, '/src/components/Card.wald')
+    expect(result.code).toMatch(/<div class="card" data-wald-[0-9a-f]{8}>/)
+    expect(result.code).toMatch(/<span data-wald-[0-9a-f]{8}>/)
+  })
+
+  it('scopes the returned CSS with the same hash used on the elements', () => {
+    const ast: WaldDocument = {
+      type: 'document',
+      frontmatter: { type: 'frontmatter', code: '' },
+      template: [{ type: 'element', tag: 'div', attrs: [], children: [] }],
+      styles: '.card { color: red }',
+    }
+    const result = transformWithMap(ast, '/src/components/Card.wald')
+    const hashInMarkup = result.code.match(/data-wald-([0-9a-f]{8})/)?.[1]
+    expect(hashInMarkup).toBeTruthy()
+    expect(result.styles).toBe(`.card[data-wald-${hashInMarkup}]{ color: red }`)
+  })
+
+  it('produces the same hash for the same file id across two separate compiles', () => {
+    const ast: WaldDocument = {
+      type: 'document',
+      frontmatter: { type: 'frontmatter', code: '' },
+      template: [{ type: 'element', tag: 'div', attrs: [], children: [] }],
+      styles: '.card {}',
+    }
+    const first = transformWithMap(ast, '/src/components/Card.wald')
+    const second = transformWithMap(ast, '/src/components/Card.wald')
+    expect(first.styles).toBe(second.styles)
+  })
+
+  it('treats a document with no styles field the same as styles: null (existing fixtures keep working)', () => {
+    const ast: WaldDocument = {
+      type: 'document',
+      frontmatter: { type: 'frontmatter', code: '' },
+      template: [{ type: 'element', tag: 'h1', attrs: [], children: [] }],
+      // no `styles` key at all
+    }
+    const result = transformWithMap(ast, '/src/pages/index.wald')
+    expect(result.styles).toBeNull()
+  })
+})
+
 describe('component rendering', () => {
   it('renders a self-closing component with string props', () => {
     const source = `---\nimport Card from './Card.wald'\n---\n<Card title="Hoi" />`

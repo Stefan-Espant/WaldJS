@@ -1,19 +1,25 @@
 import type { WaldDocument, TemplateNode, ElementNode, ComponentNode, AttributeNode } from '../ast/types.js'
 import { VOID_ELEMENTS } from '../void-elements.js'
+import { scopeCss, scopeHash } from '../scope-css.js'
 
 type MappedLine = { text: string; srcLine: number }
 
-export function transform(ast: WaldDocument): string {
-  return transformWithMap(ast).code
+export function transform(ast: WaldDocument, fileId = ''): string {
+  return transformWithMap(ast, fileId).code
 }
 
 /** lineMap[i] is the 1-based .wald source line for output line i + 1, or null for generated lines. */
 export type LineMap = (number | null)[]
 
-export type TransformResult = { code: string; lineMap: LineMap }
+export type TransformResult = { code: string; lineMap: LineMap; styles: string | null }
 
-export function transformWithMap(ast: WaldDocument): TransformResult {
-  const templateCode = renderNodes(ast.template)
+export function transformWithMap(ast: WaldDocument, fileId = ''): TransformResult {
+  const hasStyles = (ast.styles ?? null) !== null
+  const hash = hasStyles ? scopeHash(fileId) : null
+  const scopeAttr = hash !== null ? ` data-wald-${hash}` : ''
+  const styles = hash !== null ? scopeCss(ast.styles as string, hash) : null
+
+  const templateCode = renderNodes(ast.template, scopeAttr)
   const code = ast.frontmatter.code ?? ''
   const fmStart = ast.frontmatter.line ?? 2
   const { hoisted, body, hasProps } = splitFrontmatter(code)
@@ -56,7 +62,7 @@ export function transformWithMap(ast: WaldDocument): TransformResult {
   pushGenerated(`  return renderTemplate\`${templateCode}\``)
   push(`})`, null)
 
-  return { code: out.join('\n'), lineMap: map }
+  return { code: out.join('\n'), lineMap: map, styles }
 }
 
 function splitFrontmatter(code: string): { hoisted: MappedLine[]; body: MappedLine[]; hasProps: boolean } {
@@ -111,16 +117,16 @@ function splitFrontmatter(code: string): { hoisted: MappedLine[]; body: MappedLi
   return { hoisted, body, hasProps }
 }
 
-function renderNodes(nodes: TemplateNode[]): string {
-  return nodes.map(renderNode).join('')
+function renderNodes(nodes: TemplateNode[], scopeAttr: string): string {
+  return nodes.map(node => renderNode(node, scopeAttr)).join('')
 }
 
-function renderNode(node: TemplateNode): string {
+function renderNode(node: TemplateNode, scopeAttr: string): string {
   switch (node.type) {
-    case 'element': return renderElement(node)
+    case 'element': return renderElement(node, scopeAttr)
     case 'text': return escapeTemplateLiteral(node.value)
     case 'expression': return `\${${node.code}}`
-    case 'component': return renderComponent(node)
+    case 'component': return renderComponent(node, scopeAttr)
     case 'script': return `\${new SafeHtml(${JSON.stringify(node.content)})}`
     // Never actually reached — parser/index.ts lifts every StyleNode out of
     // the tree before it gets here. Handled for switch exhaustiveness.
@@ -128,7 +134,7 @@ function renderNode(node: TemplateNode): string {
   }
 }
 
-function renderComponent(node: ComponentNode): string {
+function renderComponent(node: ComponentNode, scopeAttr: string): string {
   const props = node.attrs
     .map(attr =>
       typeof attr.value === 'string'
@@ -144,7 +150,7 @@ function renderComponent(node: ComponentNode): string {
   }
 
   if (node.children.length > 0) {
-    const childrenHtml = renderNodes(node.children)
+    const childrenHtml = renderNodes(node.children, scopeAttr)
     const propsWithPond = props
       ? `${props}, pond: new SafeHtml(renderTemplate\`${childrenHtml}\`)`
       : `pond: new SafeHtml(renderTemplate\`${childrenHtml}\`)`
@@ -158,15 +164,15 @@ function escapeTemplateLiteral(text: string): string {
   return text.replace(/`/g, '\\`').replace(/\$\{/g, '\\${')
 }
 
-function renderElement(node: ElementNode): string {
+function renderElement(node: ElementNode, scopeAttr: string): string {
   const attrs = node.attrs.map(renderAttr).join(' ')
-  const attrsStr = attrs ? ` ${attrs}` : ''
+  const attrsStr = `${attrs ? ` ${attrs}` : ''}${scopeAttr}`
 
   if (VOID_ELEMENTS.has(node.tag)) {
     return `<${node.tag}${attrsStr}>`
   }
 
-  const children = renderNodes(node.children)
+  const children = renderNodes(node.children, scopeAttr)
   return `<${node.tag}${attrsStr}>${children}</${node.tag}>`
 }
 
