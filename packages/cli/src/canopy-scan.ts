@@ -40,7 +40,7 @@ export function collectCanopyScriptContents(entries: Map<string, string>): Set<s
   return contents
 }
 
-function walkWaldFiles(dir: string): string[] {
+export function walkWaldFiles(dir: string): string[] {
   const files: string[] = []
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
     const full = join(dir, entry.name)

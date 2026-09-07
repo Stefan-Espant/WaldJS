@@ -11,11 +11,14 @@ import { maybeWrap, hoistScripts } from '../shell.js'
 import { injectPrefetchRuntime } from '../prefetch-runtime.js'
 import { withGrowingTree } from '../growing-tree.js'
 import { runCheck } from './check.js'
+import { injectComponentStyles } from '../component-styles.js'
+import { collectComponentStyles } from '../style-scan.js'
 
 export type BuildPhase =
   | 'Scanning routes'
   | 'Scanning canopies'
   | 'Bundling canopy client'
+  | 'Bundling component styles'
   | 'Bundling SSR pages'
   | 'Rendering static pages'
   | 'Rendering dynamic pages'
@@ -141,6 +144,9 @@ export async function buildPages(
   reporter.onPhase?.('Bundling canopy client')
   const canopyAssets = await buildCanopyClient(canopyEntries, distDir, config.base, config.vite)
 
+  reporter.onPhase?.('Bundling component styles')
+  const componentStyles = collectComponentStyles(srcDir)
+
   reporter.onPhase?.('Bundling SSR pages')
   const ssrResult = await withGrowingTree('Bundling SSR pages...', build(mergeConfig(
     config.vite ?? {},
@@ -190,7 +196,7 @@ export async function buildPages(
         default: { render: (props?: Record<string, unknown>) => Promise<string> }
       }
       const rendered = stripCanopyScripts(await mod.default.render(), canopyScriptContents)
-      const html = injectPrefetchRuntime(applyCanopyAssets(hoistScripts(maybeWrap(rendered)), canopyAssets))
+      const html = injectComponentStyles(injectPrefetchRuntime(applyCanopyAssets(hoistScripts(maybeWrap(rendered)), canopyAssets)))
       const outPath = resolveOutPath(distDir, route.pattern)
       mkdirSync(dirname(outPath), { recursive: true })
       writeFileSync(outPath, html)
@@ -219,7 +225,7 @@ export async function buildPages(
       for (const { params } of paths) {
         dynamicPages++
         const rendered = stripCanopyScripts(await mod.default.render(params), canopyScriptContents)
-        const html = injectPrefetchRuntime(applyCanopyAssets(hoistScripts(maybeWrap(rendered)), canopyAssets))
+        const html = injectComponentStyles(injectPrefetchRuntime(applyCanopyAssets(hoistScripts(maybeWrap(rendered)), canopyAssets)))
         const outPath = resolveOutPath(distDir, route.pattern, params)
         mkdirSync(dirname(outPath), { recursive: true })
         writeFileSync(outPath, html)
@@ -244,6 +250,11 @@ export async function buildPages(
     reporter.onPhase?.('Copying source assets')
     cpSync(assetsDir, join(distDir, 'assets'), { recursive: true })
     copiedAssets = true
+  }
+
+  if (componentStyles) {
+    mkdirSync(join(distDir, 'assets'), { recursive: true })
+    writeFileSync(join(distDir, 'assets', 'wald-components.css'), componentStyles)
   }
 
   reporter.onPhase?.('Applying adapter')

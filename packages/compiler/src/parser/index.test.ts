@@ -44,3 +44,33 @@ const title = "Hello Wald"
     expect(doc.template[1]).toMatchObject({ type: 'element', tag: 'p' })
   })
 })
+
+describe('parse — styles', () => {
+  it('lifts a <style> block out of the template into doc.styles', () => {
+    const doc = parse('<style>.a { color: red }</style><h1>Hi</h1>')
+    expect(doc.styles).toBe('.a { color: red }')
+    expect(doc.template).toEqual([{ type: 'element', tag: 'h1', attrs: [], children: [{ type: 'text', value: 'Hi' }] }])
+  })
+
+  it('sets styles to null when there is no <style> block', () => {
+    const doc = parse('<h1>Hi</h1>')
+    expect(doc.styles).toBeNull()
+  })
+
+  it('throws when a file has more than one <style> block', () => {
+    expect(() => parse('<style>.a{color:red}</style><style>.b{color:blue}</style>')).toThrow(
+      'A .wald file can only have one <style> block',
+    )
+  })
+
+  it('lifts a <style> block nested inside an element', () => {
+    const doc = parse('<div><style>.a{color:red}</style><p>Hi</p></div>')
+    expect(doc.styles).toBe('.a{color:red}')
+    expect(doc.template).toEqual([{
+      type: 'element',
+      tag: 'div',
+      attrs: [],
+      children: [{ type: 'element', tag: 'p', attrs: [], children: [{ type: 'text', value: 'Hi' }] }],
+    }])
+  })
+})

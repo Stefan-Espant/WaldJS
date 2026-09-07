@@ -9,7 +9,7 @@ export function compile(source: string, id: string): string {
 export function compileWithMap(source: string, id: string): TransformResult {
   try {
     const ast = parse(source)
-    return transformWithMap(ast)
+    return transformWithMap(ast, id)
   } catch (e) {
     if (e instanceof WaldError) {
       e.file = id

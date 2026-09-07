@@ -8,6 +8,8 @@ import { matchRoute, scanRoutes, type Route } from '../router/index.js'
 import { maybeWrap, hoistScripts } from '../shell.js'
 import { renderErrorPage } from '../error-page.js'
 import { injectPrefetchRuntime } from '../prefetch-runtime.js'
+import { injectComponentStyles } from '../component-styles.js'
+import { collectComponentStyles } from '../style-scan.js'
 import { withGrowingTree } from '../growing-tree.js'
 import { join } from 'node:path'
 
@@ -37,7 +39,7 @@ export async function handleRequest(
 
   const mod = await vite!.ssrLoadModule(match.route.file)
   const html = await mod.default.render(match.params)
-  let body = injectPrefetchRuntime(hoistScripts(maybeWrap(html)))
+  let body = injectComponentStyles(injectPrefetchRuntime(hoistScripts(maybeWrap(html))))
   if (vite!.transformIndexHtml) {
     body = await vite!.transformIndexHtml(url, body)
   }
@@ -68,6 +70,12 @@ export const growCommand = defineCommand({
 
     const server = createHttpServer((req, res) => {
       const url = req.url ?? '/'
+
+      if (url === '/assets/wald-components.css') {
+        res.writeHead(200, { 'Content-Type': 'text/css' })
+        res.end(collectComponentStyles(srcDir))
+        return
+      }
 
       if (url.startsWith('/assets/')) {
         serveSrc(req, res, () => {

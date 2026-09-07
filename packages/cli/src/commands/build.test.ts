@@ -480,6 +480,44 @@ describe('buildPages', () => {
     expect(html).not.toContain('wald-canopy')
     expect(html).not.toContain('<script type="module" src="/assets/wald-canopy-testhash.js"></script>')
   })
+
+  it('bundles scoped component styles into dist/assets/wald-components.css and links them from pages that use them', async () => {
+    const pagesDir = join(tmpDir, 'src', 'pages')
+    const componentsDir = join(tmpDir, 'src', 'components')
+    const distDir = join(tmpDir, 'dist')
+    mkdirSync(pagesDir, { recursive: true })
+    mkdirSync(componentsDir, { recursive: true })
+    writeFileSync(
+      join(componentsDir, 'Card.wald'),
+      '---\n---\n<div class="card">Hi</div>\n<style>.card { color: red }</style>',
+    )
+    writeFileSync(
+      join(pagesDir, 'index.wald'),
+      "---\nimport Card from '../components/Card.wald'\n---\n<Card />",
+    )
+
+    await buildPages(pagesDir, makeConfig(distDir))
+
+    const html = readFileSync(join(distDir, 'index.html'), 'utf8')
+    expect(html).toMatch(/<div class="card" data-wald-[0-9a-f]{8}>/)
+    expect(html).toContain('<link rel="stylesheet" href="/assets/wald-components.css">')
+
+    const css = readFileSync(join(distDir, 'assets', 'wald-components.css'), 'utf8')
+    expect(css).toMatch(/\.card\[data-wald-[0-9a-f]{8}\]\{ color: red \}/)
+  })
+
+  it('does not create a component-styles bundle when no component has a <style> block', async () => {
+    const pagesDir = join(tmpDir, 'src', 'pages')
+    const distDir = join(tmpDir, 'dist')
+    mkdirSync(pagesDir, { recursive: true })
+    writeFileSync(join(pagesDir, 'index.wald'), '---\n---\n<h1>Hi</h1>')
+
+    await buildPages(pagesDir, makeConfig(distDir))
+
+    expect(existsSync(join(distDir, 'assets', 'wald-components.css'))).toBe(false)
+    const html = readFileSync(join(distDir, 'index.html'), 'utf8')
+    expect(html).not.toContain('wald-components.css')
+  })
 })
 
 describe('build --check', () => {
