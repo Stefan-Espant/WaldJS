@@ -481,6 +481,40 @@ describe('buildPages', () => {
     expect(html).not.toContain('<script type="module" src="/assets/wald-canopy-testhash.js"></script>')
   })
 
+  it('keeps the scope attribute on a component that also uses canopy:load', async () => {
+    const pagesDir = join(tmpDir, 'src', 'pages')
+    const componentsDir = join(tmpDir, 'src', 'components')
+    const distDir = join(tmpDir, 'dist')
+    mkdirSync(pagesDir, { recursive: true })
+    mkdirSync(componentsDir, { recursive: true })
+
+    writeFileSync(
+      join(componentsDir, 'Counter.wald'),
+      [
+        '---',
+        'const { initial } = $$props',
+        '---',
+        '<button class="counter">{initial}</button>',
+        '<script>export default function(root) { root.dataset.ready = "yes" }</script>',
+        '<style>.counter { color: red }</style>',
+      ].join('\n')
+    )
+
+    writeFileSync(
+      join(pagesDir, 'index.wald'),
+      ["---", "import Counter from '../components/Counter.wald'", '---', '<Counter canopy:load initial={3} />'].join('\n')
+    )
+
+    await buildPages(pagesDir, makeConfig(distDir))
+
+    const html = readFileSync(join(distDir, 'index.html'), 'utf8')
+    expect(html).toMatch(/<wald-canopy[\s\S]*?<button class="counter" data-wald-[0-9a-f]{8}>3<\/button>/)
+    expect(html).toContain('<link rel="stylesheet" href="/assets/wald-components.css">')
+
+    const css = readFileSync(join(distDir, 'assets', 'wald-components.css'), 'utf8')
+    expect(css).toMatch(/\.counter\[data-wald-[0-9a-f]{8}\]\{ color: red \}/)
+  })
+
   it('bundles scoped component styles into dist/assets/wald-components.css and links them from pages that use them', async () => {
     const pagesDir = join(tmpDir, 'src', 'pages')
     const componentsDir = join(tmpDir, 'src', 'components')
