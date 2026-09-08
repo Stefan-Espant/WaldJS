@@ -506,6 +506,32 @@ describe('buildPages', () => {
     expect(css).toMatch(/\.card\[data-wald-[0-9a-f]{8}\]\{ color: red \}/)
   })
 
+  it('links the component-styles bundle with a base-prefixed href under a non-root base', async () => {
+    const pagesDir = join(tmpDir, 'src', 'pages')
+    const componentsDir = join(tmpDir, 'src', 'components')
+    const distDir = join(tmpDir, 'dist')
+    mkdirSync(pagesDir, { recursive: true })
+    mkdirSync(componentsDir, { recursive: true })
+    writeFileSync(
+      join(componentsDir, 'Card.wald'),
+      '---\n---\n<div class="card">Hi</div>\n<style>.card { color: red }</style>',
+    )
+    writeFileSync(
+      join(pagesDir, 'index.wald'),
+      "---\nimport Card from '../components/Card.wald'\n---\n<Card />",
+    )
+
+    await buildPages(pagesDir, { ...makeConfig(distDir), base: '/my-forest/' })
+
+    const html = readFileSync(join(distDir, 'index.html'), 'utf8')
+    expect(html).toContain('<link rel="stylesheet" href="/my-forest/assets/wald-components.css">')
+
+    // The physical bundle file's location on disk is unaffected by base —
+    // only how it's *referenced* from HTML changes, same as every other
+    // build asset (canopy chunks, images, etc.).
+    expect(existsSync(join(distDir, 'assets', 'wald-components.css'))).toBe(true)
+  })
+
   it('does not create a component-styles bundle when no component has a <style> block', async () => {
     const pagesDir = join(tmpDir, 'src', 'pages')
     const distDir = join(tmpDir, 'dist')

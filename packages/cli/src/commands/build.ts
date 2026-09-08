@@ -196,7 +196,7 @@ export async function buildPages(
         default: { render: (props?: Record<string, unknown>) => Promise<string> }
       }
       const rendered = stripCanopyScripts(await mod.default.render(), canopyScriptContents)
-      const html = injectComponentStyles(injectPrefetchRuntime(applyCanopyAssets(hoistScripts(maybeWrap(rendered)), canopyAssets)))
+      const html = injectComponentStyles(injectPrefetchRuntime(applyCanopyAssets(hoistScripts(maybeWrap(rendered)), canopyAssets)), config.base)
       const outPath = resolveOutPath(distDir, route.pattern)
       mkdirSync(dirname(outPath), { recursive: true })
       writeFileSync(outPath, html)
@@ -225,7 +225,7 @@ export async function buildPages(
       for (const { params } of paths) {
         dynamicPages++
         const rendered = stripCanopyScripts(await mod.default.render(params), canopyScriptContents)
-        const html = injectComponentStyles(injectPrefetchRuntime(applyCanopyAssets(hoistScripts(maybeWrap(rendered)), canopyAssets)))
+        const html = injectComponentStyles(injectPrefetchRuntime(applyCanopyAssets(hoistScripts(maybeWrap(rendered)), canopyAssets)), config.base)
         const outPath = resolveOutPath(distDir, route.pattern, params)
         mkdirSync(dirname(outPath), { recursive: true })
         writeFileSync(outPath, html)
