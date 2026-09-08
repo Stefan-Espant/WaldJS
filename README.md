@@ -273,6 +273,8 @@ export default defineConfig({
 | `netlifyAdapter()` | Adds a `_headers` file with cache rules |
 | `cloudflarePagesAdapter()` | Adds a `_headers` file with cache rules |
 | `vercelAdapter()` | Builds to `.vercel/output/` with a `config.json` (Build Output API v3) |
+| `githubPagesAdapter()` | Adds a `.nojekyll` file and a `404.html` fallback (a copy of `index.html`) |
+| `denoDeployAdapter()` | Plain static files — Deno Deploy needs no special output shape |
 
 Write your own with `defineAdapter({ name, adapt({ outDir }) { … } })`.
 
