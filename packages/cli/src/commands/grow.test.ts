@@ -122,15 +122,22 @@ describe('handleRequest', () => {
     expect(result.body).not.toContain('wald-components.css')
   })
 
-  it('injects a base-prefixed component-styles link when a non-default base is passed', async () => {
+  it('leaves the component-styles link root-relative and lets transformIndexHtml apply base once (not double-prefixed)', async () => {
     const routes = [{ pattern: '/about', file: '/pages/about.wald', params: [] }]
     const fakeVite = {
       ssrLoadModule: async (_file: string) => ({
         default: { render: async () => '<div class="card" data-wald-ab12cd34>Hi</div>' },
       }),
+      // Mimics Vite's real transformIndexHtml: it joins config.base onto
+      // any root-relative href/src exactly once. If handleRequest already
+      // baked a base into the link itself, this would double it up — this
+      // test catches that regression class.
+      transformIndexHtml: async (_url: string, html: string) =>
+        html.replace(/(href|src)="\/(?!\/)/g, '$1="/my-forest/'),
     }
 
-    const result = await handleRequest(routes, '/about', fakeVite as any, '/my-forest/')
+    const result = await handleRequest(routes, '/about', fakeVite as any)
     expect(result.body).toContain('<link rel="stylesheet" href="/my-forest/assets/wald-components.css">')
+    expect(result.body).not.toContain('/my-forest/my-forest/')
   })
 })

@@ -32,15 +32,19 @@ function printGrowReady(port: number, cwd: string, base: string, routeCount: num
 export async function handleRequest(
   routes: Route[],
   url: string,
-  vite: ViteLike | undefined,
-  base = '/'
+  vite: ViteLike | undefined
 ): Promise<{ status: number; body: string }> {
   const match = matchRoute(routes, url)
   if (!match) return { status: 404, body: 'Page not found' }
 
   const mod = await vite!.ssrLoadModule(match.route.file)
   const html = await mod.default.render(match.params)
-  let body = injectComponentStyles(injectPrefetchRuntime(hoistScripts(maybeWrap(html))), base)
+  // Deliberately NOT passing config.base here: injectComponentStyles's link
+  // stays root-relative, and vite.transformIndexHtml() below already
+  // base-prefixes every root-relative href/src in the page exactly once
+  // (the same way it already handles the Vite HMR client and everything
+  // else) — baking base in here too would double-prefix it.
+  let body = injectComponentStyles(injectPrefetchRuntime(hoistScripts(maybeWrap(html))))
   if (vite!.transformIndexHtml) {
     body = await vite!.transformIndexHtml(url, body)
   }
@@ -106,7 +110,7 @@ export const growCommand = defineCommand({
         }
 
         try {
-          const { status, body } = await handleRequest(routes, url, vite as unknown as ViteLike, config.base)
+          const { status, body } = await handleRequest(routes, url, vite as unknown as ViteLike)
           res.writeHead(status, { 'Content-Type': 'text/html' })
           res.end(body)
         } catch (e) {
