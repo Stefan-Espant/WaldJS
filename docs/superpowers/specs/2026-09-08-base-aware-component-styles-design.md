@@ -45,7 +45,7 @@ One new test in `build.test.ts`, modeled directly on the existing canopy tests t
 
 - A broader audit of whether `wald grow`'s other static-asset routes (`/assets/*` passthrough, `public/`) are base-aware. The issue is scoped to `wald-components.css` specifically; other routes either already flow through Vite's own base-aware middleware (they don't literally start with `/assets/` when base-prefixed, so they never hit the raw-HTTP shortcut branches at all) or are a separate, larger concern.
 - Any change to `canopy-build.ts`'s own behavior — `joinUrl` is only being exported, not modified.
-- **Discovered but not fixed here:** `wald grow`'s own page routing (`matchRoute`, driven by the raw incoming `req.url`) doesn't strip `config.base` at all — requesting `/my-forest/` 404s while `/` works, verified live with a real dev server under `base: '/my-forest/'`. This is a separate, pre-existing gap in `wald grow`'s base support generally (not specific to component styles, and not something this fix's scope — the `wald-components.css` link/route — touches), worth its own follow-up issue.
+- **Discovered but not fixed here:** `wald grow`'s own page routing (`matchRoute`, driven by the raw incoming `req.url`) doesn't strip `config.base` at all — requesting `/my-forest/` 404s while `/` works, verified live with a real dev server under `base: '/my-forest/'`. This is a separate, pre-existing gap in `wald grow`'s base support generally (not specific to component styles, and not something this fix's scope — the `wald-components.css` link/route — touches). Filed as [#45](https://github.com/Stefan-Espant/WaldJS/issues/45).
 
 ## Testing
 
