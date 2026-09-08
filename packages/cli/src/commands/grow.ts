@@ -8,7 +8,7 @@ import { matchRoute, scanRoutes, type Route } from '../router/index.js'
 import { maybeWrap, hoistScripts } from '../shell.js'
 import { renderErrorPage } from '../error-page.js'
 import { injectPrefetchRuntime } from '../prefetch-runtime.js'
-import { injectComponentStyles } from '../component-styles.js'
+import { injectComponentStyles, componentStylesHref } from '../component-styles.js'
 import { collectComponentStyles } from '../style-scan.js'
 import { withGrowingTree } from '../growing-tree.js'
 import { join } from 'node:path'
@@ -32,14 +32,15 @@ function printGrowReady(port: number, cwd: string, base: string, routeCount: num
 export async function handleRequest(
   routes: Route[],
   url: string,
-  vite: ViteLike | undefined
+  vite: ViteLike | undefined,
+  base = '/'
 ): Promise<{ status: number; body: string }> {
   const match = matchRoute(routes, url)
   if (!match) return { status: 404, body: 'Page not found' }
 
   const mod = await vite!.ssrLoadModule(match.route.file)
   const html = await mod.default.render(match.params)
-  let body = injectComponentStyles(injectPrefetchRuntime(hoistScripts(maybeWrap(html))))
+  let body = injectComponentStyles(injectPrefetchRuntime(hoistScripts(maybeWrap(html))), base)
   if (vite!.transformIndexHtml) {
     body = await vite!.transformIndexHtml(url, body)
   }
@@ -59,6 +60,7 @@ export const growCommand = defineCommand({
     const dynamicCount = routes.length - staticCount
 
     const config = await loadWaldConfig(cwd)
+    const componentStylesPath = componentStylesHref(config.base)
     const start = Date.now()
     const servePublic = sirv(publicDir, { dev: true })
     const serveSrc = sirv(srcDir, { dev: true })
@@ -71,7 +73,7 @@ export const growCommand = defineCommand({
     const server = createHttpServer((req, res) => {
       const url = req.url ?? '/'
 
-      if (url === '/assets/wald-components.css') {
+      if (url === componentStylesPath) {
         res.writeHead(200, { 'Content-Type': 'text/css' })
         res.end(collectComponentStyles(srcDir))
         return
@@ -104,7 +106,7 @@ export const growCommand = defineCommand({
         }
 
         try {
-          const { status, body } = await handleRequest(routes, url, vite as unknown as ViteLike)
+          const { status, body } = await handleRequest(routes, url, vite as unknown as ViteLike, config.base)
           res.writeHead(status, { 'Content-Type': 'text/html' })
           res.end(body)
         } catch (e) {

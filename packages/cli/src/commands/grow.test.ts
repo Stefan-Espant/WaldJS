@@ -121,4 +121,16 @@ describe('handleRequest', () => {
     const result = await handleRequest(routes, '/about', fakeVite as any)
     expect(result.body).not.toContain('wald-components.css')
   })
+
+  it('injects a base-prefixed component-styles link when a non-default base is passed', async () => {
+    const routes = [{ pattern: '/about', file: '/pages/about.wald', params: [] }]
+    const fakeVite = {
+      ssrLoadModule: async (_file: string) => ({
+        default: { render: async () => '<div class="card" data-wald-ab12cd34>Hi</div>' },
+      }),
+    }
+
+    const result = await handleRequest(routes, '/about', fakeVite as any, '/my-forest/')
+    expect(result.body).toContain('<link rel="stylesheet" href="/my-forest/assets/wald-components.css">')
+  })
 })
