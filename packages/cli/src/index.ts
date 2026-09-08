@@ -6,6 +6,8 @@ export {
   netlifyAdapter,
   cloudflarePagesAdapter,
   vercelAdapter,
+  githubPagesAdapter,
+  denoDeployAdapter,
 } from './adapters.js'
 export type { WaldAdapter, WaldAdapterContext } from './adapters.js'
 export { optimizeImage, renderImage, renderImageTag } from './image.js'
