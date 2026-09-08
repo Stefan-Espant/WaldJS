@@ -16,7 +16,7 @@ export function captureCanopyAssets(assetMap: CanopyAssetMap, base: string): Plu
   }
 }
 
-function joinUrl(base: string, fileName: string): string {
+export function joinUrl(base: string, fileName: string): string {
   return `${base.replace(/\/$/, '')}/${fileName}`
 }
 

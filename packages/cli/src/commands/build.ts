@@ -196,7 +196,12 @@ export async function buildPages(
         default: { render: (props?: Record<string, unknown>) => Promise<string> }
       }
       const rendered = stripCanopyScripts(await mod.default.render(), canopyScriptContents)
-      const html = injectComponentStyles(injectPrefetchRuntime(applyCanopyAssets(hoistScripts(maybeWrap(rendered)), canopyAssets)))
+      // config.base is baked into the link directly here — unlike wald grow's
+      // handleRequest, there's no live HTML transform pass afterward to apply
+      // it for us (this HTML is the final, written-to-disk output). Don't
+      // "simplify" this to match grow.ts's unprefixed call — that would break
+      // base-prefixed deploys the same way the reverse mistake once did in dev.
+      const html = injectComponentStyles(injectPrefetchRuntime(applyCanopyAssets(hoistScripts(maybeWrap(rendered)), canopyAssets)), config.base)
       const outPath = resolveOutPath(distDir, route.pattern)
       mkdirSync(dirname(outPath), { recursive: true })
       writeFileSync(outPath, html)
@@ -225,7 +230,7 @@ export async function buildPages(
       for (const { params } of paths) {
         dynamicPages++
         const rendered = stripCanopyScripts(await mod.default.render(params), canopyScriptContents)
-        const html = injectComponentStyles(injectPrefetchRuntime(applyCanopyAssets(hoistScripts(maybeWrap(rendered)), canopyAssets)))
+        const html = injectComponentStyles(injectPrefetchRuntime(applyCanopyAssets(hoistScripts(maybeWrap(rendered)), canopyAssets)), config.base)
         const outPath = resolveOutPath(distDir, route.pattern, params)
         mkdirSync(dirname(outPath), { recursive: true })
         writeFileSync(outPath, html)
