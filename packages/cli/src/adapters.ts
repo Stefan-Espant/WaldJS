@@ -1,4 +1,4 @@
-import { mkdirSync, writeFileSync } from 'node:fs'
+import { mkdirSync, writeFileSync, existsSync, cpSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 
 export type WaldAdapterContext = {
@@ -94,6 +94,31 @@ export function vercelAdapter(): WaldAdapter {
       )
     },
   })
+}
+
+export function githubPagesAdapter(): WaldAdapter {
+  return defineAdapter({
+    name: 'github-pages',
+    adapt({ outDir }) {
+      writeFile(join(outDir, '.nojekyll'), '')
+      const indexPath = join(outDir, 'index.html')
+      const notFoundPath = join(outDir, '404.html')
+      if (existsSync(indexPath) && !existsSync(notFoundPath)) {
+        cpSync(indexPath, notFoundPath)
+      }
+    },
+  })
+}
+
+// Deno Deploy has no adapter-specific output shape to produce — a plain
+// static directory (`deployctl deploy --static-dir=dist`, or the GitHub
+// integration's zero-config detection) is exactly what staticAdapter()
+// already produces. This exists as its own named export so a project's
+// wald.config.ts can say what it's deploying to explicitly, rather than
+// silently relying on staticAdapter()'s default for a platform that in
+// fact needs nothing special.
+export function denoDeployAdapter(): WaldAdapter {
+  return defineAdapter({ name: 'deno-deploy' })
 }
 
 function writeFile(filePath: string, contents: string) {
