@@ -18,6 +18,25 @@ type ViteLike = {
   transformIndexHtml?: (url: string, html: string) => Promise<string>
 }
 
+// Strips config.base from an incoming request URL before route matching —
+// wald grow's own routing (unlike Vite's own dev-server middleware, which
+// already handles base correctly) otherwise has no idea a non-default base
+// is configured, so a browser's base-prefixed request never matches any
+// route. Returns null (not the unchanged url) when the request doesn't
+// start with the configured base at all, so the caller can 404 it instead
+// of accidentally matching against a still-prefixed path.
+export function stripBase(url: string, base: string): string | null {
+  const queryIndex = url.indexOf('?')
+  const pathname = queryIndex === -1 ? url : url.slice(0, queryIndex)
+  const query = queryIndex === -1 ? '' : url.slice(queryIndex)
+
+  const normalizedBase = base.replace(/\/$/, '')
+  if (normalizedBase === '') return url
+  if (pathname === normalizedBase) return '/' + query
+  if (pathname.startsWith(normalizedBase + '/')) return pathname.slice(normalizedBase.length) + query
+  return null
+}
+
 function printGrowReady(port: number, cwd: string, base: string, routeCount: number, staticCount: number, dynamicCount: number, ms: number) {
   console.log(`\n✔ Dev server ready in ${ms}ms`)
   console.log(`  Local:   http://localhost:${port}${base === '/' ? '' : base}`)
@@ -32,9 +51,10 @@ function printGrowReady(port: number, cwd: string, base: string, routeCount: num
 export async function handleRequest(
   routes: Route[],
   url: string,
-  vite: ViteLike | undefined
+  vite: ViteLike | undefined,
+  routePath = url
 ): Promise<{ status: number; body: string }> {
-  const match = matchRoute(routes, url)
+  const match = matchRoute(routes, routePath)
   if (!match) return { status: 404, body: 'Page not found' }
 
   const mod = await vite!.ssrLoadModule(match.route.file)
@@ -97,7 +117,8 @@ export const growCommand = defineCommand({
         if (res.headersSent || res.writableEnded) return
 
         const routes = scanRoutes(pagesDir)
-        const match = matchRoute(routes, url)
+        const routePath = stripBase(url, config.base)
+        const match = routePath !== null ? matchRoute(routes, routePath) : null
 
         if (!match) {
           vite.middlewares(req, res, () => {
@@ -110,7 +131,7 @@ export const growCommand = defineCommand({
         }
 
         try {
-          const { status, body } = await handleRequest(routes, url, vite as unknown as ViteLike)
+          const { status, body } = await handleRequest(routes, url, vite as unknown as ViteLike, routePath!)
           res.writeHead(status, { 'Content-Type': 'text/html' })
           res.end(body)
         } catch (e) {

@@ -1,5 +1,39 @@
 import { describe, it, expect, vi } from 'vitest'
-import { handleRequest } from './grow.js'
+import { handleRequest, stripBase } from './grow.js'
+
+describe('stripBase', () => {
+  it('passes the url through unchanged for the root base', () => {
+    expect(stripBase('/about', '/')).toBe('/about')
+  })
+
+  it('strips a non-root base from a prefixed path', () => {
+    expect(stripBase('/my-forest/about', '/my-forest/')).toBe('/about')
+  })
+
+  it('resolves the base root itself to /', () => {
+    expect(stripBase('/my-forest/', '/my-forest/')).toBe('/')
+  })
+
+  it('resolves the base root without a trailing slash to /', () => {
+    expect(stripBase('/my-forest', '/my-forest/')).toBe('/')
+  })
+
+  it('works the same whether base is configured with or without a trailing slash', () => {
+    expect(stripBase('/my-forest/about', '/my-forest')).toBe('/about')
+  })
+
+  it('preserves a query string after stripping', () => {
+    expect(stripBase('/my-forest/about?x=1', '/my-forest/')).toBe('/about?x=1')
+  })
+
+  it('returns null for a request that does not start with the configured base', () => {
+    expect(stripBase('/about', '/my-forest/')).toBeNull()
+  })
+
+  it('does not false-match a path that only shares a text prefix with base', () => {
+    expect(stripBase('/my-forest-extra/about', '/my-forest/')).toBeNull()
+  })
+})
 
 describe('handleRequest', () => {
   it('returns 404 for unmatched URL', async () => {
@@ -139,5 +173,24 @@ describe('handleRequest', () => {
     const result = await handleRequest(routes, '/about', fakeVite as any)
     expect(result.body).toContain('<link rel="stylesheet" href="/my-forest/assets/wald-components.css">')
     expect(result.body).not.toContain('/my-forest/my-forest/')
+  })
+
+  it('matches the route using a base-stripped routePath while still passing the real url to transformIndexHtml', async () => {
+    const routes = [{ pattern: '/about', file: '/pages/about.wald', params: [] }]
+    const capturedUrls: string[] = []
+    const fakeVite = {
+      ssrLoadModule: async (_file: string) => ({
+        default: { render: async () => '<p>About</p>' },
+      }),
+      transformIndexHtml: async (url: string, html: string) => {
+        capturedUrls.push(url)
+        return html
+      },
+    }
+
+    const result = await handleRequest(routes, '/my-forest/about', fakeVite as any, '/about')
+    expect(result.status).toBe(200)
+    expect(result.body).toContain('<p>About</p>')
+    expect(capturedUrls[0]).toBe('/my-forest/about')
   })
 })
