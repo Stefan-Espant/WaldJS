@@ -65,7 +65,9 @@ const { status, body } = await handleRequest(routes, url, vite as unknown as Vit
 
 ## Why not touch the `/assets/*` or component-styles routes
 
-Both already either handle `base` correctly (`componentStylesPath`, fixed in #41) or fall through to Vite's own already-base-aware middleware when they don't match (confirmed: a base-prefixed asset request like `/my-forest/assets/hero.jpg` doesn't literally start with `/assets/`, so it skips the raw-HTTP shortcut branch entirely and reaches `vite.middlewares`, which handles it). This issue is scoped to page routing specifically, per its own acceptance criteria.
+The component-styles route already handles `base` correctly (`componentStylesPath`, fixed in #41). This issue is scoped to page routing specifically, per its own acceptance criteria.
+
+**Correction, found during this PR's final holistic review:** the `/assets/*` claim above was wrong when first written. A base-prefixed request for a `src/assets/*` file (e.g. `/my-forest/assets/css/global.css`, exactly what `transformIndexHtml` correctly rewrites a scaffolded project's global stylesheet link to) does *not* fall through to a working path — `vite.middlewares` has no knowledge of WaldJS's own `srcDir` → `/assets/` `sirv` mapping (that mapping only exists in this raw HTTP handler, not in Vite's module graph or `public/` serving), so it 404s. Live-verified: a freshly-scaffolded project with a non-default `base` loads completely unstyled in `wald grow`, because its global CSS link is dead. This is a real, pre-existing gap (not introduced by #45, and not something #45's own acceptance criteria — page-route 404s — covers), filed separately as [#47](https://github.com/Stefan-Espant/WaldJS/issues/47).
 
 ## Testing
 
