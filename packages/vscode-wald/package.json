@@ -2,7 +2,7 @@
   "name": "vscode-wald",
   "displayName": "WaldJS",
   "description": "Syntax highlighting for WaldJS .wald single-file components",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": false,
   "publisher": "waldjs",
   "license": "MIT",
@@ -37,7 +37,11 @@
         "extensions": [
           ".wald"
         ],
-        "configuration": "./language-configuration.json"
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./icons/wald-file-icon.svg",
+          "dark": "./icons/wald-file-icon.svg"
+        }
       }
     ],
     "grammars": [
