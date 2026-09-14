@@ -33,6 +33,14 @@ describe('stripBase', () => {
   it('does not false-match a path that only shares a text prefix with base', () => {
     expect(stripBase('/my-forest-extra/about', '/my-forest/')).toBeNull()
   })
+
+  it('strips a base prefix from a src/assets/* request', () => {
+    expect(stripBase('/my-forest/assets/css/global.css', '/my-forest/')).toBe('/assets/css/global.css')
+  })
+
+  it('returns null for an unprefixed src/assets/* request under a non-default base', () => {
+    expect(stripBase('/assets/css/global.css', '/my-forest/')).toBeNull()
+  })
 })
 
 describe('handleRequest', () => {
