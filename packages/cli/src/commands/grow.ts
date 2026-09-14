@@ -96,6 +96,7 @@ export const growCommand = defineCommand({
 
     const server = createHttpServer((req, res) => {
       const url = req.url ?? '/'
+      const routePath = stripBase(url, config.base)
 
       if (url === componentStylesPath) {
         res.writeHead(200, { 'Content-Type': 'text/css' })
@@ -103,7 +104,8 @@ export const growCommand = defineCommand({
         return
       }
 
-      if (url.startsWith('/assets/')) {
+      if (routePath !== null && routePath.startsWith('/assets/')) {
+        req.url = routePath
         serveSrc(req, res, () => {
           if (!res.headersSent && !res.writableEnded) {
             res.writeHead(404, { 'Content-Type': 'text/plain' })
@@ -117,7 +119,6 @@ export const growCommand = defineCommand({
         if (res.headersSent || res.writableEnded) return
 
         const routes = scanRoutes(pagesDir)
-        const routePath = stripBase(url, config.base)
         const match = routePath !== null ? matchRoute(routes, routePath) : null
 
         if (!match) {
