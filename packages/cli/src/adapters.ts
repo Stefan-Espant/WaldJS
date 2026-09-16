@@ -121,6 +121,39 @@ export function denoDeployAdapter(): WaldAdapter {
   return defineAdapter({ name: 'deno-deploy' })
 }
 
+export function oesterAdapter(): WaldAdapter {
+  return defineAdapter({
+    name: 'oester',
+    outDir: '.oester/output/client',
+    async adapt({ rootDir, base }) {
+      if (base !== '/') {
+        throw new Error(
+          `oesterAdapter() needs base: '/', because Oester serves a site from the root of its hostname (got base: '${base}')`,
+        )
+      }
+      writeFile(
+        join(rootDir, '.oester', 'output', 'manifest.json'),
+        JSON.stringify(
+          {
+            version: 2,
+            framework: { name: 'wald' },
+            routes: [],
+            redirects: [],
+            headers: [
+              {
+                path: '/assets/*',
+                headers: { 'cache-control': 'public, max-age=31536000, immutable' },
+              },
+            ],
+          },
+          null,
+          2,
+        ) + '\n',
+      )
+    },
+  })
+}
+
 function writeFile(filePath: string, contents: string) {
   mkdirSync(dirname(filePath), { recursive: true })
   writeFileSync(filePath, contents)
