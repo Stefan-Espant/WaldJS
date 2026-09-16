@@ -8,6 +8,7 @@ export {
   vercelAdapter,
   githubPagesAdapter,
   denoDeployAdapter,
+  oesterAdapter,
 } from './adapters.js'
 export type { WaldAdapter, WaldAdapterContext } from './adapters.js'
 export { optimizeImage, renderImage, renderImageTag } from './image.js'
