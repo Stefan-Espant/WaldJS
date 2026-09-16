@@ -275,7 +275,7 @@ export default defineConfig({
 | `vercelAdapter()` | Builds to `.vercel/output/` with a `config.json` (Build Output API v3) |
 | `githubPagesAdapter()` | Adds a `.nojekyll` file and a `404.html` fallback (a copy of `index.html`) |
 | `denoDeployAdapter()` | Plain static files — Deno Deploy needs no special output shape |
-| `oesterAdapter()` | Builds to `.oester/output/` with the `manifest.json` Oester reads; needs `base: '/'` |
+| `oesterAdapter()` | Builds to `.oester/output/` with the `manifest.json` Oester reads, which also tells Oester your `base` |
 
 Write your own with `defineAdapter({ name, adapt({ outDir }) { … } })`.
 

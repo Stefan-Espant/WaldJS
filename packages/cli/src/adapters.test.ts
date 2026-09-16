@@ -114,13 +114,34 @@ describe('oesterAdapter', () => {
     })
   })
 
-  it('refuses a base other than /, since Oester serves a site from the root of its hostname', async () => {
+  it('tells Oester the base, which serves the build under it', async () => {
+    const outDir = join(tmpDir, '.oester', 'output', 'client')
+    mkdirSync(outDir, { recursive: true })
+    writeFileSync(join(outDir, 'index.html'), '<h1>Home</h1>')
+
+    await oesterAdapter().adapt?.(makeContext(outDir, { base: '/docs/' }))
+
+    const manifest = JSON.parse(readFileSync(join(tmpDir, '.oester', 'output', 'manifest.json'), 'utf8'))
+    expect(manifest).toEqual({
+      version: 2,
+      framework: { name: 'wald' },
+      base: '/docs/',
+      routes: [],
+      redirects: [],
+      headers: [
+        { path: '/assets/*', headers: { 'cache-control': 'public, max-age=31536000, immutable' } },
+      ],
+    })
+    expect(readFileSync(join(outDir, 'index.html'), 'utf8')).toBe('<h1>Home</h1>')
+  })
+
+  it('leaves the base out for an empty base, which the build treats as the root', async () => {
     const outDir = join(tmpDir, '.oester', 'output', 'client')
     mkdirSync(outDir, { recursive: true })
 
-    await expect(
-      oesterAdapter().adapt?.(makeContext(outDir, { base: '/docs/' })),
-    ).rejects.toThrow("oesterAdapter() needs base: '/'")
-    expect(existsSync(join(tmpDir, '.oester', 'output', 'manifest.json'))).toBe(false)
+    await oesterAdapter().adapt?.(makeContext(outDir, { base: '' }))
+
+    const manifest = JSON.parse(readFileSync(join(tmpDir, '.oester', 'output', 'manifest.json'), 'utf8'))
+    expect(manifest).not.toHaveProperty('base')
   })
 })

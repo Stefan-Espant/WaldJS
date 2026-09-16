@@ -125,18 +125,15 @@ export function oesterAdapter(): WaldAdapter {
   return defineAdapter({
     name: 'oester',
     outDir: '.oester/output/client',
-    async adapt({ rootDir, base }) {
-      if (base !== '/') {
-        throw new Error(
-          `oesterAdapter() needs base: '/', because Oester serves a site from the root of its hostname (got base: '${base}')`,
-        )
-      }
+    adapt({ rootDir, base }) {
       writeFile(
         join(rootDir, '.oester', 'output', 'manifest.json'),
         JSON.stringify(
           {
             version: 2,
             framework: { name: 'wald' },
+            // Oester serves the build under its base; an empty base is the root, as it is for the build.
+            ...(base === '' || base === '/' ? {} : { base }),
             routes: [],
             redirects: [],
             headers: [
