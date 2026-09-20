@@ -7,15 +7,23 @@
 //   node scripts/build-css.js dist    -> dist/assets/css/site.css (na `wald build`, productie)
 //   node scripts/build-css.js public  -> src/assets/css/site.css (vóór `wald grow`, want WaldJS
 //                                        serveert /assets/* uit src/assets/)
+//
+// Met --watch blijft het proces draaien: het herbundelt automatisch bij elke
+// wijziging in src/styles/ en start `wald grow` als kindproces na de eerste
+// bundel, zodat `npm run dev` één commando blijft.
 
 import fs from 'node:fs'
 import path from 'node:path'
+import { spawn } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const target = process.argv[2] === 'public' ? 'src' : 'dist'
-const stylesDir = path.join(__dirname, '..', 'src', 'styles')
-const outDir = path.join(__dirname, '..', target, 'assets', 'css')
+const args = process.argv.slice(2)
+const watch = args.includes('--watch')
+const target = args.includes('public') ? 'src' : 'dist'
+const rootDir = path.join(__dirname, '..')
+const stylesDir = path.join(rootDir, 'src', 'styles')
+const outDir = path.join(rootDir, target, 'assets', 'css')
 const entry = path.join(stylesDir, 'site.css')
 
 function resolveImports(filePath, seen = new Set()) {
@@ -37,12 +45,57 @@ function minify(css) {
     .trim()
 }
 
-const bundled = resolveImports(entry)
-const minified = minify(bundled)
-const output = target === 'src' ? bundled : minified
+function build() {
+  const bundled = resolveImports(entry)
+  const minified = minify(bundled)
+  const output = target === 'src' ? bundled : minified
 
-fs.mkdirSync(outDir, { recursive: true })
-fs.writeFileSync(path.join(outDir, 'site.css'), output + '\n')
+  fs.mkdirSync(outDir, { recursive: true })
+  fs.writeFileSync(path.join(outDir, 'site.css'), output + '\n')
 
-const kb = (Buffer.byteLength(output) / 1024).toFixed(1)
-console.log(`css gebundeld: ${kb} kB -> ${target}/assets/css/site.css`)
+  const kb = (Buffer.byteLength(output) / 1024).toFixed(1)
+  console.log(`css gebundeld: ${kb} kB -> ${target}/assets/css/site.css`)
+}
+
+build()
+
+if (watch) {
+  // Recursief watchen wordt door Node's fs.watch ondersteund op macOS en
+  // moderne Linux-kernels (Node >= 20). Op oudere platforms zonder recursive-
+  // support gooit dit een ERR_FEATURE_UNAVAILABLE_ON_PLATFORM — dan is de
+  // fallback: dit script zonder --watch draaien en handmatig herbundelen.
+  // (Dit is lokaal dev-gemak, geen productiecode.)
+  let timer = null
+  fs.watch(stylesDir, { recursive: true }, () => {
+    // Korte debounce: editors schrijven soms meerdere keren per save.
+    clearTimeout(timer)
+    timer = setTimeout(() => {
+      try {
+        build()
+      } catch (err) {
+        console.error(`css bundelen mislukt: ${err.message}`)
+      }
+    }, 75)
+  })
+  console.log(`css watcher actief op ${path.relative(rootDir, stylesDir)}/`)
+
+  // Start `wald grow` als kindproces zodat één commando volstaat voor dev.
+  // Voorkeur: de workspace-CLI via de @waldjs/cli-link in node_modules;
+  // anders `wald` van het PATH (npm zet node_modules/.bin daar al op).
+  const waldJs = [
+    path.join(rootDir, 'node_modules', '@waldjs', 'cli', 'bin', 'wald.js'),
+    path.join(rootDir, '..', 'node_modules', '@waldjs', 'cli', 'bin', 'wald.js'),
+  ].find((p) => fs.existsSync(p))
+  const child = waldJs
+    ? spawn(process.execPath, [waldJs, 'grow'], { cwd: rootDir, stdio: 'inherit' })
+    : spawn('wald', ['grow'], { cwd: rootDir, stdio: 'inherit' })
+
+  // Ctrl+C / kill netjes doorsturen naar het kind; wij stoppen pas als het
+  // kind gestopt is, zodat er nooit een wees-`wald grow` achterblijft.
+  for (const sig of ['SIGINT', 'SIGTERM']) {
+    process.on(sig, () => child.kill(sig))
+  }
+  child.on('exit', (code, signal) => {
+    process.exit(signal ? 0 : (code ?? 0))
+  })
+}
