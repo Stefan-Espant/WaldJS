@@ -1,5 +1,11 @@
 # @waldjs/cli
 
+## 0.8.0
+
+### Minor Changes
+
+- 0d040e4: Add `oesterAdapter()`, which builds to `.oester/output/` with the `manifest.json` the Oester hosting platform reads, so a WaldJS site deploys to Oester without further setup, also under a `base`.
+
 ## 0.7.1
 
 ### Patch Changes
