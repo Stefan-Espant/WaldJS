@@ -115,7 +115,7 @@ export const growCommand = defineCommand({
         return
       }
 
-      servePublic(req, res, async () => {
+      const afterPublic = async () => {
         if (res.headersSent || res.writableEnded) return
 
         const routes = scanRoutes(pagesDir)
@@ -150,6 +150,23 @@ export const growCommand = defineCommand({
             res.end(body)
           }
         }
+      }
+
+      // A request outside config.base (routePath === null) must never reach
+      // servePublic OR vite.middlewares: Vite's own dev-server middleware
+      // serves publicDir files at the unprefixed path too, regardless of
+      // base (confirmed by live-testing during design — this is why the
+      // fallback itself is skipped entirely here, not just servePublic).
+      if (routePath === null) {
+        res.writeHead(404, { 'Content-Type': 'text/plain' })
+        res.end('Not found')
+        return
+      }
+
+      req.url = routePath
+      servePublic(req, res, () => {
+        req.url = url
+        afterPublic()
       })
     })
 
