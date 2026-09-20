@@ -1,5 +1,11 @@
 # @waldjs/compiler
 
+## 0.3.0
+
+### Minor Changes
+
+- a5e65ec: Add a built-in, idempotent formatter for `.wald` files. Use the exported `format()` compiler API or run `wald format`; `wald format --check` verifies formatting without writing and returns a failing exit status for CI.
+
 ## 0.2.0
 
 ### Minor Changes
