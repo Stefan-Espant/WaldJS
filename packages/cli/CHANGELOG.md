@@ -1,5 +1,17 @@
 # @waldjs/cli
 
+## 0.9.0
+
+### Minor Changes
+
+- a5e65ec: Add a built-in, idempotent formatter for `.wald` files. Use the exported `format()` compiler API or run `wald format`; `wald format --check` verifies formatting without writing and returns a failing exit status for CI.
+
+### Patch Changes
+
+- 0c8a5f0: Fix `wald grow` to serve `public/` directory files (e.g. `robots.txt`, `favicon.ico`) only at their `config.base`-prefixed URL — previously, a non-default `base` still made these files reachable unprefixed as well, because Vite's own dev-server middleware serves `publicDir` files regardless of `base`.
+- Updated dependencies [a5e65ec]
+  - @waldjs/compiler@0.3.0
+
 ## 0.8.0
 
 ### Minor Changes
