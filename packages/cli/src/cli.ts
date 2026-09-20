@@ -5,6 +5,7 @@ import { buildCommand } from './commands/build.js'
 import { previewCommand } from './commands/preview.js'
 import { checkCommand } from './commands/check.js'
 import { newCommand } from './commands/new.js'
+import { formatCommand } from './commands/format.js'
 
 const main = defineCommand({
   meta: {
@@ -18,6 +19,7 @@ const main = defineCommand({
     build: buildCommand,
     preview: previewCommand,
     check: checkCommand,
+    format: formatCommand,
     new: newCommand,
   },
 })

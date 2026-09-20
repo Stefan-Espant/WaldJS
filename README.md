@@ -43,6 +43,16 @@ const title = "Hello World"
 
 The top part (frontmatter) is plain JavaScript/TypeScript. The bottom part is an HTML template where `{expression}` interpolates values. All interpolated values are HTML-escaped by default.
 
+Format one file, several files, or a complete directory with the built-in formatter:
+
+```bash
+wald format src
+wald format src/pages/index.wald src/components/Nav.wald
+wald format --check src
+```
+
+`--check` does not write files and exits with status 1 when formatting is needed, making it suitable for CI. The formatter is also available programmatically as `format(source, options)` from `@waldjs/compiler`.
+
 ---
 
 ## Pages
