@@ -128,13 +128,8 @@ export async function buildPages(
 
   const ssrDir = join(dirname(distDir), '.wald-ssr')
 
-  const sanitizeKey = (k: string) => k.replace(/[\[\]]/g, '_')
-
   const input = Object.fromEntries(
-    routes.map(r => [
-      sanitizeKey(relative(pagesDir, r.file).replace(/\.wald$/, '')),
-      r.file,
-    ]),
+    routes.map(r => [relative(pagesDir, r.file).replace(/\.wald$/, ''), r.file]),
   )
 
   const srcDir = dirname(pagesDir)
