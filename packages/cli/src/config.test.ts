@@ -20,7 +20,10 @@ describe('defineConfig', () => {
 describe('loadWaldConfig', () => {
   it('returns defaults when no wald.config.ts exists', async () => {
     const config = await loadWaldConfig(tmpDir)
-    expect(config).toEqual({ outDir: 'dist', base: '/', vite: {} })
+    expect(config.outDir).toBe('dist')
+    expect(config.base).toBe('/')
+    expect(config.vite).toEqual({})
+    expect(config.adapter.name).toBe('static')
   })
 
   it('merges partial config with defaults', async () => {
@@ -32,6 +35,7 @@ describe('loadWaldConfig', () => {
     expect(config.outDir).toBe('build')
     expect(config.base).toBe('/')
     expect(config.vite).toEqual({})
+    expect(config.adapter.name).toBe('static')
   })
 
   it('returns all user-specified values', async () => {
@@ -43,5 +47,15 @@ describe('loadWaldConfig', () => {
     expect(config.outDir).toBe('public')
     expect(config.base).toBe('/app/')
     expect(config.vite).toEqual({ server: { port: 3000 } })
+  })
+
+  it('lets an adapter override outDir', async () => {
+    writeFileSync(
+      join(tmpDir, 'wald.config.ts'),
+      `export default { adapter: { name: 'vercel', outDir: '.vercel/output/static' } }`
+    )
+    const config = await loadWaldConfig(tmpDir)
+    expect(config.outDir).toBe('.vercel/output/static')
+    expect(config.adapter.name).toBe('vercel')
   })
 })

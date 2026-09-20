@@ -3,6 +3,8 @@ import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, existsSync } from 
 import { join, resolve, dirname } from 'node:path'
 import { tmpdir } from 'node:os'
 import type { WaldConfig } from '../config.js'
+import { staticAdapter, vercelAdapter } from '../adapters.js'
+import { runCheck } from './check.js'
 
 // Mock vite.build() — simulates what Vite SSR would do by compiling .wald files
 // with the same data: URL technique as the old pipeline, writing wrapper modules
@@ -15,6 +17,27 @@ vi.mock('vite', async (importOriginal) => {
       const { compile } = await import('@waldjs/compiler')
       const { readFileSync: fsRead, writeFileSync: fsWrite, mkdirSync: fsMkdir } = await import('node:fs')
       const { join: pJoin, dirname: pDirname, resolve: pResolve } = await import('node:path')
+
+      if (cfg.build.ssr === false) {
+        const outDir: string = cfg.build.outDir
+        const inputs: Record<string, string> = cfg.build.rollupOptions.input
+        fsMkdir(pJoin(outDir, 'assets'), { recursive: true })
+
+        const bundle: Record<string, any> = {}
+        for (const key of Object.keys(inputs)) {
+          const fileName = `assets/${key}-testhash.js`
+          fsWrite(pJoin(outDir, fileName), 'export default function() {}')
+          bundle[fileName] = { type: 'chunk', isEntry: true, name: key, fileName }
+        }
+
+        for (const plugin of cfg.plugins ?? []) {
+          if (typeof plugin?.generateBundle === 'function') {
+            await plugin.generateBundle({}, bundle)
+          }
+        }
+
+        return
+      }
 
       const ssrDir: string = cfg.build.outDir
       const inputs: Record<string, string> = cfg.build.rollupOptions.input
@@ -77,12 +100,16 @@ vi.mock('vite', async (importOriginal) => {
   }
 })
 
-import { buildPages } from './build.js'
+vi.mock('./check.js', () => ({
+  runCheck: vi.fn(),
+}))
+
+import { buildPages, buildCommand, formatBuildSummary } from './build.js'
 
 let tmpDir: string
 
 function makeConfig(distDir: string): Required<WaldConfig> {
-  return { outDir: distDir, base: '/', vite: {} }
+  return { outDir: distDir, base: '/', vite: {}, adapter: staticAdapter() }
 }
 
 beforeEach(() => {
@@ -101,6 +128,24 @@ describe('buildPages', () => {
     const html = readFileSync(join(distDir, 'index.html'), 'utf8')
     expect(html).toContain('<h1>Hi</h1>')
     expect(html).toContain('<!DOCTYPE html>')
+  })
+
+  it('returns build stats for summary output', async () => {
+    const pagesDir = join(tmpDir, 'src', 'pages')
+    const distDir = join(tmpDir, 'dist')
+    mkdirSync(pagesDir, { recursive: true })
+    writeFileSync(join(pagesDir, 'index.wald'), '<p>home</p>')
+
+    const stats = await buildPages(pagesDir, makeConfig(distDir))
+
+    expect(stats.staticRoutes).toBe(1)
+    expect(stats.dynamicRoutes).toBe(0)
+    expect(stats.dynamicPages).toBe(0)
+    expect(stats.warnings).toEqual([])
+    expect(stats.canopyEntries).toBe(0)
+    expect(stats.copiedPublic).toBe(false)
+    expect(stats.copiedAssets).toBe(false)
+    expect(stats.adapterName).toBe('static')
   })
 
   it('generates dist/about/index.html from about.wald', async () => {
@@ -126,6 +171,23 @@ describe('buildPages', () => {
     expect(existsSync(join(distDir, 'blog', '[slug]', 'index.html'))).toBe(false)
   })
 
+  it('reports warnings through the reporter instead of printing inline', async () => {
+    const pagesDir = join(tmpDir, 'src', 'pages')
+    const distDir = join(tmpDir, 'dist')
+    mkdirSync(join(pagesDir, 'blog'), { recursive: true })
+    writeFileSync(join(pagesDir, 'blog', '[slug].wald'), '<h1>Post</h1>')
+
+    const reported: string[] = []
+    const stats = await buildPages(pagesDir, makeConfig(distDir), undefined, undefined, {
+      onWarning(warning) {
+        reported.push(warning)
+      },
+    })
+
+    expect(reported).toContain('Skipping dynamic route /blog/:slug — no getStaticPaths() export')
+    expect(stats.warnings).toContain('Skipping dynamic route /blog/:slug — no getStaticPaths() export')
+  })
+
   it('copies public/ to dist/ when it exists', async () => {
     const pagesDir = join(tmpDir, 'src', 'pages')
     const distDir = join(tmpDir, 'dist')
@@ -138,6 +200,36 @@ describe('buildPages', () => {
     await buildPages(pagesDir, makeConfig(distDir), publicDir)
 
     expect(existsSync(join(distDir, 'logo.svg'))).toBe(true)
+  })
+
+  it('copies src/assets/ to dist/assets/ when it exists', async () => {
+    const pagesDir = join(tmpDir, 'src', 'pages')
+    const assetsDir = join(tmpDir, 'src', 'assets', 'js')
+    const distDir = join(tmpDir, 'dist')
+    mkdirSync(pagesDir, { recursive: true })
+    mkdirSync(assetsDir, { recursive: true })
+    writeFileSync(join(pagesDir, 'index.wald'), '<p>home</p>')
+    writeFileSync(join(assetsDir, 'site.js'), 'console.log("site")')
+
+    const stats = await buildPages(pagesDir, makeConfig(distDir))
+
+    expect(existsSync(join(distDir, 'assets', 'js', 'site.js'))).toBe(true)
+    expect(stats.copiedAssets).toBe(true)
+  })
+
+  it('runs the configured adapter after building', async () => {
+    const pagesDir = join(tmpDir, 'src', 'pages')
+    const distDir = join(tmpDir, '.vercel', 'output', 'static')
+    mkdirSync(pagesDir, { recursive: true })
+    writeFileSync(join(pagesDir, 'index.wald'), '<p>home</p>')
+
+    const config = makeConfig(distDir)
+    config.adapter = vercelAdapter()
+
+    await buildPages(pagesDir, config)
+
+    expect(existsSync(join(tmpDir, '.vercel', 'output', 'config.json'))).toBe(true)
+    expect(existsSync(join(distDir, 'index.html'))).toBe(true)
   })
 
   it('renders a static route that uses getCollection from wald:content', async () => {
@@ -314,5 +406,224 @@ describe('buildPages', () => {
     await buildPages(pagesDir, makeConfig(distDir))
 
     expect(existsSync(join(tmpDir, '.wald-ssr'))).toBe(false)
+  })
+
+  it('replaces canopy placeholder data-src with the real asset URL and injects the runtime script', async () => {
+    const pagesDir = join(tmpDir, 'src', 'pages')
+    const componentsDir = join(tmpDir, 'src', 'components')
+    const distDir = join(tmpDir, 'dist')
+    mkdirSync(pagesDir, { recursive: true })
+    mkdirSync(componentsDir, { recursive: true })
+
+    writeFileSync(
+      join(componentsDir, 'Counter.wald'),
+      [
+        '---',
+        'const { initial } = $$props',
+        '---',
+        '<button>{initial}</button>',
+        '<script>export default function(root) { root.dataset.ready = "yes" }</script>',
+      ].join('\n')
+    )
+
+    writeFileSync(
+      join(pagesDir, 'index.wald'),
+      ["---", "import Counter from '../components/Counter.wald'", '---', '<Counter canopy:load initial={3} />'].join('\n')
+    )
+
+    await buildPages(pagesDir, makeConfig(distDir))
+
+    const html = readFileSync(join(distDir, 'index.html'), 'utf8')
+    expect(html).not.toContain('wald:canopy:Counter')
+    expect(html).toContain('data-src="/assets/counter-testhash.js"')
+    expect(html).toContain('<script type="module" src="/assets/wald-canopy-testhash.js"></script>')
+  })
+
+  it('does not hoist the inline script of a component used with canopy', async () => {
+    const pagesDir = join(tmpDir, 'src', 'pages')
+    const componentsDir = join(tmpDir, 'src', 'components')
+    const distDir = join(tmpDir, 'dist')
+    mkdirSync(pagesDir, { recursive: true })
+    mkdirSync(componentsDir, { recursive: true })
+
+    writeFileSync(
+      join(componentsDir, 'Counter.wald'),
+      [
+        '---',
+        'const { initial } = $$props',
+        '---',
+        '<button>{initial}</button>',
+        '<script>export default function(root) { root.dataset.ready = "yes" }</script>',
+      ].join('\n')
+    )
+
+    writeFileSync(
+      join(pagesDir, 'index.wald'),
+      ["---", "import Counter from '../components/Counter.wald'", '---', '<Counter canopy:load initial={3} />'].join('\n')
+    )
+
+    await buildPages(pagesDir, makeConfig(distDir))
+
+    const html = readFileSync(join(distDir, 'index.html'), 'utf8')
+    expect(html).not.toContain('export default function(root) { root.dataset.ready = "yes" }')
+  })
+
+  it('does not inject the canopy runtime script when no page uses canopy', async () => {
+    const pagesDir = join(tmpDir, 'src', 'pages')
+    const distDir = join(tmpDir, 'dist')
+    mkdirSync(pagesDir, { recursive: true })
+    writeFileSync(join(pagesDir, 'index.wald'), '<p>Hello</p>')
+
+    await buildPages(pagesDir, makeConfig(distDir))
+
+    const html = readFileSync(join(distDir, 'index.html'), 'utf8')
+    expect(html).not.toContain('wald-canopy')
+    expect(html).not.toContain('<script type="module" src="/assets/wald-canopy-testhash.js"></script>')
+  })
+
+  it('keeps the scope attribute on a component that also uses canopy:load', async () => {
+    const pagesDir = join(tmpDir, 'src', 'pages')
+    const componentsDir = join(tmpDir, 'src', 'components')
+    const distDir = join(tmpDir, 'dist')
+    mkdirSync(pagesDir, { recursive: true })
+    mkdirSync(componentsDir, { recursive: true })
+
+    writeFileSync(
+      join(componentsDir, 'Counter.wald'),
+      [
+        '---',
+        'const { initial } = $$props',
+        '---',
+        '<button class="counter">{initial}</button>',
+        '<script>export default function(root) { root.dataset.ready = "yes" }</script>',
+        '<style>.counter { color: red }</style>',
+      ].join('\n')
+    )
+
+    writeFileSync(
+      join(pagesDir, 'index.wald'),
+      ["---", "import Counter from '../components/Counter.wald'", '---', '<Counter canopy:load initial={3} />'].join('\n')
+    )
+
+    await buildPages(pagesDir, makeConfig(distDir))
+
+    const html = readFileSync(join(distDir, 'index.html'), 'utf8')
+    expect(html).toMatch(/<wald-canopy[\s\S]*?<button class="counter" data-wald-[0-9a-f]{8}>3<\/button>/)
+    expect(html).toContain('<link rel="stylesheet" href="/assets/wald-components.css">')
+
+    const css = readFileSync(join(distDir, 'assets', 'wald-components.css'), 'utf8')
+    expect(css).toMatch(/\.counter\[data-wald-[0-9a-f]{8}\]\{ color: red \}/)
+  })
+
+  it('bundles scoped component styles into dist/assets/wald-components.css and links them from pages that use them', async () => {
+    const pagesDir = join(tmpDir, 'src', 'pages')
+    const componentsDir = join(tmpDir, 'src', 'components')
+    const distDir = join(tmpDir, 'dist')
+    mkdirSync(pagesDir, { recursive: true })
+    mkdirSync(componentsDir, { recursive: true })
+    writeFileSync(
+      join(componentsDir, 'Card.wald'),
+      '---\n---\n<div class="card">Hi</div>\n<style>.card { color: red }</style>',
+    )
+    writeFileSync(
+      join(pagesDir, 'index.wald'),
+      "---\nimport Card from '../components/Card.wald'\n---\n<Card />",
+    )
+
+    await buildPages(pagesDir, makeConfig(distDir))
+
+    const html = readFileSync(join(distDir, 'index.html'), 'utf8')
+    expect(html).toMatch(/<div class="card" data-wald-[0-9a-f]{8}>/)
+    expect(html).toContain('<link rel="stylesheet" href="/assets/wald-components.css">')
+
+    const css = readFileSync(join(distDir, 'assets', 'wald-components.css'), 'utf8')
+    expect(css).toMatch(/\.card\[data-wald-[0-9a-f]{8}\]\{ color: red \}/)
+  })
+
+  it('links the component-styles bundle with a base-prefixed href under a non-root base', async () => {
+    const pagesDir = join(tmpDir, 'src', 'pages')
+    const componentsDir = join(tmpDir, 'src', 'components')
+    const distDir = join(tmpDir, 'dist')
+    mkdirSync(pagesDir, { recursive: true })
+    mkdirSync(componentsDir, { recursive: true })
+    writeFileSync(
+      join(componentsDir, 'Card.wald'),
+      '---\n---\n<div class="card">Hi</div>\n<style>.card { color: red }</style>',
+    )
+    writeFileSync(
+      join(pagesDir, 'index.wald'),
+      "---\nimport Card from '../components/Card.wald'\n---\n<Card />",
+    )
+
+    await buildPages(pagesDir, { ...makeConfig(distDir), base: '/my-forest/' })
+
+    const html = readFileSync(join(distDir, 'index.html'), 'utf8')
+    expect(html).toContain('<link rel="stylesheet" href="/my-forest/assets/wald-components.css">')
+
+    // The physical bundle file's location on disk is unaffected by base —
+    // only how it's *referenced* from HTML changes, same as every other
+    // build asset (canopy chunks, images, etc.).
+    expect(existsSync(join(distDir, 'assets', 'wald-components.css'))).toBe(true)
+  })
+
+  it('does not create a component-styles bundle when no component has a <style> block', async () => {
+    const pagesDir = join(tmpDir, 'src', 'pages')
+    const distDir = join(tmpDir, 'dist')
+    mkdirSync(pagesDir, { recursive: true })
+    writeFileSync(join(pagesDir, 'index.wald'), '---\n---\n<h1>Hi</h1>')
+
+    await buildPages(pagesDir, makeConfig(distDir))
+
+    expect(existsSync(join(distDir, 'assets', 'wald-components.css'))).toBe(false)
+    const html = readFileSync(join(distDir, 'index.html'), 'utf8')
+    expect(html).not.toContain('wald-components.css')
+  })
+})
+
+describe('build --check', () => {
+  it('aborts the build when the check fails', async () => {
+    vi.mocked(runCheck).mockResolvedValue(false)
+    const prevExitCode = process.exitCode
+    await (buildCommand.run as Function)({ args: { check: true } })
+    expect(process.exitCode).toBe(1)
+    process.exitCode = prevExitCode
+  })
+
+  it('runs the check before building when --check passed', async () => {
+    vi.mocked(runCheck).mockResolvedValue(false)
+    await (buildCommand.run as Function)({ args: { check: true } })
+    expect(runCheck).toHaveBeenCalledWith(process.cwd())
+  })
+
+  it('skips the check without --check', async () => {
+    vi.mocked(runCheck).mockClear()
+    try {
+      await (buildCommand.run as Function)({ args: {} })
+    } catch {
+      // real build may fail, but we only care that runCheck was not called
+    }
+    expect(runCheck).not.toHaveBeenCalled()
+  })
+})
+
+describe('formatBuildSummary', () => {
+  it('renders compact summary lines', () => {
+    expect(formatBuildSummary({
+      staticRoutes: 2,
+      dynamicRoutes: 1,
+      dynamicPages: 3,
+      warnings: ['one'],
+      canopyEntries: 4,
+      copiedPublic: true,
+      copiedAssets: true,
+      adapterName: 'vercel',
+    }, 'dist')).toEqual([
+      '  Output:   dist/',
+      '  Pages:    2 static routes',
+      '  Dynamic:  1 route -> 3 pages',
+      '  Canopy:   4 canopies',
+      '  Adapter:  vercel',
+      '  Warnings: 1',
+    ])
   })
 })

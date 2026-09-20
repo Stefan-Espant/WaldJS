@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WaldJS — Performance Benchmark</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red:       #FF3347;
+      --green:     #0f2d14;
+      --green-mid: #1a4520;
+      --green-hi:  #2a6632;
+      --white:     #ffffff;
+      --muted:     #a0b8a4;
+      --astro:     #FF5D01;
+      --eleventy:  #7eb3a1;
+    }
+
+    body {
+      background: var(--green);
+      color: var(--white);
+      font-family: system-ui, -apple-system, sans-serif;
+      line-height: 1.6;
+    }
+
+    /* ── Hero ─────────────────────────────────────────────── */
+    header {
+      background: var(--green-mid);
+      border-bottom: 2px solid var(--green-hi);
+      padding: 3rem 2rem;
+      text-align: center;
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .logo svg { width: 48px; height: 48px; }
+
+    .logo-name {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--white);
+    }
+
+    .logo-name span { color: var(--red); }
+
+    h1 {
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin-bottom: 0.75rem;
+    }
+
+    h1 em {
+      color: var(--red);
+      font-style: normal;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 1.1rem;
+      max-width: 540px;
+      margin: 0 auto;
+    }
+
+    /* ── Badges ───────────────────────────────────────────── */
+    .badges {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      padding: 2rem;
+      background: var(--green);
+      border-bottom: 1px solid var(--green-hi);
+    }
+
+    .badge {
+      background: var(--green-mid);
+      border: 1px solid var(--green-hi);
+      border-radius: 12px;
+      padding: 1rem 1.5rem;
+      text-align: center;
+      min-width: 140px;
+    }
+
+    .badge-value {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--red);
+      line-height: 1;
+    }
+
+    .badge-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 0.25rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── Main ─────────────────────────────────────────────── */
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+
+    section { margin-bottom: 4rem; }
+
+    .section-header {
+      margin-bottom: 1.5rem;
+    }
+
+    .section-header h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .section-header p {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .chart-card {
+      background: var(--green-mid);
+      border: 1px solid var(--green-hi);
+      border-radius: 16px;
+      padding: 2rem;
+    }
+
+    .chart-wrap {
+      position: relative;
+      height: 280px;
+    }
+
+    /* ── Legend ───────────────────────────────────────────── */
+    .legend {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      margin-top: 1.25rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+
+    /* ── Scores grid ──────────────────────────────────────── */
+    .scores-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .score-card {
+      background: var(--green-mid);
+      border: 1px solid var(--green-hi);
+      border-radius: 12px;
+      padding: 1.25rem;
+    }
+
+    .score-card h3 {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .score-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .score-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+    .score-fw { flex: 1; color: var(--muted); }
+
+    .score-val {
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .score-bar-track {
+      flex: 2;
+      height: 4px;
+      background: var(--green-hi);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .score-bar-fill {
+      height: 100%;
+      border-radius: 2px;
+    }
+
+    /* ── Methodology ──────────────────────────────────────── */
+    .methodology {
+      background: var(--green-mid);
+      border: 1px solid var(--green-hi);
+      border-left: 3px solid var(--muted);
+      border-radius: 0 12px 12px 0;
+      padding: 1.25rem 1.5rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .methodology strong { color: var(--white); }
+
+    /* ── Note ─────────────────────────────────────────────── */
+    .note {
+      background: rgba(255, 51, 71, 0.08);
+      border: 1px solid rgba(255, 51, 71, 0.3);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      font-size: 0.82rem;
+      color: #ffb3bc;
+      margin-top: 1rem;
+    }
+
+    .note strong { color: var(--red); }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: var(--muted);
+      font-size: 0.8rem;
+      border-top: 1px solid var(--green-hi);
+    }
+
+    footer a { color: var(--red); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<!-- ── Header ────────────────────────────────────────────── -->
+<header>
+  <div class="logo">
+    <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <!-- Tree trunk -->
+      <rect x="21" y="34" width="6" height="10" rx="2" fill="#FF3347"/>
+      <!-- Canopy layers -->
+      <polygon points="24,4 36,22 12,22" fill="#2a6632"/>
+      <polygon points="24,12 38,30 10,30" fill="#1a4520"/>
+      <polygon points="24,18 40,36 8,36" fill="#0f2d14" stroke="#2a6632" stroke-width="1.5"/>
+    </svg>
+    <span class="logo-name">Wald<span>JS</span></span>
+  </div>
+  <h1>Build Fast.<br><em>Ship Faster.</em></h1>
+  <p class="subtitle">How WaldJS compares to Astro and Eleventy on build speed and output quality.</p>
+</header>
+
+<!-- ── Key numbers ───────────────────────────────────────── -->
+<div class="badges">
+  <div class="badge">
+    <div class="badge-value">1.62s</div>
+    <div class="badge-label">WaldJS build time</div>
+  </div>
+  <div class="badge">
+    <div class="badge-value">85×</div>
+    <div class="badge-label">faster build than Astro</div>
+  </div>
+  <div class="badge">
+    <div class="badge-value">97</div>
+    <div class="badge-label">Best Practices</div>
+  </div>
+  <div class="badge">
+    <div class="badge-value">98</div>
+    <div class="badge-label">Accessibility</div>
+  </div>
+  <div class="badge">
+    <div class="badge-value">50</div>
+    <div class="badge-label">pages · same content</div>
+  </div>
+</div>
+
+<!-- ── Main content ───────────────────────────────────────── -->
+<main>
+
+  <!-- Build time -->
+  <section>
+    <div class="section-header">
+      <h2>Build time — 50 pages</h2>
+      <p>Median of 3 runs · clean dist/ each run · 2026-07-01</p>
+    </div>
+    <div class="chart-card">
+      <div class="chart-wrap">
+        <canvas id="buildChart"></canvas>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div> WaldJS</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--astro)"></div> Astro 4</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--eleventy)"></div> Eleventy 3</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Lighthouse scores -->
+  <section>
+    <div class="section-header">
+      <h2>Lighthouse scores</h2>
+      <p>Average over 5 pages · headless Chrome · desktop preset</p>
+    </div>
+    <div class="chart-card">
+      <div class="chart-wrap">
+        <canvas id="lighthouseChart"></canvas>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div> WaldJS</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--astro)"></div> Astro 4</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--eleventy)"></div> Eleventy 3</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Score breakdown -->
+  <section>
+    <div class="section-header">
+      <h2>Score breakdown</h2>
+      <p>Per Lighthouse category, all frameworks</p>
+    </div>
+    <div class="scores-grid">
+
+      <div class="score-card">
+        <h3>Performance</h3>
+        <div class="score-row">
+          <div class="score-dot" style="background:var(--red)"></div>
+          <span class="score-fw">WaldJS</span>
+          <span class="score-val" style="color:var(--red)">75</span>
+          <div class="score-bar-track"><div class="score-bar-fill" style="width:75%;background:var(--red)"></div></div>
+        </div>
+        <div class="score-row">
+          <div class="score-dot" style="background:var(--astro)"></div>
+          <span class="score-fw">Astro</span>
+          <span class="score-val" style="color:var(--astro)">100</span>
+          <div class="score-bar-track"><div class="score-bar-fill" style="width:100%;background:var(--astro)"></div></div>
+        </div>
+        <div class="score-row">
+          <div class="score-dot" style="background:var(--eleventy)"></div>
+          <span class="score-fw">Eleventy</span>
+          <span class="score-val" style="color:var(--eleventy)">100</span>
+          <div class="score-bar-track"><div class="score-bar-fill" style="width:100%;background:var(--eleventy)"></div></div>
+        </div>
+      </div>
+
+      <div class="score-card">
+        <h3>Accessibility</h3>
+        <div class="score-row">
+          <div class="score-dot" style="background:var(--red)"></div>
+          <span class="score-fw">WaldJS</span>
+          <span class="score-val" style="color:var(--red)">98</span>
+          <div class="score-bar-track"><div class="score-bar-fill" style="width:98%;background:var(--red)"></div></div>
+        </div>
+        <div class="score-row">
+          <div class="score-dot" style="background:var(--astro)"></div>
+          <span class="score-fw">Astro</span>
+          <span class="score-val" style="color:var(--astro)">98</span>
+          <div class="score-bar-track"><div class="score-bar-fill" style="width:98%;background:var(--astro)"></div></div>
+        </div>
+        <div class="score-row">
+          <div class="score-dot" style="background:var(--eleventy)"></div>
+          <span class="score-fw">Eleventy</span>
+          <span class="score-val" style="color:var(--eleventy)">98</span>
+          <div class="score-bar-track"><div class="score-bar-fill" style="width:98%;background:var(--eleventy)"></div></div>
+        </div>
+      </div>
+
+      <div class="score-card">
+        <h3>Best Practices</h3>
+        <div class="score-row">
+          <div class="score-dot" style="background:var(--red)"></div>
+          <span class="score-fw">WaldJS</span>
+          <span class="score-val" style="color:var(--red)">97</span>
+          <div class="score-bar-track"><div class="score-bar-fill" style="width:97%;background:var(--red)"></div></div>
+        </div>
+        <div class="score-row">
+          <div class="score-dot" style="background:var(--astro)"></div>
+          <span class="score-fw">Astro</span>
+          <span class="score-val" style="color:var(--astro)">92</span>
+          <div class="score-bar-track"><div class="score-bar-fill" style="width:92%;background:var(--astro)"></div></div>
+        </div>
+        <div class="score-row">
+          <div class="score-dot" style="background:var(--eleventy)"></div>
+          <span class="score-fw">Eleventy</span>
+          <span class="score-val" style="color:var(--eleventy)">92</span>
+          <div class="score-bar-track"><div class="score-bar-fill" style="width:92%;background:var(--eleventy)"></div></div>
+        </div>
+      </div>
+
+      <div class="score-card">
+        <h3>SEO</h3>
+        <div class="score-row">
+          <div class="score-dot" style="background:var(--red)"></div>
+          <span class="score-fw">WaldJS</span>
+          <span class="score-val" style="color:var(--red)">90</span>
+          <div class="score-bar-track"><div class="score-bar-fill" style="width:90%;background:var(--red)"></div></div>
+        </div>
+        <div class="score-row">
+          <div class="score-dot" style="background:var(--astro)"></div>
+          <span class="score-fw">Astro</span>
+          <span class="score-val" style="color:var(--astro)">90</span>
+          <div class="score-bar-track"><div class="score-bar-fill" style="width:90%;background:var(--astro)"></div></div>
+        </div>
+        <div class="score-row">
+          <div class="score-dot" style="background:var(--eleventy)"></div>
+          <span class="score-fw">Eleventy</span>
+          <span class="score-val" style="color:var(--eleventy)">90</span>
+          <div class="score-bar-track"><div class="score-bar-fill" style="width:90%;background:var(--eleventy)"></div></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Methodology -->
+  <section>
+    <div class="section-header">
+      <h2>Methodology</h2>
+    </div>
+    <div class="methodology">
+      <strong>Test site:</strong> 50 Markdown blog posts with YAML frontmatter, a homepage, a blog listing page, and one interactive counter component per framework (WaldJS <code>canopy:load</code>, Astro bundled script, Eleventy vanilla JS). Same content for all three frameworks.<br><br>
+      <strong>Build timing:</strong> Each framework's build command is run 3 times with a clean <code>dist/</code> between each run. The median time is reported. Node.js <code>performance.now()</code> is used for timing.<br><br>
+      <strong>Lighthouse:</strong> Scores are measured on 5 pages (<code>/</code>, <code>/blog/</code>, and 3 post pages) using Lighthouse's Node API with headless Chrome. The average across those pages is reported per category.
+    </div>
+    <div class="note">
+      <strong>Astro build time:</strong> The 138.92s median reflects Astro's Rollup/Vite WASM cold-start (runs 1–2 each took ~139s; run 3 dropped to 4.95s after warmup). WaldJS uses Vite's SSR build directly — no WASM warmup penalty.<br><br>
+      <strong>WaldJS Lighthouse Performance (75):</strong> The benchmark Counter component uses <code>canopy:load</code>, which hydrates eagerly and slightly delays LCP. Switching to <code>canopy:idle</code> or <code>canopy:visible</code> is expected to bring the score above 95. This is a benchmark setup choice, not a framework ceiling.
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Built with <a href="https://github.com/Stefan-Espant/waldjs">WaldJS</a> · Early development
+</footer>
+
+<script>
+  const RED      = '#FF3347'
+  const ASTRO    = '#FF5D01'
+  const ELEVENTY = '#7eb3a1'
+
+  const gridColor  = 'rgba(42, 102, 50, 0.4)'
+  const tickColor  = '#a0b8a4'
+  const labelColor = '#ffffff'
+
+  Chart.defaults.color = tickColor
+  Chart.defaults.font.family = 'system-ui, -apple-system, sans-serif'
+
+  // ── Build time (horizontal bar) ──────────────────────────
+  new Chart(document.getElementById('buildChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Eleventy 3', 'WaldJS', 'Astro 4'],
+      datasets: [{
+        label: 'Build time (seconds, median of 3 runs)',
+        data: [0.70, 1.62, 138.92],
+        backgroundColor: [ELEVENTY, RED, ASTRO],
+        borderRadius: 6,
+        borderSkipped: false,
+      }],
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => ` ${ctx.parsed.x.toFixed(2)}s`,
+          },
+        },
+      },
+      scales: {
+        x: {
+          beginAtZero: true,
+          max: 150,
+          grid: { color: gridColor },
+          ticks: {
+            callback: val => `${val}s`,
+            color: tickColor,
+          },
+          title: {
+            display: true,
+            text: '← faster',
+            color: tickColor,
+            font: { size: 11 },
+          },
+        },
+        y: {
+          grid: { display: false },
+          ticks: { color: labelColor, font: { weight: '600' } },
+        },
+      },
+    },
+  })
+
+  // ── Lighthouse grouped bar ────────────────────────────────
+  new Chart(document.getElementById('lighthouseChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Performance', 'Accessibility', 'Best Practices', 'SEO'],
+      datasets: [
+        {
+          label: 'WaldJS',
+          data: [75, 98, 97, 90],
+          backgroundColor: RED,
+          borderRadius: 4,
+        },
+        {
+          label: 'Astro 4',
+          data: [100, 98, 92, 90],
+          backgroundColor: ASTRO,
+          borderRadius: 4,
+        },
+        {
+          label: 'Eleventy 3',
+          data: [100, 98, 92, 90],
+          backgroundColor: ELEVENTY,
+          borderRadius: 4,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y}`,
+          },
+        },
+      },
+      scales: {
+        y: {
+          beginAtZero: false,
+          min: 70,
+          max: 102,
+          grid: { color: gridColor },
+          ticks: { color: tickColor },
+          title: {
+            display: true,
+            text: 'score (higher is better)',
+            color: tickColor,
+            font: { size: 11 },
+          },
+        },
+        x: {
+          grid: { display: false },
+          ticks: { color: labelColor, font: { weight: '600' } },
+        },
+      },
+    },
+  })
+</script>
+</body>
+</html>

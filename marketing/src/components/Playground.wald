@@ -1,0 +1,18 @@
+---
+---
+<section id="playground">
+  <div class="sectiekop">
+    <span class="tag">Playground</span>
+    <h2><span class="nl">Probeer het zelf</span><span class="en">Try it yourself</span></h2>
+    <p><span class="nl">Bewerk het .wald-bestand links en zie de pagina rechts direct meegroeien.</span><span class="en">Edit the .wald file on the left and watch the page grow on the right.</span></p>
+  </div>
+  <div class="pg-grid">
+    <div class="codeblok">
+      <div class="titel"><span class="dot"></span>speeltuin.wald</div>
+      <textarea id="pg-editor" class="pg-editor" spellcheck="false" aria-label="Wald editor"></textarea>
+    </div>
+    <div class="pg-preview" id="pg-preview" aria-live="polite"></div>
+  </div>
+</section>
+
+<!-- BOS METAFOOR -->

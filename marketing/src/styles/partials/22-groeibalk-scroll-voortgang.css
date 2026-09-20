@@ -1,0 +1,15 @@
+/* ---------- groeibalk (scroll-voortgang) ---------- */
+#groeibalk {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 0.25rem;
+  width: 0%;
+  z-index: var(--byz-z-toast);
+  background: linear-gradient(90deg, var(--groen-licht), #7FD8BE);
+  border-radius: 0 6.1875rem 6.1875rem 0
+}
+
+#groeiblad {
+  display: none
+}

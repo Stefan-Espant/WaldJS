@@ -1,0 +1,76 @@
+---
+---
+<section id="changelog">
+  <div class="sectiekop">
+    <span class="tag"><span class="nl">Groeidagboek</span><span class="en">Growth log</span></span>
+    <h2>Changelog</h2>
+    <p><span class="nl">Elke release een jaarring. Dit is er tot nu toe gegroeid.</span><span class="en">Every release a growth ring. Here's what has grown so far.</span></p>
+    <p style="margin-top:.5rem">
+      <a href="https://www.npmjs.com/package/@waldjs/cli" target="_blank" rel="noopener">
+        <img src="https://img.shields.io/npm/v/@waldjs/cli.svg" alt="npm version" style="vertical-align:middle" />
+      </a>
+      <span class="nl" style="margin-left:.5rem;opacity:.7;font-size:.85rem">huidige npm-versie — de fasenamen hieronder zijn mijlpalen, geen versienummers</span>
+      <span class="en" style="margin-left:.5rem;opacity:.7;font-size:.85rem">current npm version — the phase names below are milestones, not version numbers</span>
+    </p>
+  </div>
+  <div class="changelog">
+    <div class="log-kaart">
+      <div class="log-kop"><h3>Forest</h3><span class="datum">juli 2026</span></div>
+      <ul>
+        <li><span class="nl">Deployment-adapters voor static, Netlify, Cloudflare Pages en Vercel</span><span class="en">Deployment adapters for static, Netlify, Cloudflare Pages and Vercel</span></li>
+        <li><span class="nl"><code style="font-family:var(--mono);font-size:.85em">adapter</code> in <code style="font-family:var(--mono);font-size:.85em">wald.config.ts</code> met host-specifieke output en post-build bestanden</span><span class="en"><code style="font-family:var(--mono);font-size:.85em">adapter</code> in <code style="font-family:var(--mono);font-size:.85em">wald.config.ts</code> with host-specific output and post-build files</span></li>
+        <li><span class="nl">CLI-buildsummary toont nu ook welke adapter je bos gebruikt</span><span class="en">The CLI build summary now shows which adapter your forest uses</span></li>
+      </ul>
+    </div>
+    <div class="log-kaart">
+      <div class="log-kop"><h3>Canopy</h3><span class="datum">juli 2026</span></div>
+      <ul>
+        <li><span class="nl">Client-side hydration — interactieve eilandjes in je statische bos</span><span class="en">Client-side hydration — interactive islands in your static forest</span></li>
+        <li><span class="nl">Canopy-directives: <code style="font-family:var(--mono);font-size:.85em">canopy:load</code>, <code style="font-family:var(--mono);font-size:.85em">canopy:idle</code> en <code style="font-family:var(--mono);font-size:.85em">canopy:visible</code></span><span class="en">Canopy directives: <code style="font-family:var(--mono);font-size:.85em">canopy:load</code>, <code style="font-family:var(--mono);font-size:.85em">canopy:idle</code> and <code style="font-family:var(--mono);font-size:.85em">canopy:visible</code></span></li>
+        <li><span class="nl">Het <code style="font-family:var(--mono);font-size:.85em">&lt;wald-canopy&gt;</code>-element laadt islands als ES-modules — de rest blijft 0 KB JavaScript</span><span class="en">The <code style="font-family:var(--mono);font-size:.85em">&lt;wald-canopy&gt;</code> element loads islands as ES modules — the rest stays 0 KB JavaScript</span></li>
+      </ul>
+    </div>
+    <div class="log-kaart">
+      <div class="log-kop"><h3>Forest Polish</h3><span class="datum">juli 2026</span></div>
+      <ul>
+        <li><span class="nl">Marketing-site opgefrist met een branded favicon en scherpere CTA-states</span><span class="en">Refreshed the marketing site with a branded favicon and sharper CTA states</span></li>
+        <li><span class="nl">3D-depth toegevoegd aan knoppen, kaarten, terminals en footer</span><span class="en">Added 3D depth to buttons, cards, terminals and the footer</span></li>
+        <li><span class="nl">Dev-server serveert nu ook <code style="font-family:var(--mono);font-size:.85em">src/assets</code> correct tijdens <code style="font-family:var(--mono);font-size:.85em">wald grow</code></span><span class="en">The dev server now correctly serves <code style="font-family:var(--mono);font-size:.85em">src/assets</code> during <code style="font-family:var(--mono);font-size:.85em">wald grow</code></span></li>
+      </ul>
+    </div>
+    <div class="log-kaart">
+      <div class="log-kop"><h3>Forest</h3><span class="datum">juni 2026</span></div>
+      <ul>
+        <li><span class="nl"><code style="font-family:var(--mono);font-size:.85em">wald.config.ts</code> met outDir, base en Vite-passthrough</span><span class="en"><code style="font-family:var(--mono);font-size:.85em">wald.config.ts</code> with outDir, base and Vite passthrough</span></li>
+        <li><span class="nl">Vite SSR build-pipeline + statische pre-render</span><span class="en">Vite SSR build pipeline + static pre-render</span></li>
+        <li>vite-plugin-wald</li>
+      </ul>
+    </div>
+    <div class="log-kaart">
+      <div class="log-kop"><h3>Branches</h3><span class="datum">mei 2026</span></div>
+      <ul>
+        <li><span class="nl">Componenten — herbruikbare .wald-bestanden</span><span class="en">Components — reusable .wald files</span></li>
+        <li><span class="nl">Layouts voor gedeelde paginastructuur</span><span class="en">Layouts for shared page structure</span></li>
+      </ul>
+    </div>
+    <div class="log-kaart">
+      <div class="log-kop"><h3>Sapling</h3><span class="datum">mei 2026</span></div>
+      <ul>
+        <li><span class="nl">Content collections via <code style="font-family:var(--mono);font-size:.85em">wald:content</code></span><span class="en">Content collections via <code style="font-family:var(--mono);font-size:.85em">wald:content</code></span></li>
+        <li><span class="nl">Dynamische routes met getStaticPaths()</span><span class="en">Dynamic routes with getStaticPaths()</span></li>
+      </ul>
+    </div>
+    <div class="log-kaart">
+      <div class="log-kop"><h3>Seed</h3><span class="datum">april 2026</span></div>
+      <ul>
+        <li><span class="nl">CLI: plant, grow, build en preview</span><span class="en">CLI: plant, grow, build and preview</span></li>
+      </ul>
+    </div>
+    <div class="log-kaart">
+      <div class="log-kop"><h3>Roots</h3><span class="datum">april 2026</span></div>
+      <ul>
+        <li><span class="nl">De compiler: parser + transform van .wald naar JS-modules</span><span class="en">The compiler: parser + transform from .wald to JS modules</span></li>
+      </ul>
+    </div>
+  </div>
+</section>

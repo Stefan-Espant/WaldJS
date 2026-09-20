@@ -1,0 +1,61 @@
+{
+  "name": "vscode-wald",
+  "displayName": "WaldJS",
+  "description": "Syntax highlighting for WaldJS .wald single-file components",
+  "version": "0.0.2",
+  "private": false,
+  "publisher": "waldjs",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Stefan-Espant/WaldJS.git",
+    "directory": "packages/vscode-wald"
+  },
+  "bugs": {
+    "url": "https://github.com/Stefan-Espant/WaldJS/issues"
+  },
+  "homepage": "https://github.com/Stefan-Espant/WaldJS/tree/main/packages/vscode-wald#readme",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "keywords": [
+    "wald",
+    "waldjs",
+    "syntax highlighting"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "wald",
+        "aliases": [
+          "Wald",
+          "wald"
+        ],
+        "extensions": [
+          ".wald"
+        ],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./icons/wald-file-icon.svg",
+          "dark": "./icons/wald-file-icon.svg"
+        }
+      }
+    ],
+    "grammars": [
+      {
+        "language": "wald",
+        "scopeName": "source.wald",
+        "path": "./syntaxes/wald.tmLanguage.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.frontmatter.wald": "typescript",
+          "meta.embedded.expression.wald": "typescript",
+          "source.ts": "typescript",
+          "text.html.basic": "html"
+        }
+      }
+    ]
+  }
+}

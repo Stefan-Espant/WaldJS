@@ -3,6 +3,8 @@ import { plantCommand } from './commands/plant.js'
 import { growCommand } from './commands/grow.js'
 import { buildCommand } from './commands/build.js'
 import { previewCommand } from './commands/preview.js'
+import { checkCommand } from './commands/check.js'
+import { newCommand } from './commands/new.js'
 
 const main = defineCommand({
   meta: {
@@ -15,6 +17,8 @@ const main = defineCommand({
     grow: growCommand,
     build: buildCommand,
     preview: previewCommand,
+    check: checkCommand,
+    new: newCommand,
   },
 })
 

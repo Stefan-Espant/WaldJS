@@ -5,6 +5,9 @@ dist/
 .env
 .DS_Store
 .turbo/
+*.vsix
+marketing/public/css/site.css
+marketing/src/assets/css/site.css
 benchmarks/results/
 benchmarks/wald/node_modules/
 benchmarks/astro/node_modules/

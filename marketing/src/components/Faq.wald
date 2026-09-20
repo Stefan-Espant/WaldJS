@@ -1,0 +1,26 @@
+---
+---
+<section id="faq">
+  <div class="sectiekop">
+    <span class="tag">FAQ</span>
+    <h2><span class="nl">Veelgestelde vragen</span><span class="en">Frequently asked questions</span></h2>
+  </div>
+  <div class="faq">
+    <details>
+      <summary><span class="nl">Waarom nóg een framework?</span><span class="en">Why yet another framework?</span></summary>
+      <p><span class="nl">WaldJS is compromisloos content-first: één .wald-bestandsformaat, nul kilobyte JavaScript standaard, en een terminologie die je kunt onthouden. Geen configuratie-oerwoud — gewoon planten en groeien.</span><span class="en">WaldJS is uncompromisingly content-first: one .wald file format, zero kilobytes of JavaScript by default, and terminology you can actually remember. No configuration jungle — just plant and grow.</span></p>
+    </details>
+    <details>
+      <summary><span class="nl">Is WaldJS klaar voor productie?</span><span class="en">Is WaldJS production-ready?</span></summary>
+      <p><span class="nl">Nog niet helemaal — het framework is in actieve ontwikkeling. Fase 0 t/m 2b en 4a/4b zijn af; client-side hydration (fase 3) is onderweg. Voor statische sites zonder interactiviteit kun je vandaag al bouwen.</span><span class="en">Not quite yet — the framework is in active development. Phases 0 through 2b and 4a/4b are complete; client-side hydration (phase 3) is on its way. For static sites without interactivity you can build today.</span></p>
+    </details>
+    <details>
+      <summary><span class="nl">Kan ik migreren vanaf Astro?</span><span class="en">Can I migrate from Astro?</span></summary>
+      <p><span class="nl">De concepten lijken sterk op elkaar: frontmatter + template, file-based routing, content collections en getStaticPaths() werken vrijwel hetzelfde. Meestal is het hernoemen van .astro naar .wald en het aanpassen van imports naar wald:content het grootste werk.</span><span class="en">The concepts are very similar: frontmatter + template, file-based routing, content collections and getStaticPaths() work almost identically. Usually renaming .astro to .wald and updating imports to wald:content is the bulk of the work.</span></p>
+    </details>
+    <details>
+      <summary><span class="nl">Werken mijn Vite-plugins?</span><span class="en">Do my Vite plugins work?</span></summary>
+      <p><span class="nl">Ja — via het vite-blok in wald.config.ts gaat alles rechtstreeks naar Vite door, inclusief plugins en resolve-opties.</span><span class="en">Yes — the vite block in wald.config.ts passes everything straight through to Vite, including plugins and resolve options.</span></p>
+    </details>
+  </div>
+</section>

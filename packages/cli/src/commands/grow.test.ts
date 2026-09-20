@@ -1,5 +1,47 @@
-import { describe, it, expect } from 'vitest'
-import { handleRequest } from './grow.js'
+import { describe, it, expect, vi } from 'vitest'
+import { handleRequest, stripBase } from './grow.js'
+
+describe('stripBase', () => {
+  it('passes the url through unchanged for the root base', () => {
+    expect(stripBase('/about', '/')).toBe('/about')
+  })
+
+  it('strips a non-root base from a prefixed path', () => {
+    expect(stripBase('/my-forest/about', '/my-forest/')).toBe('/about')
+  })
+
+  it('resolves the base root itself to /', () => {
+    expect(stripBase('/my-forest/', '/my-forest/')).toBe('/')
+  })
+
+  it('resolves the base root without a trailing slash to /', () => {
+    expect(stripBase('/my-forest', '/my-forest/')).toBe('/')
+  })
+
+  it('works the same whether base is configured with or without a trailing slash', () => {
+    expect(stripBase('/my-forest/about', '/my-forest')).toBe('/about')
+  })
+
+  it('preserves a query string after stripping', () => {
+    expect(stripBase('/my-forest/about?x=1', '/my-forest/')).toBe('/about?x=1')
+  })
+
+  it('returns null for a request that does not start with the configured base', () => {
+    expect(stripBase('/about', '/my-forest/')).toBeNull()
+  })
+
+  it('does not false-match a path that only shares a text prefix with base', () => {
+    expect(stripBase('/my-forest-extra/about', '/my-forest/')).toBeNull()
+  })
+
+  it('strips a base prefix from a src/assets/* request', () => {
+    expect(stripBase('/my-forest/assets/css/global.css', '/my-forest/')).toBe('/assets/css/global.css')
+  })
+
+  it('returns null for an unprefixed src/assets/* request under a non-default base', () => {
+    expect(stripBase('/assets/css/global.css', '/my-forest/')).toBeNull()
+  })
+})
 
 describe('handleRequest', () => {
   it('returns 404 for unmatched URL', async () => {
@@ -42,5 +84,121 @@ describe('handleRequest', () => {
 
     await handleRequest(routes, '/blog/hello-world', fakeVite as any)
     expect(capturedProps[0]).toEqual({ slug: 'hello-world' })
+  })
+
+  it('injects the prefetch runtime when the rendered page uses wald:prefetch', async () => {
+    const routes = [{ pattern: '/about', file: '/pages/about.wald', params: [] }]
+    const fakeVite = {
+      ssrLoadModule: async (_file: string) => ({
+        default: {
+          render: async () => '<a href="/x" wald:prefetch="hover">x</a>',
+        },
+      }),
+    }
+
+    const result = await handleRequest(routes, '/about', fakeVite as any)
+    expect(result.body).toContain('<script>')
+    expect(result.body).toContain('wald:prefetch')
+  })
+
+  it('does not inject the prefetch runtime for a page without wald:prefetch', async () => {
+    const routes = [{ pattern: '/about', file: '/pages/about.wald', params: [] }]
+    const fakeVite = {
+      ssrLoadModule: async (_file: string) => ({
+        default: {
+          render: async () => '<a href="/x">x</a>',
+        },
+      }),
+    }
+
+    const result = await handleRequest(routes, '/about', fakeVite as any)
+    expect(result.body).not.toContain('<script>')
+  })
+
+  it('rethrows render errors from ssrLoadModule', async () => {
+    const routes = [{ pattern: '/about', file: '/pages/about.wald', params: [] }]
+    const fakeVite = {
+      ssrLoadModule: vi.fn(async () => {
+        throw new Error('boom')
+      }),
+    }
+
+    await expect(handleRequest(routes, '/about', fakeVite as any)).rejects.toThrow('boom')
+  })
+
+  it('runs the response through transformIndexHtml to inject the Vite HMR client', async () => {
+    const routes = [{ pattern: '/about', file: '/pages/about.wald', params: [] }]
+    const fakeVite = {
+      ssrLoadModule: async (_file: string) => ({
+        default: { render: async () => '<p>About</p>' },
+      }),
+      transformIndexHtml: async (_url: string, html: string) =>
+        html.replace('</head>', '<script type="module" src="/@vite/client"></script></head>'),
+    }
+
+    const result = await handleRequest(routes, '/about', fakeVite as any)
+    expect(result.body).toContain('<script type="module" src="/@vite/client"></script>')
+  })
+
+  it('injects the component-styles link when the rendered page uses a styled component', async () => {
+    const routes = [{ pattern: '/about', file: '/pages/about.wald', params: [] }]
+    const fakeVite = {
+      ssrLoadModule: async (_file: string) => ({
+        default: { render: async () => '<div class="card" data-wald-ab12cd34>Hi</div>' },
+      }),
+    }
+
+    const result = await handleRequest(routes, '/about', fakeVite as any)
+    expect(result.body).toContain('<link rel="stylesheet" href="/assets/wald-components.css">')
+  })
+
+  it('does not inject the component-styles link for a page with no styled components', async () => {
+    const routes = [{ pattern: '/about', file: '/pages/about.wald', params: [] }]
+    const fakeVite = {
+      ssrLoadModule: async (_file: string) => ({
+        default: { render: async () => '<p>About</p>' },
+      }),
+    }
+
+    const result = await handleRequest(routes, '/about', fakeVite as any)
+    expect(result.body).not.toContain('wald-components.css')
+  })
+
+  it('leaves the component-styles link root-relative and lets transformIndexHtml apply base once (not double-prefixed)', async () => {
+    const routes = [{ pattern: '/about', file: '/pages/about.wald', params: [] }]
+    const fakeVite = {
+      ssrLoadModule: async (_file: string) => ({
+        default: { render: async () => '<div class="card" data-wald-ab12cd34>Hi</div>' },
+      }),
+      // Mimics Vite's real transformIndexHtml: it joins config.base onto
+      // any root-relative href/src exactly once. If handleRequest already
+      // baked a base into the link itself, this would double it up — this
+      // test catches that regression class.
+      transformIndexHtml: async (_url: string, html: string) =>
+        html.replace(/(href|src)="\/(?!\/)/g, '$1="/my-forest/'),
+    }
+
+    const result = await handleRequest(routes, '/about', fakeVite as any)
+    expect(result.body).toContain('<link rel="stylesheet" href="/my-forest/assets/wald-components.css">')
+    expect(result.body).not.toContain('/my-forest/my-forest/')
+  })
+
+  it('matches the route using a base-stripped routePath while still passing the real url to transformIndexHtml', async () => {
+    const routes = [{ pattern: '/about', file: '/pages/about.wald', params: [] }]
+    const capturedUrls: string[] = []
+    const fakeVite = {
+      ssrLoadModule: async (_file: string) => ({
+        default: { render: async () => '<p>About</p>' },
+      }),
+      transformIndexHtml: async (url: string, html: string) => {
+        capturedUrls.push(url)
+        return html
+      },
+    }
+
+    const result = await handleRequest(routes, '/my-forest/about', fakeVite as any, '/about')
+    expect(result.status).toBe(200)
+    expect(result.body).toContain('<p>About</p>')
+    expect(capturedUrls[0]).toBe('/my-forest/about')
   })
 })

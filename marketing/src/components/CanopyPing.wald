@@ -1,0 +1,8 @@
+---
+---
+<span hidden data-canopy-fixture>ready</span>
+<script>
+export default function(root) {
+  root.dataset.canopyReady = 'true'
+}
+</script>

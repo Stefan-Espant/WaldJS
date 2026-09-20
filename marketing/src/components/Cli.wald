@@ -1,0 +1,15 @@
+---
+---
+<section id="cli">
+  <svg class="varen rechts" aria-hidden="true"></svg>
+  <div class="sectiekop">
+    <span class="tag">CLI</span>
+    <h2><span class="nl">Vier commando's, één bos</span><span class="en">Four commands, one forest</span></h2>
+  </div>
+  <div class="cli-grid">
+    <div class="cli-kaart"><code>wald plant &lt;name&gt;</code><p><span class="nl">Maak een nieuw project aan.</span><span class="en">Create a new project.</span></p></div>
+    <div class="cli-kaart"><code>wald grow</code><p><span class="nl">Start de dev-server op <b>localhost:7233</b>.</span><span class="en">Start the dev server at <b>localhost:7233</b>.</span></p></div>
+    <div class="cli-kaart"><code>wald build</code><p><span class="nl">Bouw naar <b>dist/</b> (Vite SSR + statische pre-render).</span><span class="en">Build to <b>dist/</b> (Vite SSR + static pre-render).</span></p></div>
+    <div class="cli-kaart"><code>wald preview</code><p><span class="nl">Bekijk de build op <b>localhost:4321</b>.</span><span class="en">Preview the build at <b>localhost:4321</b>.</span></p></div>
+  </div>
+</section>

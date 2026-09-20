@@ -1,6 +1,14 @@
 {
   "name": "@waldjs/content",
   "version": "0.1.0",
+  "description": "Content collections and getStaticPaths() for WaldJS",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Stefan-Espant/WaldJS.git",
+    "directory": "packages/content"
+  },
+  "author": "Stefan van der Kort",
   "private": false,
   "type": "module",
   "main": "./dist/index.js",
@@ -10,6 +18,12 @@
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
     }
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "build": "tsc",

@@ -58,6 +58,23 @@ describe('createTree', () => {
     const html = await tree.render({ name: 'Wald' })
     expect(html).toBe('<h1>Wald</h1>')
   })
+
+  it('accepts a typed TProps generic and passes typed props to the function', async () => {
+    type Props = { greeting: string; count: number }
+    const tree = createTree<Props>(async (_result, props) => {
+      return renderTemplate`${props.greeting} ${props.count}`
+    })
+    const html = await tree.render({ greeting: 'hello', count: 42 })
+    expect(html).toBe('hello 42')
+  })
+
+  it('defaults to Record<string, unknown> when no generic is provided', async () => {
+    const tree = createTree(async (_result, props) => {
+      return renderTemplate`${props['name']}`
+    })
+    const html = await tree.render({ name: 'Wald' })
+    expect(html).toBe('Wald')
+  })
 })
 
 describe('SafeHtml', () => {

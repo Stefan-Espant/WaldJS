@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { scanTemplate } from './scanner.js'
-import type { ScriptNode } from '../ast/types.js'
+import type { ScriptNode, StyleNode } from '../ast/types.js'
+import { WaldError } from '../errors.js'
 
 describe('scanTemplate — text', () => {
   it('returns a TextNode for plain text', () => {
@@ -119,6 +120,35 @@ describe('scanTemplate — elements', () => {
       children: [],
     }])
   })
+
+  it('extracts canopy strategy from component attrs', () => {
+    const nodes = scanTemplate('<Counter canopy:load initial={3} />')
+    expect(nodes).toEqual([{
+      type: 'component',
+      name: 'Counter',
+      attrs: [{ type: 'attribute', name: 'initial', value: { type: 'expression', code: '3' } }],
+      children: [],
+      canopy: { strategy: 'load' },
+    }])
+  })
+})
+
+describe('scanTemplate — void elements', () => {
+  it('parseert bare void elements zonder kinderen te slikken', () => {
+    const nodes = scanTemplate('<head><meta charset="utf-8"><title>x</title></head>')
+    const head = nodes[0] as { children: { type: string; tag?: string }[] }
+    expect(head.children.map(c => (c as { tag?: string }).tag ?? c.type)).toEqual(['meta', 'title'])
+  })
+
+  it('behandelt componenten met void-namen niet als void', () => {
+    const nodes = scanTemplate('<div><Link href="/about">About</Link><p>after</p></div>')
+    const div = nodes[0] as { children: { type: string; name?: string; tag?: string }[] }
+    expect(div.children.length).toBe(2)
+    const link = div.children[0] as { type: string; name: string; children: unknown[] }
+    expect(link.type).toBe('component')
+    expect(link.name).toBe('Link')
+    expect(link.children.length).toBe(1)
+  })
 })
 
 describe('scanTemplate — script', () => {
@@ -140,5 +170,115 @@ describe('scanTemplate — script', () => {
   it('handles script with type attribute', () => {
     const nodes = scanTemplate('<script type="module">export const x = 1</script>')
     expect(nodes).toEqual([{ type: 'script', content: '<script type="module">export const x = 1</script>' }])
+  })
+})
+
+describe('scanTemplate — style', () => {
+  it('scans a style block as a single node holding only its inner content', () => {
+    const nodes = scanTemplate('<style>.card { color: red }</style>')
+    expect(nodes).toEqual([{ type: 'style', content: '.card { color: red }', line: 1, column: 1 } satisfies StyleNode])
+  })
+
+  it('does not choke on braces inside the style content', () => {
+    const nodes = scanTemplate('<style>.a { color: red } .b { color: blue }</style>')
+    expect(nodes).toEqual([{ type: 'style', content: '.a { color: red } .b { color: blue }', line: 1, column: 1 }])
+  })
+
+  it('tracks the line and column of the opening tag', () => {
+    // nodes[0] is the <div></div> element, nodes[1] is the whitespace text
+    // node for the newline between the two tags, nodes[2] is the style block.
+    const nodes = scanTemplate('<div></div>\n<style>.a{color:red}</style>')
+    expect(nodes[2]).toMatchObject({ type: 'style', line: 2, column: 1 })
+  })
+
+  it('treats content after the style block as a sibling node', () => {
+    const nodes = scanTemplate('<style>.a{color:red}</style><h1>Hi</h1>')
+    expect(nodes[1]).toEqual({ type: 'element', tag: 'h1', attrs: [], children: [{ type: 'text', value: 'Hi' }] })
+  })
+})
+
+describe('scanTemplate — doctype en comments', () => {
+  it('geeft <!DOCTYPE html> door als letterlijke tekst', () => {
+    const nodes = scanTemplate('<!DOCTYPE html>\n<p>hi</p>')
+    expect(nodes[0]).toEqual({ type: 'text', value: '<!DOCTYPE html>' })
+  })
+
+  it('geeft een HTML-comment door als letterlijke tekst', () => {
+    const nodes = scanTemplate('<!-- logo klein --><p>hi</p>')
+    expect(nodes[0]).toEqual({ type: 'text', value: '<!-- logo klein -->' })
+  })
+
+  it('parseert accolades binnen comments niet als expressies', () => {
+    const nodes = scanTemplate('<!-- {geen expressie} -->')
+    expect(nodes[0]).toEqual({ type: 'text', value: '<!-- {geen expressie} -->' })
+  })
+
+  it('comment met > erin eindigt pas bij -->', () => {
+    const nodes = scanTemplate('<!-- a > b --><p>x</p>')
+    expect(nodes[0]).toEqual({ type: 'text', value: '<!-- a > b -->' })
+  })
+
+  it('ongesloten comment loopt tot einde bron zonder crash', () => {
+    const nodes = scanTemplate('<!-- nooit dicht')
+    expect(nodes[0]).toEqual({ type: 'text', value: '<!-- nooit dicht' })
+  })
+})
+
+describe('scanTemplate — errors', () => {
+  it('throws WaldError for unclosed expression {', () => {
+    expect(() => scanTemplate('{title')).toThrow(WaldError)
+  })
+
+  it('unclosed expression error points to the opening {', () => {
+    let caught: WaldError | undefined
+    try { scanTemplate('{title') } catch (e) { caught = e as WaldError }
+    expect(caught?.message).toContain("Unclosed expression")
+    expect(caught?.message).toContain("'}'")
+    expect(caught?.line).toBe(1)
+    expect(caught?.column).toBe(1)
+  })
+
+  it('unclosed expression on line 2 reports correct line', () => {
+    let caught: WaldError | undefined
+    try { scanTemplate('<p>ok</p>\n<h1>{oops') } catch (e) { caught = e as WaldError }
+    expect(caught?.line).toBe(2)
+    expect(caught?.column).toBe(5)
+  })
+
+  it('throws WaldError for unclosed string attribute', () => {
+    expect(() => scanTemplate('<div class="oops')).toThrow(WaldError)
+  })
+
+  it('unclosed string attribute error points to the opening quote', () => {
+    let caught: WaldError | undefined
+    try { scanTemplate('<div class="oops') } catch (e) { caught = e as WaldError }
+    expect(caught?.message).toContain("Unclosed string attribute")
+    expect(caught?.message).toContain("'\"'")
+    expect(caught?.line).toBe(1)
+    expect(caught?.column).toBe(12)
+  })
+
+  it('throws WaldError for unclosed element tag', () => {
+    expect(() => scanTemplate('<div')).toThrow(WaldError)
+  })
+
+  it('throws WaldError for an invalid canopy strategy', () => {
+    expect(() => scanTemplate('<Counter canopy:soon />')).toThrow(/canopy:soon is not valid/)
+  })
+
+  it('unclosed tag error includes the tag name and points to <', () => {
+    let caught: WaldError | undefined
+    try { scanTemplate('<div') } catch (e) { caught = e as WaldError }
+    expect(caught?.message).toContain("<div>")
+    expect(caught?.message).toContain("'>'")
+    expect(caught?.line).toBe(1)
+    expect(caught?.column).toBe(1)
+  })
+
+  it('unclosed tag on line 3 reports correct position', () => {
+    let caught: WaldError | undefined
+    try { scanTemplate('<p>ok</p>\n<span>ok</span>\n<section') } catch (e) { caught = e as WaldError }
+    expect(caught?.line).toBe(3)
+    expect(caught?.column).toBe(1)
   })
 })

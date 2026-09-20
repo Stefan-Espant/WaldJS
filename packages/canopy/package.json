@@ -1,0 +1,40 @@
+{
+  "name": "@waldjs/canopy",
+  "version": "0.2.0",
+  "description": "Client-side hydration (islands) for WaldJS",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Stefan-Espant/WaldJS.git",
+    "directory": "packages/canopy"
+  },
+  "author": "Stefan van der Kort",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./prefetch": {
+      "import": "./dist/prefetch.js",
+      "types": "./dist/prefetch.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "happy-dom": "^15.0.0",
+    "typescript": "^5.5.0",
+    "vitest": "^2.0.0"
+  }
+}

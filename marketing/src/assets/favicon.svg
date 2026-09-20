@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="14" fill="#023B2D"/>
+  <path
+    fill="#FFF"
+    opacity=".3"
+    d="M32 8c-1.5 0-2.8 1-3.2 2.5-2.4 8.6-7.7 15-17.9 19.4-1.5.7-2.5 2.1-2.5 3.8 0 2.4 1.9 4.1 4.5 4.1.9 0 1.9-.2 2.8-.6l4.5-2-4.6 5.8c-.8.9-1.2 1.9-1.2 2.9 0 2.2 1.8 3.7 4 3.7.8 0 1.7-.2 2.8-.7l6.9-3.1-6.4 7.9c-.6.8-.6 1.9.2 2.6.3.2.8.4 1.2.4h14.9c1 0 1.9-.8 1.9-1.9 0-.4-.2-.8-.4-1.1l-6.4-7.9 6.9 3.1c1 .5 2 .7 2.8.7 2.2 0 4-1.5 4-3.7 0-1-.4-2-1.2-2.9l-4.6-5.8 4.5 2c.9.4 1.9.6 2.8.6 2.6 0 4.5-1.7 4.5-4.1 0-1.7-1-3.1-2.5-3.8-10.2-4.3-15.6-10.8-17.9-19.4C34.8 9 33.5 8 32 8Z"
+  />
+  <text
+    x="15"
+    y="49"
+    fill="#FFF"
+    font-family="'Puffin Display Soft', 'Baloo 2', system-ui, sans-serif"
+    font-size="20"
+    font-weight="700"
+    letter-spacing="-1.2"
+  >W</text>
+  <text
+    x="29"
+    y="49"
+    fill="#FF3347"
+    font-family="'Puffin Display Soft', 'Baloo 2', system-ui, sans-serif"
+    font-size="20"
+    font-weight="700"
+    letter-spacing="-1.2"
+  >JS</text>
+</svg>

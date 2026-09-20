@@ -63,3 +63,25 @@ const items: string[] = ['a', 'b']
     expect(result.code).toBe("const items: string[] = ['a', 'b']")
   })
 })
+
+describe('extractFrontmatter — code start line', () => {
+  it('reports line 2 for standard frontmatter', () => {
+    const result = extractFrontmatter('---\nconst x = 1\n---\n<p>hi</p>')
+    expect(result.line).toBe(2)
+  })
+
+  it('accounts for blank lines before the opening delimiter', () => {
+    const result = extractFrontmatter('\n\n---\nconst x = 1\n---\n<p>hi</p>')
+    expect(result.line).toBe(4)
+  })
+
+  it('accounts for blank lines between delimiter and first code line', () => {
+    const result = extractFrontmatter('---\n\n\nconst x = 1\n---\n<p>hi</p>')
+    expect(result.line).toBe(4)
+  })
+
+  it('returns line 1 when there is no frontmatter', () => {
+    const result = extractFrontmatter('<p>hi</p>')
+    expect(result.line).toBe(1)
+  })
+})

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { transform } from './index.js'
+import { transform, transformWithMap } from './index.js'
 import type { WaldDocument } from '../ast/types.js'
 
 describe('transform', () => {
@@ -89,6 +89,26 @@ describe('transform', () => {
     expect(output).toContain('await Button.render(')
   })
 
+  it('renders canopy components as wald-canopy wrappers', () => {
+    const ast: WaldDocument = {
+      type: 'document',
+      frontmatter: { type: 'frontmatter', code: '' },
+      template: [{
+        type: 'component',
+        name: 'Counter',
+        attrs: [{ type: 'attribute', name: 'initial', value: { type: 'expression', code: '3' } }],
+        children: [],
+        canopy: { strategy: 'visible' },
+      }],
+    }
+
+    const output = transform(ast)
+    expect(output).toContain('<wald-canopy data-src="wald:canopy:Counter"')
+    expect(output).toContain('data-strategy="visible"')
+    expect(output).toContain('JSON.stringify({ initial: (3) })')
+    expect(output).toContain("await Counter.render({ initial: (3) }) + '</wald-canopy>'")
+  })
+
   it('hoists export function to module level before export default', () => {
     const ast: WaldDocument = {
       type: 'document',
@@ -140,6 +160,198 @@ describe('transform', () => {
   })
 })
 
+describe('transform — type Props support', () => {
+  it('hoists type Props to module level before export default', () => {
+    const ast: WaldDocument = {
+      type: 'document',
+      frontmatter: { type: 'frontmatter', code: 'type Props = { title: string }' },
+      template: [],
+    }
+    const output = transform(ast)
+    const propsPos = output.indexOf('type Props = { title: string }')
+    const exportDefaultPos = output.indexOf('export default createTree')
+    expect(propsPos).toBeGreaterThanOrEqual(0)
+    expect(propsPos).toBeLessThan(exportDefaultPos)
+  })
+
+  it('injects Props generic when type Props is present', () => {
+    const ast: WaldDocument = {
+      type: 'document',
+      frontmatter: { type: 'frontmatter', code: 'type Props = { title: string }' },
+      template: [],
+    }
+    const output = transform(ast)
+    expect(output).toContain('export default createTree<Props>(async ($$result, $$props: Props) => {')
+  })
+
+  it('injects const $props = $$props alias inside the callback when Props present', () => {
+    const ast: WaldDocument = {
+      type: 'document',
+      frontmatter: { type: 'frontmatter', code: 'type Props = { title: string }' },
+      template: [],
+    }
+    const output = transform(ast)
+    const exportDefaultPos = output.indexOf('export default createTree<Props>')
+    const aliasPos = output.indexOf('const $props = $$props')
+    expect(aliasPos).toBeGreaterThan(exportDefaultPos)
+  })
+
+  it('does not inject Props generic when no type Props in frontmatter', () => {
+    const ast: WaldDocument = {
+      type: 'document',
+      frontmatter: { type: 'frontmatter', code: 'const x = 1' },
+      template: [],
+    }
+    const output = transform(ast)
+    expect(output).toContain('export default createTree(async ($$result, $$props) => {')
+    expect(output).not.toContain('createTree<Props>')
+    expect(output).not.toContain('const $props = $$props')
+  })
+
+  it('hoists multi-line type Props', () => {
+    const code = 'type Props = {\n  title: string\n  count?: number\n}'
+    const ast: WaldDocument = {
+      type: 'document',
+      frontmatter: { type: 'frontmatter', code },
+      template: [],
+    }
+    const output = transform(ast)
+    const propsPos = output.indexOf('type Props = {')
+    const exportDefaultPos = output.indexOf('export default createTree<Props>')
+    expect(propsPos).toBeGreaterThanOrEqual(0)
+    expect(propsPos).toBeLessThan(exportDefaultPos)
+  })
+
+  it('keeps non-Props body lines inside the callback when Props present', () => {
+    const code = 'type Props = { title: string }\nconst x = 1'
+    const ast: WaldDocument = {
+      type: 'document',
+      frontmatter: { type: 'frontmatter', code },
+      template: [],
+    }
+    const output = transform(ast)
+    const exportDefaultPos = output.indexOf('export default createTree<Props>')
+    const constXPos = output.indexOf('const x = 1')
+    expect(constXPos).toBeGreaterThan(exportDefaultPos)
+  })
+
+  it('produces correct full output for a single-line Props type', () => {
+    const ast: WaldDocument = {
+      type: 'document',
+      frontmatter: { type: 'frontmatter', code: 'type Props = { title: string }' },
+      template: [],
+    }
+    const output = transform(ast)
+    expect(output).toBe(
+      `import { createTree, renderTemplate, SafeHtml } from '@waldjs/runtime'\n\ntype Props = { title: string }\n\nexport default createTree<Props>(async ($$result, $$props: Props) => {\n  const $props = $$props\n\n  return renderTemplate\`\`\n})`
+    )
+  })
+
+  it('detects export type Props and injects generic', () => {
+    const ast: WaldDocument = {
+      type: 'document',
+      frontmatter: { type: 'frontmatter', code: 'export type Props = { title: string }' },
+      template: [],
+    }
+    const output = transform(ast)
+    expect(output).toContain('createTree<Props>')
+    expect(output).toContain('$$props: Props')
+    expect(output).toContain('const $props = $$props')
+  })
+
+  it('does not treat type PropsExtra as type Props', () => {
+    const ast: WaldDocument = {
+      type: 'document',
+      frontmatter: { type: 'frontmatter', code: 'type PropsExtra = { extra: string }' },
+      template: [],
+    }
+    const output = transform(ast)
+    expect(output).not.toContain('createTree<Props>')
+    expect(output).not.toContain('$$props: Props')
+  })
+})
+
+describe('transformWithMap', () => {
+  const doc = (code: string, line = 2): WaldDocument => ({
+    type: 'document',
+    frontmatter: { type: 'frontmatter', code, line },
+    template: [],
+  })
+
+  it('returns the same code as transform', () => {
+    const ast = doc('type Props = { title: string }\nconst { title } = $props')
+    expect(transformWithMap(ast).code).toBe(transform(ast))
+  })
+
+  it('maps hoisted type Props to its original line', () => {
+    const ast = doc('type Props = { title: string }\nconst { title } = $props')
+    const { code, lineMap } = transformWithMap(ast)
+    const lines = code.split('\n')
+    const propsIdx = lines.findIndex(l => l.startsWith('type Props'))
+    expect(lineMap[propsIdx]).toBe(2)
+  })
+
+  it('maps body lines to their original lines, after the injected alias', () => {
+    const ast = doc('type Props = { title: string }\nconst { title } = $props')
+    const { code, lineMap } = transformWithMap(ast)
+    const lines = code.split('\n')
+    const bodyIdx = lines.findIndex(l => l.includes('const { title } = $props'))
+    expect(lineMap[bodyIdx]).toBe(3)
+  })
+
+  it('maps generated lines (import, signature, alias, return) to null', () => {
+    const ast = doc('type Props = { title: string }\nconst { title } = $props')
+    const { code, lineMap } = transformWithMap(ast)
+    const lines = code.split('\n')
+    expect(lineMap[0]).toBe(null) // runtime import
+    expect(lineMap[lines.findIndex(l => l.startsWith('export default createTree'))]).toBe(null)
+    expect(lineMap[lines.findIndex(l => l.includes('const $props = $$props'))]).toBe(null)
+    expect(lineMap[lines.findIndex(l => l.includes('return renderTemplate'))]).toBe(null)
+  })
+
+  it('maps multi-line type Props line by line', () => {
+    const ast = doc('type Props = {\n  title: string\n}\nconst x = 1')
+    const { code, lineMap } = transformWithMap(ast)
+    const lines = code.split('\n')
+    const start = lines.findIndex(l => l.startsWith('type Props'))
+    expect(lineMap[start]).toBe(2)
+    expect(lineMap[start + 1]).toBe(3)
+    expect(lineMap[start + 2]).toBe(4)
+  })
+
+  it('respects a custom frontmatter start line', () => {
+    const ast = doc('const x = 1', 5)
+    const { code, lineMap } = transformWithMap(ast)
+    const lines = code.split('\n')
+    const idx = lines.findIndex(l => l.includes('const x = 1'))
+    expect(lineMap[idx]).toBe(5)
+  })
+
+  it('lineMap has exactly one entry per output line', () => {
+    const ast = doc('type Props = { title: string }\nconst { title } = $props')
+    const { code, lineMap } = transformWithMap(ast)
+    expect(lineMap.length).toBe(code.split('\n').length)
+  })
+})
+
+describe('transformWithMap — output identity with transform', () => {
+  it.each([
+    ['empty frontmatter', ''],
+    ['plain body', 'const title = "Hello"'],
+    ['import + body', "import Card from './Card.wald'\nconst t = 'x'"],
+    ['export + body', 'export async function getStaticPaths() {\n  return []\n}\nconst x = 1'],
+    ['props + body', 'type Props = { title: string }\nconst { title } = $props'],
+    ['props only', 'type Props = { title: string }'],
+  ])('%s', (_name, code) => {
+    const ast: WaldDocument = {
+      type: 'document',
+      frontmatter: { type: 'frontmatter', code },
+      template: [{ type: 'element', tag: 'h1', attrs: [], children: [{ type: 'expression', code: 'title' }] }],
+    }
+    expect(transformWithMap(ast).code).toBe(transform(ast))
+  })
+})
+
 import { compile } from '../index.js'
 
 describe('script rendering', () => {
@@ -155,6 +367,73 @@ describe('script rendering', () => {
     const output = compile(source, 'test.wald')
     expect(output).toContain('const ok = 1 < 2')
     expect(output).toContain('{ a: 1 }')
+  })
+})
+
+describe('transformWithMap — scoped styles', () => {
+  it('returns null styles and adds no attribute when the document has no styles', () => {
+    const ast: WaldDocument = {
+      type: 'document',
+      frontmatter: { type: 'frontmatter', code: '' },
+      template: [{ type: 'element', tag: 'h1', attrs: [], children: [{ type: 'text', value: 'Hi' }] }],
+      styles: null,
+    }
+    const result = transformWithMap(ast, '/src/pages/index.wald')
+    expect(result.styles).toBeNull()
+    expect(result.code).not.toContain('data-wald-')
+  })
+
+  it('stamps every element with a data-wald-<hash> attribute when styles are present', () => {
+    const ast: WaldDocument = {
+      type: 'document',
+      frontmatter: { type: 'frontmatter', code: '' },
+      template: [{
+        type: 'element',
+        tag: 'div',
+        attrs: [{ type: 'attribute', name: 'class', value: 'card' }],
+        children: [{ type: 'element', tag: 'span', attrs: [], children: [] }],
+      }],
+      styles: '.card { color: red }',
+    }
+    const result = transformWithMap(ast, '/src/components/Card.wald')
+    expect(result.code).toMatch(/<div class="card" data-wald-[0-9a-f]{8}>/)
+    expect(result.code).toMatch(/<span data-wald-[0-9a-f]{8}>/)
+  })
+
+  it('scopes the returned CSS with the same hash used on the elements', () => {
+    const ast: WaldDocument = {
+      type: 'document',
+      frontmatter: { type: 'frontmatter', code: '' },
+      template: [{ type: 'element', tag: 'div', attrs: [], children: [] }],
+      styles: '.card { color: red }',
+    }
+    const result = transformWithMap(ast, '/src/components/Card.wald')
+    const hashInMarkup = result.code.match(/data-wald-([0-9a-f]{8})/)?.[1]
+    expect(hashInMarkup).toBeTruthy()
+    expect(result.styles).toBe(`.card[data-wald-${hashInMarkup}]{ color: red }`)
+  })
+
+  it('produces the same hash for the same file id across two separate compiles', () => {
+    const ast: WaldDocument = {
+      type: 'document',
+      frontmatter: { type: 'frontmatter', code: '' },
+      template: [{ type: 'element', tag: 'div', attrs: [], children: [] }],
+      styles: '.card {}',
+    }
+    const first = transformWithMap(ast, '/src/components/Card.wald')
+    const second = transformWithMap(ast, '/src/components/Card.wald')
+    expect(first.styles).toBe(second.styles)
+  })
+
+  it('treats a document with no styles field the same as styles: null (existing fixtures keep working)', () => {
+    const ast: WaldDocument = {
+      type: 'document',
+      frontmatter: { type: 'frontmatter', code: '' },
+      template: [{ type: 'element', tag: 'h1', attrs: [], children: [] }],
+      // no `styles` key at all
+    }
+    const result = transformWithMap(ast, '/src/pages/index.wald')
+    expect(result.styles).toBeNull()
   })
 })
 

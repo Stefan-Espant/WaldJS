@@ -2,11 +2,16 @@ export type WaldDocument = {
   type: 'document'
   frontmatter: FrontmatterNode
   template: TemplateNode[]
+  // Optional (not required) so the ~20 hand-written WaldDocument literals in
+  // transform/index.test.ts that predate this feature keep compiling as-is —
+  // transformWithMap() treats a missing field the same as `null`.
+  styles?: string | null
 }
 
 export type FrontmatterNode = {
   type: 'frontmatter'
   code: string
+  line?: number
 }
 
 export type TemplateNode =
@@ -15,6 +20,7 @@ export type TemplateNode =
   | ExpressionNode
   | ComponentNode
   | ScriptNode
+  | StyleNode
 
 export type ElementNode = {
   type: 'element'
@@ -44,9 +50,19 @@ export type ComponentNode = {
   name: string
   attrs: AttributeNode[]
   children: TemplateNode[]
+  canopy?: {
+    strategy: 'load' | 'idle' | 'visible'
+  }
 }
 
 export type ScriptNode = {
   type: 'script'
   content: string
+}
+
+export type StyleNode = {
+  type: 'style'
+  content: string
+  line: number
+  column: number
 }

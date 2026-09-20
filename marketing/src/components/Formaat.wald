@@ -1,0 +1,26 @@
+---
+---
+<section id="formaat">
+  <div class="split">
+    <div class="tekst">
+      <h2><span class="tag"><span class="nl">Het bestandsformaat</span><span class="en">The file format</span></span>
+        <span class="nl">Eén <span style="color:var(--rood)">.wald</span>-bestand, twee delen</span>
+        <span class="en">One <span style="color:var(--rood)">.wald</span> file, two parts</span>
+      </h2>
+      <p><span class="nl">Boven de <b>---</b> schrijf je gewone JavaScript of TypeScript (frontmatter). Daaronder een HTML-template waarin <b>&#123;expressies&#125;</b> waarden interpoleren.</span>
+      <span class="en">Above the <b>---</b> you write plain JavaScript or TypeScript (frontmatter). Below it an HTML template where <b>&#123;expressions&#125;</b> interpolate values.</span></p>
+      <p><span class="nl">Alle geïnterpoleerde waarden worden standaard HTML-escaped. Veilig vanaf de wortel.</span>
+      <span class="en">All interpolated values are HTML-escaped by default. Safe from the roots up.</span></p>
+    </div>
+    <div class="codeblok">
+      <div class="titel"><span class="dot"></span>src/pages/index.wald</div>
+      <pre><span class="c-c">---</span>
+<span class="c-k">const</span> title = <span class="c-s">"Hello World"</span>
+<span class="c-c">---</span>
+<span class="c-t">&lt;h1&gt;</span>&#123;title&#125;<span class="c-t">&lt;/h1&gt;</span>
+<span class="c-t">&lt;p&gt;</span><span class="nl">Welkom in je bos.</span><span class="en">Welcome to your forest.</span><span class="c-t">&lt;/p&gt;</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- PLAYGROUND -->

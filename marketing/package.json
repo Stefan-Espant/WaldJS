@@ -1,0 +1,19 @@
+{
+  "name": "@waldjs/marketing",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:css": "node scripts/build-css.js dist",
+    "dev": "node scripts/build-css.js public && wald grow",
+    "build": "wald build && node scripts/build-css.js dist",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@waldjs/canopy": "workspace:*",
+    "@waldjs/cli": "workspace:*",
+    "@waldjs/runtime": "workspace:*"
+  },
+  "devDependencies": {
+    "vitest": "^2.0.0"
+  }
+}

@@ -1,17 +1,19 @@
-type RenderFn = (
+type RenderFn<TProps extends Record<string, unknown> = Record<string, unknown>> = (
   $$result: BuildContext,
-  $$props: Record<string, unknown>
+  $$props: TProps
 ) => Promise<string>
 
 type BuildContext = Record<string, never>
 
-export type Tree = {
-  render: (props?: Record<string, unknown>) => Promise<string>
+export type Tree<TProps extends Record<string, unknown> = Record<string, unknown>> = {
+  render: (props?: TProps) => Promise<string>
 }
 
-export function createTree(fn: RenderFn): Tree {
+export function createTree<TProps extends Record<string, unknown> = Record<string, unknown>>(
+  fn: RenderFn<TProps>
+): Tree<TProps> {
   return {
-    render: (props = {}) => fn({}, props),
+    render: (props = {} as TProps) => fn({}, props),
   }
 }
 
