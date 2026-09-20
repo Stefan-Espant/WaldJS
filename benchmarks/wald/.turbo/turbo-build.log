@@ -1,0 +1,33 @@
+$ wald build
+- Building your forest...
+vite v5.4.21 building SSR bundle for production...
+transforming...
+✓ 104 modules transformed.
+../../node_modules/.pnpm/gray-matter@4.0.3/node_modules/gray-matter/lib/engines.js (43:13): Use of eval in "../../node_modules/.pnpm/gray-matter@4.0.3/node_modules/gray-matter/lib/engines.js" is strongly discouraged as it poses security risks and may cause issues with minification.
+rendering chunks...
+.wald-ssr/index.mjs                            0.43 kB
+.wald-ssr/blog/index.mjs                       0.59 kB
+.wald-ssr/assets/index-DiT4BJU5.mjs            1.07 kB
+.wald-ssr/blog/_slug_.mjs                      1.25 kB
+.wald-ssr/assets/_wald_content-BXlxjI0v.mjs  172.28 kB
+✓ built in 748ms
+✖ Build failed: TypeError [ERR_INVALID_MODULE_SPECIFIER]: Invalid module ".wald-ssr/blog/index.js" is not a valid package name imported from /Users/stefan/Desktop/semantique-agency/repositories/waldjs/.worktrees/phase-benchmark/node_modules/.pnpm/@waldjs+cli@file+packages+cli_@types+node@20.19.43/node_modules/@waldjs/cli/dist/commands/build.js
+
+ ERROR  Invalid module ".wald-ssr/blog/index.js" is not a valid package name imported from /Users/stefan/Desktop/semantique-agency/repositories/waldjs/.worktrees/phase-benchmark/node_modules/.pnpm/@waldjs+cli@file+packages+cli_@types+node@20.19.43/node_modules/@waldjs/cli/dist/commands/build.js
+
+    at parsePackageName (node:internal/modules/package_json_reader:270:11)
+    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:281:53)
+    at packageResolve (node:internal/modules/esm/resolve:767:81)
+    at moduleResolve (node:internal/modules/esm/resolve:853:18)
+    at defaultResolve (node:internal/modules/esm/resolve:983:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:731:20)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:708:38)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:310:38)
+    at onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:664:36)
+    at TracingChannel.tracePromise (node:diagnostics_channel:350:14) 
+
+
+
+ ERROR  Invalid module ".wald-ssr/blog/index.js" is not a valid package name imported from /Users/stefan/Desktop/semantique-agency/repositories/waldjs/.worktrees/phase-benchmark/node_modules/.pnpm/@waldjs+cli@file+packages+cli_@types+node@20.19.43/node_modules/@waldjs/cli/dist/commands/build.js
+
+[ELIFECYCLE] Command failed with exit code 1.

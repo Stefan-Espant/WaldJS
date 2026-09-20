@@ -1,0 +1,14 @@
+---
+import { getCollection } from 'wald:content'
+const posts = await getCollection('blog')
+---
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>Blog</title></head>
+<body>
+<h1>Blog</h1>
+<ul>
+  {posts.map(p => `<li><a href="/blog/${p.slug}">${p.data.title}</a></li>`).join('')}
+</ul>
+</body>
+</html>

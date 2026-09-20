@@ -1,0 +1,11 @@
+---
+const { initialCount = 0 } = $$props
+---
+<button class="counter" style="padding:8px 16px;font-size:1rem">{initialCount}</button>
+<script>
+export default function(root, props) {
+  let n = props.initialCount ?? 0
+  const btn = root.querySelector('.counter')
+  btn.onclick = () => { btn.textContent = String(++n) }
+}
+</script>

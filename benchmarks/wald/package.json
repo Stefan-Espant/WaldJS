@@ -1,0 +1,14 @@
+{
+  "name": "@waldjs/benchmark-wald",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "wald build"
+  },
+  "devDependencies": {
+    "@waldjs/cli": "file:../../packages/cli",
+    "@waldjs/runtime": "workspace:*",
+    "@waldjs/content": "workspace:*"
+  }
+}

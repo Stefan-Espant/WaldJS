@@ -9,3 +9,10 @@ dist/
 *.vsix
 marketing/public/css/site.css
 marketing/src/assets/css/site.css
+benchmarks/results/
+benchmarks/wald/node_modules/
+benchmarks/astro/node_modules/
+benchmarks/eleventy/node_modules/
+benchmarks/wald/dist/
+benchmarks/astro/dist/
+benchmarks/eleventy/dist/

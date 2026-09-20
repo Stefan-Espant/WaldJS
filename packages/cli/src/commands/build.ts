@@ -322,6 +322,8 @@ export const buildCommand = defineCommand({
     }
 
     const config = await loadWaldConfig(cwd)
+    // Resolve outDir to absolute so ssrDir import() works with Node ESM
+    config.outDir = resolve(cwd, config.outDir)
     const pagesDir = join(cwd, 'src', 'pages')
     const publicDir = join(cwd, 'public')
     const contentDir = join(cwd, 'content')

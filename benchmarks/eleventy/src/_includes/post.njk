@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>{{ title }}</title></head>
+<body>
+<h1>{{ title }}</h1>
+{{ content | safe }}
+<button class="counter" data-count="0" style="padding:8px 16px;font-size:1rem">0</button>
+<script>
+  document.querySelectorAll('.counter').forEach(function (btn) {
+    var n = parseInt(btn.dataset.count || '0')
+    btn.onclick = function () { btn.textContent = String(++n) }
+  })
+</script>
+</body>
+</html>

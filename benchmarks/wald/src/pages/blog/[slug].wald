@@ -1,0 +1,20 @@
+---
+import { getCollection, getEntry } from 'wald:content'
+import Counter from '../../components/Counter.wald'
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog')
+  return posts.map(p => ({ params: { slug: p.slug } }))
+}
+
+const post = await getEntry('blog', $$props.slug)
+---
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>{post.data.title}</title></head>
+<body>
+<h1>{post.data.title}</h1>
+<div>{post.body}</div>
+<Counter canopy:load initialCount={0} />
+</body>
+</html>
