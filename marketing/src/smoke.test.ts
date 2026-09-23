@@ -33,7 +33,7 @@ describe('marketing site build', () => {
     const html = readFileSync(join(ROOT, 'dist/index.html'), 'utf-8')
     const inlineScripts = html.match(/<script(?![^>]*src=)[^>]*>[\s\S]*?<\/script>/g) ?? []
     const isSanctioned = (script: string) =>
-      script.includes('data-wald-no-hoist') || script.includes('dataLayer')
+      script.includes('data-wald-no-hoist') || script.includes('dataLayer') || script.includes('application/ld+json')
     const unsanctioned = inlineScripts.filter((script) => !isSanctioned(script))
     expect(unsanctioned).toEqual([])
   })
@@ -44,5 +44,26 @@ describe('marketing site build', () => {
     expect(html).toContain('data-strategy="load"')
     expect(html).toContain('/assets/wald-canopy-')
     expect(html).toContain('/assets/canopyping-')
+  })
+
+  it('bevat canonical, og:image en geldige JSON-LD structured data', () => {
+    const html = readFileSync(join(ROOT, 'dist/index.html'), 'utf-8')
+    expect(html).toContain('<link rel="canonical" href="https://waldjs.steefan.nl/">')
+    expect(html).toContain('property="og:image"')
+    expect(html).toContain('name="twitter:image"')
+
+    const match = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)
+    expect(match).not.toBeNull()
+    const data = JSON.parse(match![1])
+    expect(data['@type']).toBe('SoftwareApplication')
+    expect(data.url).toBe('https://waldjs.steefan.nl/')
+  })
+
+  it('produceert robots.txt en sitemap.xml met de juiste canonical host', () => {
+    const robots = readFileSync(join(ROOT, 'dist/robots.txt'), 'utf-8')
+    expect(robots).toContain('Sitemap: https://waldjs.steefan.nl/sitemap.xml')
+
+    const sitemap = readFileSync(join(ROOT, 'dist/sitemap.xml'), 'utf-8')
+    expect(sitemap).toContain('<loc>https://waldjs.steefan.nl/</loc>')
   })
 })

@@ -29,9 +29,36 @@ import CanopyPing from '../components/CanopyPing.wald'
 <meta property="og:description" content="Een content-first webframework voor razendsnelle, statische websites. Deel frontmatter, deel HTML-template — 0 KB JavaScript standaard.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="WaldJS">
-<meta name="twitter:card" content="summary">
+<link rel="canonical" href="https://waldjs.steefan.nl/">
+<meta property="og:url" content="https://waldjs.steefan.nl/">
+<meta property="og:image" content="https://waldjs.steefan.nl/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://waldjs.steefan.nl/assets/og-image.png">
 <meta name="theme-color" content="#023B2D">
 <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "WaldJS",
+  "description": "WaldJS is een content-first webframework voor razendsnelle, statische websites. Schrijf .wald-bestanden en WaldJS compileert ze tot een statische site.",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Cross-platform",
+  "url": "https://waldjs.steefan.nl/",
+  "author": {
+    "@type": "Organization",
+    "name": "WaldJS",
+    "url": "https://github.com/Stefan-Espant/WaldJS"
+  },
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-SR1VDF9DJK"></script>
 <script>
 window.dataLayer = window.dataLayer || [];
