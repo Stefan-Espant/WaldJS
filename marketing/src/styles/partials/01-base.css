@@ -22,6 +22,17 @@ body {
   color: var(--wit)
 }
 
+p a:not(.btn) {
+  color: var(--rood);
+  text-decoration: underline;
+  text-underline-offset: 0.15em
+}
+
+p a:not(.btn):hover,
+p a:not(.btn):focus-visible {
+  color: var(--wit)
+}
+
 h1,
 h2,
 h3,
