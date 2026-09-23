@@ -66,4 +66,24 @@ describe('marketing site build', () => {
     const sitemap = readFileSync(join(ROOT, 'dist/sitemap.xml'), 'utf-8')
     expect(sitemap).toContain('<loc>https://waldjs.steefan.nl/</loc>')
   })
+
+  it('laadt alle externe scripts met defer, behalve de inline taal-bootstrap', () => {
+    const html = readFileSync(join(ROOT, 'dist/index.html'), 'utf-8')
+    for (const src of [
+      'three.min.js',
+      'gsap.min.js',
+      'ScrollTrigger.min.js',
+      '/assets/js/site.js',
+      '/assets/js/forest.js',
+      '/assets/js/animations.js',
+    ]) {
+      const match = html.match(new RegExp(`<script[^>]*src="[^"]*${src.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"[^>]*>`))
+      expect(match, `script tag for ${src} not found`).not.toBeNull()
+      expect(match![0], `${src} should have defer`).toContain('defer')
+    }
+
+    const inlineLangScript = html.match(/<script data-wald-no-hoist[^>]*>/)
+    expect(inlineLangScript).not.toBeNull()
+    expect(inlineLangScript![0]).not.toContain('defer')
+  })
 })
