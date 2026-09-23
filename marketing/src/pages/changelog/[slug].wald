@@ -10,7 +10,7 @@ export async function getStaticPaths() {
 const entry = await getEntry('changelog', $$props.slug)
 ---
 <Layout
-  title={`${entry.data.title} — WaldJS Changelog`}
+  title={`${entry.data.title} (${entry.data.dateLabel}) — WaldJS Changelog`}
   description={`WaldJS changelog-entry: ${entry.data.title}, ${entry.data.dateLabel}.`}
   canonicalPath={`/changelog/${$$props.slug}`}
 >

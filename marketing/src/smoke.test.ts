@@ -106,4 +106,10 @@ describe('marketing site build', () => {
     expect(kaarten.length).toBe(3)
     expect(html).toContain('href="/changelog"')
   })
+
+  it('rendert changelog-body als echte HTML, niet ge-escaped', () => {
+    const detail = readFileSync(join(ROOT, 'dist/changelog/canopy/index.html'), 'utf-8')
+    expect(detail).toContain('<span class="nl">')
+    expect(detail).not.toContain('&lt;span')
+  })
 })
