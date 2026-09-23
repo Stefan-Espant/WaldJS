@@ -12,7 +12,7 @@
     <li class="verberg"><a href="#playground">Playground</a></li>
     <li class="verberg"><a href="#features">Features</a></li>
     <li class="verberg"><a href="#benchmarks">Benchmarks</a></li>
-    <li class="verberg"><a href="#changelog">Changelog</a></li>
+    <li class="verberg"><a href="/changelog">Changelog</a></li>
   </ul>
   <ul class="rechts-kant">
     <li><button id="btn-geluid" class="dagnacht" onclick="zetGeluid()" aria-label="Bosgeluiden aan/uit">🔇</button></li>
@@ -35,6 +35,6 @@
   <a href="#features" onclick="toggleMenu(false)">Features</a>
   <a href="#benchmarks" onclick="toggleMenu(false)">Benchmarks</a>
   <a href="#roadmap" onclick="toggleMenu(false)">Roadmap</a>
-  <a href="#changelog" onclick="toggleMenu(false)">Changelog</a>
+  <a href="/changelog" onclick="toggleMenu(false)">Changelog</a>
   <a href="https://github.com/Stefan-Espant/WaldJS/" target="_blank" rel="noopener">GitHub ↗</a>
 </div>

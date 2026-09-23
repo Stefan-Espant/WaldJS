@@ -86,4 +86,24 @@ describe('marketing site build', () => {
     expect(inlineLangScript).not.toBeNull()
     expect(inlineLangScript![0]).not.toContain('defer')
   })
+
+  it('genereert changelog-overzicht en 8 losse changelog-detailpagina\'s', () => {
+    expect(existsSync(join(ROOT, 'dist/changelog/index.html'))).toBe(true)
+    const overzicht = readFileSync(join(ROOT, 'dist/changelog/index.html'), 'utf-8')
+    for (const slug of ['roots', 'seed', 'sapling', 'branches', 'forest-vite-pipeline', 'canopy', 'forest-polish', 'forest-deployment-adapters']) {
+      expect(existsSync(join(ROOT, `dist/changelog/${slug}/index.html`)), `missing dist/changelog/${slug}/index.html`).toBe(true)
+      expect(overzicht).toContain(`/changelog/${slug}`)
+    }
+
+    const sitemap = readFileSync(join(ROOT, 'dist/sitemap.xml'), 'utf-8')
+    expect(sitemap).toContain('<loc>https://waldjs.steefan.nl/changelog</loc>')
+    expect(sitemap).toContain('<loc>https://waldjs.steefan.nl/changelog/roots</loc>')
+  })
+
+  it('toont nog maar de 3 recentste changelog-entries op de homepage', () => {
+    const html = readFileSync(join(ROOT, 'dist/index.html'), 'utf-8')
+    const kaarten = html.match(/class="log-kaart"/g) ?? []
+    expect(kaarten.length).toBe(3)
+    expect(html).toContain('href="/changelog"')
+  })
 })

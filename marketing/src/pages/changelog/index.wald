@@ -1,0 +1,25 @@
+---
+import Layout from '../../layouts/Layout.wald'
+import { getCollection } from 'wald:content'
+const entries = await getCollection('changelog')
+const sorted = entries.slice().sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())
+---
+<Layout
+  title="Changelog — WaldJS"
+  description="Elke release een jaarring: het volledige groeidagboek van WaldJS."
+  canonicalPath="/changelog"
+>
+  <section id="changelog-overzicht">
+    <div class="sectiekop">
+      <span class="tag"><span class="nl">Groeidagboek</span><span class="en">Growth log</span></span>
+      <h1>Changelog</h1>
+    </div>
+    <div class="changelog">
+      {new SafeHtml(sorted.map(entry => `
+        <div class="log-kaart">
+          <div class="log-kop"><h3><a href="/changelog/${entry.slug}">${entry.data.title}</a></h3><span class="datum">${entry.data.dateLabel}</span></div>
+        </div>
+      `).join(''))}
+    </div>
+  </section>
+</Layout>
