@@ -48,12 +48,13 @@ const ogImage = 'https://waldjs.steefan.nl/assets/og-image.png'
   }
 }
 </script>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-SR1VDF9DJK"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-9EZEXC8XYQ"></script>
 <script>
 window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
-gtag('config', 'G-SR1VDF9DJK');
+gtag('config', 'G-9EZEXC8XYQ');
 </script>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://use.typekit.net" crossorigin>
