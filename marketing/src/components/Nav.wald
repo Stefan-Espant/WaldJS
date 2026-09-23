@@ -13,6 +13,7 @@
     <li class="verberg"><a href="/#features">Features</a></li>
     <li class="verberg"><a href="/#benchmarks">Benchmarks</a></li>
     <li class="verberg"><a href="/changelog">Changelog</a></li>
+    <li class="verberg"><a href="/waarom"><span class="nl">Waarom WaldJS</span><span class="en">Why WaldJS</span></a></li>
   </ul>
   <ul class="rechts-kant">
     <li><button id="btn-geluid" class="dagnacht" onclick="zetGeluid()" aria-label="Bosgeluiden aan/uit">🔇</button></li>
@@ -36,5 +37,6 @@
   <a href="/#benchmarks" onclick="toggleMenu(false)">Benchmarks</a>
   <a href="/#roadmap" onclick="toggleMenu(false)">Roadmap</a>
   <a href="/changelog" onclick="toggleMenu(false)">Changelog</a>
+  <a href="/waarom" onclick="toggleMenu(false)"><span class="nl">Waarom WaldJS</span><span class="en">Why WaldJS</span></a>
   <a href="https://github.com/Stefan-Espant/WaldJS/" target="_blank" rel="noopener">GitHub ↗</a>
 </div>

@@ -35,5 +35,6 @@ import Vergelijking from '../../components/Vergelijking.wald'
         </ul>
       </div>
     </div>
+    <p style="margin-top:1.5rem"><a href="/waarom"><span class="nl">Lees het hele verhaal van WaldJS →</span><span class="en">Read WaldJS's full story →</span></a></p>
   </section>
 </Layout>

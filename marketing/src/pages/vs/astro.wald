@@ -23,8 +23,8 @@ import Vergelijking from '../../components/Vergelijking.wald'
       <div>
         <h3><span class="nl">Kies WaldJS als je...</span><span class="en">Choose WaldJS if you...</span></h3>
         <ul>
-          <li><span class="nl">een kleiner, eenvoudiger formaat wilt zonder een groot integratie-ecosysteem nodig te hebben</span><span class="en">want a smaller, simpler format and don't need a large integration ecosystem</span></li>
-          <li><span class="nl">canopy-islands als gewone JS/TS-modules voldoende vindt, zonder losse framework-adapters</span><span class="en">are fine with canopy islands as plain JS/TS modules, without separate framework adapters</span></li>
+          <li><span class="nl">bouwsnelheid zwaar laat wegen — 1,62s versus 138,92s voor dezelfde 50-posts-blogsite in onze eigen benchmarks</span><span class="en">weigh build speed heavily — 1.62s vs. 138.92s for the same 50-post blog site in our own benchmarks</span></li>
+          <li><span class="nl">geen framework-adapter wilt kiezen voor interactiviteit — canopy's zijn gewone JS/TS, geen React/Vue/Svelte-laag erbovenop</span><span class="en">don't want to choose a framework adapter for interactivity — canopies are plain JS/TS, no React/Vue/Svelte layer on top</span></li>
         </ul>
       </div>
       <div>
@@ -35,5 +35,6 @@ import Vergelijking from '../../components/Vergelijking.wald'
         </ul>
       </div>
     </div>
+    <p style="margin-top:1.5rem"><a href="/waarom"><span class="nl">Lees het hele verhaal van WaldJS →</span><span class="en">Read WaldJS's full story →</span></a></p>
   </section>
 </Layout>

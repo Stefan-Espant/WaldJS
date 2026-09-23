@@ -1,4 +1,8 @@
 ---
+const { canonicalPath } = $$props
+const vsLinksHtml = canonicalPath === '/waarom'
+  ? ''
+  : '<li><a href="/vs/astro">WaldJS vs Astro</a></li><li><a href="/vs/eleventy">WaldJS vs Eleventy</a></li>'
 ---
 <div class="footer-bos" aria-hidden="true">
   <svg viewBox="0 0 1200 72" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
@@ -24,6 +28,7 @@
         <li><a href="/#features">Features</a></li>
         <li><a href="/#benchmarks">Benchmarks</a></li>
         <li><a href="/#roadmap">Roadmap</a></li>
+        <li><a href="/waarom"><span class="nl">Waarom WaldJS</span><span class="en">Why WaldJS</span></a></li>
       </ul>
     </div>
     <div class="kolom">
@@ -38,8 +43,7 @@
         <li><a href="/#packages">Packages</a></li>
         <li><a href="/#cli">CLI</a></li>
         <li><a href="/#structuur"><span class="nl">Projectstructuur</span><span class="en">Project structure</span></a></li>
-        <li><a href="/vs/astro">WaldJS vs Astro</a></li>
-        <li><a href="/vs/eleventy">WaldJS vs Eleventy</a></li>
+        {new SafeHtml(vsLinksHtml)}
       </ul>
     </div>
   </div>
