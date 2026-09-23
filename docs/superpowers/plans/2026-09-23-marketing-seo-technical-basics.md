@@ -83,6 +83,8 @@ describe('build-sitemap.mjs', () => {
     writeFileSync(join(root, 'src/pages/index.wald'), '<h1>home</h1>')
     writeFileSync(join(root, 'src/pages/about.wald'), '<h1>about</h1>')
     writeFileSync(join(root, 'src/pages/blog/index.wald'), '<h1>blog</h1>')
+    writeFileSync(join(root, 'src/pages/blog/[slug].wald'), '<h1>post</h1>')
+    writeFileSync(join(root, 'src/pages/foo&bar.wald'), '<h1>special chars</h1>')
     mkdirSync(join(root, 'dist'), { recursive: true })
     execFileSync(
       process.execPath,
@@ -111,12 +113,24 @@ describe('build-sitemap.mjs', () => {
     const xml = readFileSync(join(root, 'dist/sitemap.xml'), 'utf-8')
     expect(xml).not.toContain('<loc>https://example.com/about/</loc>')
   })
+
+  it('excludes dynamic [param] routes, which have no single known URL', () => {
+    const xml = readFileSync(join(root, 'dist/sitemap.xml'), 'utf-8')
+    expect(xml).not.toContain('[slug]')
+    expect(xml).not.toContain('<loc>https://example.com/blog/:slug</loc>')
+  })
+
+  it('XML-escapes special characters in route URLs', () => {
+    const xml = readFileSync(join(root, 'dist/sitemap.xml'), 'utf-8')
+    expect(xml).toContain('<loc>https://example.com/foo&amp;bar</loc>')
+    expect(xml).not.toContain('<loc>https://example.com/foo&bar</loc>')
+  })
 })
 ```
 
 - [ ] **Step 3: Run the test to verify it fails**
 
-Run: `cd marketing && ../node_modules/.bin/vitest run scripts/build-sitemap.test.ts`
+Run: `cd marketing && ./node_modules/.bin/vitest run scripts/build-sitemap.test.ts`
 Expected: FAIL — `build-sitemap.mjs` doesn't exist yet, `execFileSync` throws
 `ENOENT`.
 
@@ -131,9 +145,10 @@ Create `marketing/scripts/build-sitemap.mjs`:
 // fileToRoute() for the canonical version of this logic. Re-implemented
 // here (not imported) because @waldjs/cli doesn't export its router module
 // from its public API (only config/adapters/image are exported) — importing
-// an internal path would be a fragile, unsupported dependency. Marketing has
-// no dynamic [param]-style routes today, so this only needs the simple case;
-// revisit sharing the real implementation if that changes.
+// an internal path would be a fragile, unsupported dependency. Dynamic
+// [param]-style routes are detected the same way the real router does and
+// excluded from the sitemap (no single known URL to list for them);
+// marketing has none of these today, but the exclusion is exercised by test.
 import { readdirSync, writeFileSync, mkdirSync } from 'node:fs'
 import { join, relative } from 'node:path'
 
@@ -160,16 +175,27 @@ function fileToRoute(file) {
   const withoutExt = rel.slice(0, -'.wald'.length)
   const segments = withoutExt.split('/')
   if (segments[segments.length - 1] === 'index') segments.pop()
-  return '/' + segments.join('/')
+
+  // Mirror the real router's [param] detection (packages/cli/src/router/index.ts's
+  // fileToRoute) so a [slug] segment is recognized as dynamic even though we
+  // don't rewrite it to :slug here — we just need to know to exclude it below.
+  const isDynamic = segments.some((seg) => /^\[(\w+)\]$/.test(seg))
+
+  return { route: '/' + segments.join('/'), isDynamic }
+}
+
+function escapeXml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 }
 
 const routes = walkDir(pagesDir)
   .map(fileToRoute)
-  .filter((route) => !route.includes(':')) // skip dynamic [param] routes — no known URLs to list
+  .filter(({ isDynamic }) => !isDynamic) // skip dynamic [param] routes — no known URLs to list
+  .map(({ route }) => route)
   .sort()
 
 const urls = routes
-  .map((route) => `  <url><loc>${baseUrl}${route === '/' ? '/' : route}</loc></url>`)
+  .map((route) => `  <url><loc>${escapeXml(baseUrl + (route === '/' ? '/' : route))}</loc></url>`)
   .join('\n')
 
 const xml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -185,8 +211,8 @@ console.log(`sitemap: ${routes.length} route${routes.length === 1 ? '' : 's'} ->
 
 - [ ] **Step 5: Run the test to verify it passes**
 
-Run: `cd marketing && ../node_modules/.bin/vitest run scripts/build-sitemap.test.ts`
-Expected: PASS (all 3 tests).
+Run: `cd marketing && ./node_modules/.bin/vitest run scripts/build-sitemap.test.ts`
+Expected: PASS (all 5 tests).
 
 - [ ] **Step 6: Wire it into the real build**
 

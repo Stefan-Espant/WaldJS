@@ -13,6 +13,8 @@ describe('build-sitemap.mjs', () => {
     writeFileSync(join(root, 'src/pages/index.wald'), '<h1>home</h1>')
     writeFileSync(join(root, 'src/pages/about.wald'), '<h1>about</h1>')
     writeFileSync(join(root, 'src/pages/blog/index.wald'), '<h1>blog</h1>')
+    writeFileSync(join(root, 'src/pages/blog/[slug].wald'), '<h1>post</h1>')
+    writeFileSync(join(root, 'src/pages/foo&bar.wald'), '<h1>special chars</h1>')
     mkdirSync(join(root, 'dist'), { recursive: true })
     execFileSync(
       process.execPath,
@@ -40,5 +42,17 @@ describe('build-sitemap.mjs', () => {
   it('does not include a trailing slash on non-root routes', () => {
     const xml = readFileSync(join(root, 'dist/sitemap.xml'), 'utf-8')
     expect(xml).not.toContain('<loc>https://example.com/about/</loc>')
+  })
+
+  it('excludes dynamic [param] routes, which have no single known URL', () => {
+    const xml = readFileSync(join(root, 'dist/sitemap.xml'), 'utf-8')
+    expect(xml).not.toContain('[slug]')
+    expect(xml).not.toContain('<loc>https://example.com/blog/:slug</loc>')
+  })
+
+  it('XML-escapes special characters in route URLs', () => {
+    const xml = readFileSync(join(root, 'dist/sitemap.xml'), 'utf-8')
+    expect(xml).toContain('<loc>https://example.com/foo&amp;bar</loc>')
+    expect(xml).not.toContain('<loc>https://example.com/foo&bar</loc>')
   })
 })
