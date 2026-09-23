@@ -91,6 +91,17 @@
   letter-spacing: .03em
 }
 
+.log-kop h3 a,
+.log-kop h3 a:visited {
+  color: var(--wit);
+  text-decoration: none
+}
+
+.log-kop h3 a:hover,
+.log-kop h3 a:focus-visible {
+  color: var(--rood)
+}
+
 .log-kop .datum {
   margin-left: auto;
   color: rgba(255, 255, 255, .4);
