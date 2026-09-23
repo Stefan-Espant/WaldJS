@@ -112,4 +112,21 @@ describe('marketing site build', () => {
     expect(detail).toContain('<span class="nl">')
     expect(detail).not.toContain('&lt;span')
   })
+
+  it('produceert vergelijkingspagina\'s met eigen titel en canonical', () => {
+    for (const [slug, title] of [
+      ['astro', 'WaldJS vs Astro'],
+      ['eleventy', 'WaldJS vs Eleventy'],
+    ] as const) {
+      const path = join(ROOT, `dist/vs/${slug}/index.html`)
+      expect(existsSync(path), `missing dist/vs/${slug}/index.html`).toBe(true)
+      const html = readFileSync(path, 'utf-8')
+      expect(html).toContain(`<title>${title}`)
+      expect(html).toContain(`<link rel="canonical" href="https://waldjs.steefan.nl/vs/${slug}">`)
+    }
+
+    const sitemap = readFileSync(join(ROOT, 'dist/sitemap.xml'), 'utf-8')
+    expect(sitemap).toContain('<loc>https://waldjs.steefan.nl/vs/astro</loc>')
+    expect(sitemap).toContain('<loc>https://waldjs.steefan.nl/vs/eleventy</loc>')
+  })
 })

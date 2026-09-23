@@ -1,0 +1,39 @@
+---
+import Layout from '../../layouts/Layout.wald'
+import Vergelijking from '../../components/Vergelijking.wald'
+---
+<Layout
+  title="WaldJS vs Eleventy — welke past bij jouw project?"
+  description="Een eerlijke vergelijking tussen WaldJS en Eleventy: single-file componenten, Vite-integratie, partial hydration en wanneer je welke kiest."
+  canonicalPath="/vs/eleventy"
+>
+  <section id="vs-eleventy-intro">
+    <div class="sectiekop">
+      <span class="tag"><span class="nl">Vergelijking</span><span class="en">Comparison</span></span>
+      <h1>WaldJS vs Eleventy</h1>
+      <p><span class="nl">Eleventy is een extreem volwassen, templating-taal-onafhankelijke generator. WaldJS kiest bewust voor één formaat en Vite-integratie.</span><span class="en">Eleventy is an extremely mature, templating-language-agnostic generator. WaldJS deliberately picks one format and Vite integration.</span></p>
+    </div>
+  </section>
+  <Vergelijking />
+  <section id="vs-eleventy-keuze">
+    <div class="sectiekop">
+      <h2><span class="nl">Wanneer kies je wat?</span><span class="en">When to choose which?</span></h2>
+    </div>
+    <div class="split">
+      <div>
+        <h3><span class="nl">Kies WaldJS als je...</span><span class="en">Choose WaldJS if you...</span></h3>
+        <ul>
+          <li><span class="nl">Vite-gedreven dev-ervaring en TypeScript-first single-file componenten wilt</span><span class="en">want a Vite-powered dev experience and TypeScript-first single-file components</span></li>
+          <li><span class="nl">ingebouwde partial hydration wilt zonder losse plugins te hoeven zoeken</span><span class="en">want built-in partial hydration without hunting for separate plugins</span></li>
+        </ul>
+      </div>
+      <div>
+        <h3><span class="nl">Kies Eleventy als je...</span><span class="en">Choose Eleventy if you...</span></h3>
+        <ul>
+          <li><span class="nl">maximale flexibiliteit in templating-talen wilt (Nunjucks, Liquid, en meer)</span><span class="en">want maximum flexibility in templating languages (Nunjucks, Liquid, and more)</span></li>
+          <li><span class="nl">een extreem stabiele, al jarenlang bewezen tool met een groot plugin-ecosysteem zoekt</span><span class="en">want an extremely stable, long-proven tool with a large plugin ecosystem</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</Layout>

@@ -38,6 +38,8 @@
         <li><a href="#packages">Packages</a></li>
         <li><a href="#cli">CLI</a></li>
         <li><a href="#structuur"><span class="nl">Projectstructuur</span><span class="en">Project structure</span></a></li>
+        <li><a href="/vs/astro">WaldJS vs Astro</a></li>
+        <li><a href="/vs/eleventy">WaldJS vs Eleventy</a></li>
       </ul>
     </div>
   </div>
