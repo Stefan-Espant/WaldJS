@@ -5,7 +5,7 @@
   "scripts": {
     "build:css": "node scripts/build-css.js dist",
     "dev": "node scripts/build-css.js public --watch",
-    "build": "wald build && node scripts/build-css.js dist",
+    "build": "wald build && node scripts/build-css.js dist && node scripts/build-sitemap.mjs . https://waldjs.steefan.nl",
     "test": "vitest run"
   },
   "dependencies": {
