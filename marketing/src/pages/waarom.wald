@@ -43,10 +43,8 @@ import Layout from '../layouts/Layout.wald'
   </section>
 
   <section id="waarom-cta">
-    <div class="sectiekop">
-      <p style="margin-top:1.5rem">
-        <a class="btn" href="/#quickstart"><span class="nl">Probeer het — 2 minuten</span><span class="en">Try it — 2 minutes</span></a>
-      </p>
-    </div>
+    <p style="margin-top:1.5rem">
+      <a class="btn" href="/#quickstart"><span class="nl">Probeer het — 2 minuten</span><span class="en">Try it — 2 minutes</span></a>
+    </p>
   </section>
 </Layout>
