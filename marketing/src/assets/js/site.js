@@ -1,8 +1,15 @@
-/* Start altijd bovenaan bij (hard) verversen en houd de URL vrij van #ankers */
+/* Start altijd bovenaan bij een harde refresh en houd de URL dan vrij van
+   #ankers — maar laat een binnenkomende hash van een echte cross-page
+   navigatie (bv. vanaf /changelog naar /#quickstart) gewoon normaal scrollen,
+   anders werkt de nav/footer-anker-fix niet. */
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 if (location.hash){
-  history.replaceState(null, '', location.pathname + location.search);
-  window.scrollTo(0, 0);
+  const nav = performance.getEntriesByType('navigation')[0];
+  const isHardeRefresh = nav ? nav.type === 'reload' : true; // conservatieve fallback als de API ontbreekt
+  if (isHardeRefresh){
+    history.replaceState(null, '', location.pathname + location.search);
+    window.scrollTo(0, 0);
+  }
 }
 /* Soepel scrollen naar secties zonder dat de anker in de URL komt */
 document.addEventListener('click', e => {
