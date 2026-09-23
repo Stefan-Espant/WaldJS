@@ -5,10 +5,25 @@
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 if (location.hash){
   const nav = performance.getEntriesByType('navigation')[0];
-  const isHardeRefresh = nav ? nav.type === 'reload' : true; // conservatieve fallback als de API ontbreekt
-  if (isHardeRefresh){
-    history.replaceState(null, '', location.pathname + location.search);
-    window.scrollTo(0, 0);
+  const isHardRefresh = nav ? nav.type === 'reload' : true; // conservatieve fallback als de API ontbreekt
+  if (isHardRefresh){
+    const schoneUrl = location.pathname + location.search;
+    const zetBovenaan = () => window.scrollTo(0, 0);
+    history.replaceState(null, '', schoneUrl);
+    zetBovenaan();
+    // history.scrollRestoration='manual' voorkomt de restauratie niet altijd op tijd
+    // bij een harde refresh — Chrome herstelt de oude scrollpositie soms nog een
+    // paar frames later. Herhaal de reset daarom een tijdje via rAF om die late,
+    // niet van ons komende scrollTo altijd te overschrijven.
+    const eind = performance.now() + 800;
+    (function blijfBovenaan(){
+      zetBovenaan();
+      if (performance.now() < eind) requestAnimationFrame(blijfBovenaan);
+    })();
+    // { once: true }: dit mag alleen de late restauratie van DEZE harde
+    // refresh opvangen — niet een latere pageshow (bv. bfcache-restore na
+    // "terug" in de browser), anders resetten we dan onterecht ook.
+    window.addEventListener('pageshow', zetBovenaan, { once: true });
   }
 }
 /* Soepel scrollen naar secties zonder dat de anker in de URL komt */
