@@ -135,4 +135,16 @@ describe('marketing site build', () => {
     expect(changelog).toContain('href="/#quickstart"')
     expect(changelog).not.toContain('href="#quickstart"')
   })
+
+  it('produceert een /waarom-pagina zonder concurrent-namen', () => {
+    const path = join(ROOT, 'dist/waarom/index.html')
+    expect(existsSync(path)).toBe(true)
+    const html = readFileSync(path, 'utf-8')
+    expect(html).toContain('<link rel="canonical" href="https://waldjs.steefan.nl/waarom">')
+    expect(html.toLowerCase()).not.toContain('astro')
+    expect(html.toLowerCase()).not.toContain('eleventy')
+
+    const sitemap = readFileSync(join(ROOT, 'dist/sitemap.xml'), 'utf-8')
+    expect(sitemap).toContain('<loc>https://waldjs.steefan.nl/waarom</loc>')
+  })
 })

@@ -1,4 +1,17 @@
 ---
+const { canonicalPath } = $$props
+// Any footer link that points at a real page (not a homepage #anchor) is
+// dropped when it would point at the page currently being rendered, so the
+// footer never links to itself — one general rule instead of a per-page case.
+const footerPageLinks = [
+  { href: '/waarom', section: 'verken', html: '<li><a href="/waarom"><span class="nl">Waarom WaldJS</span><span class="en">Why WaldJS</span></a></li>' },
+  { href: '/vs/astro', section: 'bronnen', html: '<li><a href="/vs/astro">WaldJS vs Astro</a></li>' },
+  { href: '/vs/eleventy', section: 'bronnen', html: '<li><a href="/vs/eleventy">WaldJS vs Eleventy</a></li>' },
+]
+  .filter(link => link.href !== canonicalPath) // never link a page to itself
+  .filter(link => !(canonicalPath === '/waarom' && link.section === 'bronnen')) // /waarom never names a competing framework, even in the footer
+const verkenWaaromHtml = footerPageLinks.filter(link => link.section === 'verken').map(link => link.html).join('')
+const bronnenVsLinksHtml = footerPageLinks.filter(link => link.section === 'bronnen').map(link => link.html).join('')
 ---
 <div class="footer-bos" aria-hidden="true">
   <svg viewBox="0 0 1200 72" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
@@ -24,6 +37,7 @@
         <li><a href="/#features">Features</a></li>
         <li><a href="/#benchmarks">Benchmarks</a></li>
         <li><a href="/#roadmap">Roadmap</a></li>
+        {new SafeHtml(verkenWaaromHtml)}
       </ul>
     </div>
     <div class="kolom">
@@ -38,8 +52,7 @@
         <li><a href="/#packages">Packages</a></li>
         <li><a href="/#cli">CLI</a></li>
         <li><a href="/#structuur"><span class="nl">Projectstructuur</span><span class="en">Project structure</span></a></li>
-        <li><a href="/vs/astro">WaldJS vs Astro</a></li>
-        <li><a href="/vs/eleventy">WaldJS vs Eleventy</a></li>
+        {new SafeHtml(bronnenVsLinksHtml)}
       </ul>
     </div>
   </div>

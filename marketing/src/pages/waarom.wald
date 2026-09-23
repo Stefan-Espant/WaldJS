@@ -1,0 +1,50 @@
+---
+import Layout from '../layouts/Layout.wald'
+---
+<Layout
+  title="Waarom WaldJS?"
+  description="WaldJS in het kort: bouwsnelheid, geen framework-lock-in voor interactiviteit, en één klein formaat zonder extra tooling."
+  canonicalPath="/waarom"
+>
+  <section id="waarom-intro">
+    <div class="sectiekop">
+      <span class="tag"><span class="nl">Filosofie</span><span class="en">Philosophy</span></span>
+      <h1><span class="nl">Waarom WaldJS?</span><span class="en">Why WaldJS?</span></h1>
+      <p><span class="nl">Nog een framework. We snappen het — er zijn er al genoeg. Maar WaldJS vraagt weinig: één bestandsformaat, geen losse tooling, en je bent binnen een paar minuten weer weg als het niks voor je is.</span><span class="en">Yet another framework. We get it — there are plenty already. But WaldJS asks little of you: one file format, no separate tooling, and you can walk away in minutes if it's not for you.</span></p>
+    </div>
+  </section>
+
+  <section id="waarom-snelheid">
+    <div class="sectiekop">
+      <h2><span class="nl">Bouwt in seconden, niet minuten</span><span class="en">Builds in seconds, not minutes</span></h2>
+      <p><span class="nl">Voor dezelfde 50-berichten-blogsite bouwt WaldJS in 1,62 seconden. Dat zijn onze eigen, gemeten <a href="/#benchmarks">benchmarks</a> — geen marketingclaim.</span><span class="en">For the same 50-post blog site, WaldJS builds in 1.62 seconds. That's our own, measured <a href="/#benchmarks">benchmark data</a> — not a marketing claim.</span></p>
+    </div>
+  </section>
+
+  <section id="waarom-lockin">
+    <div class="sectiekop">
+      <h2><span class="nl">Geen framework-keuze om te maken</span><span class="en">No framework choice to make</span></h2>
+      <p><span class="nl">Canopy's — de stukjes die interactief worden — zijn gewone JS/TS-modules. Geen adapter om te kiezen, geen extra dependency om te installeren. Je schrijft de code die je toch al zou schrijven, en WaldJS laadt 'm op het juiste moment.</span><span class="en">Canopies — the bits that become interactive — are plain JS/TS modules. No adapter to choose, no extra dependency to install. You write the code you'd write anyway, and WaldJS loads it at the right moment.</span></p>
+    </div>
+  </section>
+
+  <section id="waarom-formaat">
+    <div class="sectiekop">
+      <h2><span class="nl">Eén formaat, verder niets te installeren</span><span class="en">One format, nothing else to install</span></h2>
+      <p><span class="nl">Een <code style="font-family:var(--mono);font-size:.85em">.wald</code>-bestand is frontmatter en template in één geheel. De formatter (<code style="font-family:var(--mono);font-size:.85em">wald format</code>) en leesbare foutpagina's in de dev-server zitten er al in — geen Prettier-config, geen losse plugin te zoeken.</span><span class="en">A <code style="font-family:var(--mono);font-size:.85em">.wald</code> file is frontmatter and template as one whole. The formatter (<code style="font-family:var(--mono);font-size:.85em">wald format</code>) and readable dev-server error pages are already built in — no Prettier config, no separate plugin to hunt down.</span></p>
+    </div>
+  </section>
+
+  <section id="waarom-namen">
+    <div class="sectiekop">
+      <h2><span class="nl">Namen die iets betekenen</span><span class="en">Names that mean something</span></h2>
+      <p><span class="nl">Roots is de compiler, trees zijn je pagina's, branches je componenten, canopies de interactieve laag. Zodra je het bos-verhaal snapt, kun je <code style="font-family:var(--mono);font-size:.85em">wald grow</code> raden zonder de docs te openen.</span><span class="en">Roots is the compiler, trees are your pages, branches your components, canopies the interactive layer. Once you get the forest story, you can guess what <code style="font-family:var(--mono);font-size:.85em">wald grow</code> does without opening the docs.</span></p>
+    </div>
+  </section>
+
+  <section id="waarom-cta">
+    <p style="margin-top:1.5rem">
+      <a class="btn" href="/#quickstart"><span class="nl">Probeer het — 2 minuten</span><span class="en">Try it — 2 minutes</span></a>
+    </p>
+  </section>
+</Layout>

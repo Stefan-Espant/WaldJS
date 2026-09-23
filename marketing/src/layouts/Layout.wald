@@ -71,7 +71,7 @@ gtag('config', 'G-9EZEXC8XYQ');
 <div id="cursorvlieg" aria-hidden="true"></div>
 <Nav />
 {pond}
-<Footer />
+<Footer canonicalPath={canonicalPath} />
 <CanopyPing canopy:load />
 <script defer src="/assets/js/site.js"></script>
 <script defer src="/assets/js/forest.js"></script>
