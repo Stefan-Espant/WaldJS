@@ -1,20 +1,21 @@
 #!/usr/bin/env node
-// Generates dist/sitemap.xml from src/pages/**/*.wald, the same way
-// wald build routes pages — see packages/cli/src/router/index.ts's
-// fileToRoute() for the canonical version of this logic. Re-implemented
-// here (not imported) because @waldjs/cli doesn't export its router module
-// from its public API (only config/adapters/image are exported) — importing
-// an internal path would be a fragile, unsupported dependency. Dynamic
-// [param]-style routes are detected the same way the real router does and
-// excluded from the sitemap (no single known URL to list for them);
-// marketing has none of these today, but the exclusion is exercised by test.
-import { readdirSync, writeFileSync, mkdirSync } from 'node:fs'
+// Generates dist/sitemap.xml by scanning the already-BUILT dist/ directory
+// for real generated pages (any index.html), rather than src/pages/ source
+// files. This must run after `wald build`, not before — that's already how
+// it's wired into marketing/package.json's build script. Scanning the real
+// output means dynamically-generated routes (e.g. changelog/[slug] resolved
+// via getStaticPaths()) are included automatically, with no need to
+// reimplement route resolution here.
+import { readdirSync, writeFileSync } from 'node:fs'
 import { join, relative } from 'node:path'
 
 const root = process.argv[2] ?? process.cwd()
 const baseUrl = (process.argv[3] ?? 'https://waldjs.steefan.nl').replace(/\/$/, '')
-const pagesDir = join(root, 'src/pages')
 const distDir = join(root, 'dist')
+
+function escapeXml(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+}
 
 function walkDir(dir) {
   const files = []
@@ -22,7 +23,7 @@ function walkDir(dir) {
     const full = join(dir, entry.name)
     if (entry.isDirectory()) {
       files.push(...walkDir(full))
-    } else if (entry.name.endsWith('.wald')) {
+    } else if (entry.name === 'index.html') {
       files.push(full)
     }
   }
@@ -30,31 +31,18 @@ function walkDir(dir) {
 }
 
 function fileToRoute(file) {
-  const rel = relative(pagesDir, file).replace(/\\/g, '/')
-  const withoutExt = rel.slice(0, -'.wald'.length)
-  const segments = withoutExt.split('/')
-  if (segments[segments.length - 1] === 'index') segments.pop()
-
-  // Mirror the real router's [param] detection (packages/cli/src/router/index.ts's
-  // fileToRoute) so a [slug] segment is recognized as dynamic even though we
-  // don't rewrite it to :slug here — we just need to know to exclude it below.
-  const isDynamic = segments.some((seg) => /^\[(\w+)\]$/.test(seg))
-
-  return { route: '/' + segments.join('/'), isDynamic }
+  const rel = relative(distDir, file).replace(/\\/g, '/')
+  const withoutIndex = rel.slice(0, -'index.html'.length) // '' for the root page, 'about/' for nested
+  return '/' + withoutIndex
 }
 
-function escapeXml(str) {
-  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-}
-
-const routes = walkDir(pagesDir)
+const routes = walkDir(distDir)
   .map(fileToRoute)
-  .filter(({ isDynamic }) => !isDynamic) // skip dynamic [param] routes — no known URLs to list
-  .map(({ route }) => route)
+  .map((route) => route.replace(/\/$/, '') || '/')
   .sort()
 
 const urls = routes
-  .map((route) => `  <url><loc>${escapeXml(baseUrl + (route === '/' ? '/' : route))}</loc></url>`)
+  .map((route) => `  <url><loc>${escapeXml(baseUrl + route)}</loc></url>`)
   .join('\n')
 
 const xml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -63,6 +51,5 @@ ${urls}
 </urlset>
 `
 
-mkdirSync(distDir, { recursive: true })
 writeFileSync(join(distDir, 'sitemap.xml'), xml)
 console.log(`sitemap: ${routes.length} route${routes.length === 1 ? '' : 's'} -> dist/sitemap.xml`)

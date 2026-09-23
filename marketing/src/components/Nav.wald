@@ -1,18 +1,18 @@
 ---
 ---
 <nav>
-  <a class="brand" href="#top" aria-label="WaldJS">
+  <a class="brand" href="/#top" aria-label="WaldJS">
     <!-- logo klein -->
     <svg viewBox="0 0 563.03 496.47" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="WaldJS logo">
       <use href="#waldlogo"/>
     </svg>
   </a>
   <ul class="links-kant">
-    <li class="verberg"><a href="#formaat"><span class="nl">Het .wald-formaat</span><span class="en">The .wald format</span></a></li>
-    <li class="verberg"><a href="#playground">Playground</a></li>
-    <li class="verberg"><a href="#features">Features</a></li>
-    <li class="verberg"><a href="#benchmarks">Benchmarks</a></li>
-    <li class="verberg"><a href="#changelog">Changelog</a></li>
+    <li class="verberg"><a href="/#formaat"><span class="nl">Het .wald-formaat</span><span class="en">The .wald format</span></a></li>
+    <li class="verberg"><a href="/#playground">Playground</a></li>
+    <li class="verberg"><a href="/#features">Features</a></li>
+    <li class="verberg"><a href="/#benchmarks">Benchmarks</a></li>
+    <li class="verberg"><a href="/changelog">Changelog</a></li>
   </ul>
   <ul class="rechts-kant">
     <li><button id="btn-geluid" class="dagnacht" onclick="zetGeluid()" aria-label="Bosgeluiden aan/uit">🔇</button></li>
@@ -30,11 +30,11 @@
 
 <div id="mobielmenu" aria-hidden="true">
   <button class="sluit" onclick="toggleMenu(false)" aria-label="Sluit menu">✕</button>
-  <a href="#formaat" onclick="toggleMenu(false)"><span class="nl">Het .wald-formaat</span><span class="en">The .wald format</span></a>
-  <a href="#playground" onclick="toggleMenu(false)">Playground</a>
-  <a href="#features" onclick="toggleMenu(false)">Features</a>
-  <a href="#benchmarks" onclick="toggleMenu(false)">Benchmarks</a>
-  <a href="#roadmap" onclick="toggleMenu(false)">Roadmap</a>
-  <a href="#changelog" onclick="toggleMenu(false)">Changelog</a>
+  <a href="/#formaat" onclick="toggleMenu(false)"><span class="nl">Het .wald-formaat</span><span class="en">The .wald format</span></a>
+  <a href="/#playground" onclick="toggleMenu(false)">Playground</a>
+  <a href="/#features" onclick="toggleMenu(false)">Features</a>
+  <a href="/#benchmarks" onclick="toggleMenu(false)">Benchmarks</a>
+  <a href="/#roadmap" onclick="toggleMenu(false)">Roadmap</a>
+  <a href="/changelog" onclick="toggleMenu(false)">Changelog</a>
   <a href="https://github.com/Stefan-Espant/WaldJS/" target="_blank" rel="noopener">GitHub ↗</a>
 </div>

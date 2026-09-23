@@ -9,13 +9,15 @@ describe('build-sitemap.mjs', () => {
 
   beforeAll(() => {
     root = mkdtempSync(join(tmpdir(), 'wald-sitemap-'))
-    mkdirSync(join(root, 'src/pages/blog'), { recursive: true })
-    writeFileSync(join(root, 'src/pages/index.wald'), '<h1>home</h1>')
-    writeFileSync(join(root, 'src/pages/about.wald'), '<h1>about</h1>')
-    writeFileSync(join(root, 'src/pages/blog/index.wald'), '<h1>blog</h1>')
-    writeFileSync(join(root, 'src/pages/blog/[slug].wald'), '<h1>post</h1>')
-    writeFileSync(join(root, 'src/pages/foo&bar.wald'), '<h1>special chars</h1>')
-    mkdirSync(join(root, 'dist'), { recursive: true })
+    // Simulate a built dist/ directory — this script now runs AFTER wald
+    // build, scanning real output, not src/pages/ source files.
+    mkdirSync(join(root, 'dist/about'), { recursive: true })
+    mkdirSync(join(root, 'dist/changelog/roots'), { recursive: true })
+    mkdirSync(join(root, 'dist/changelog/forest-polish'), { recursive: true })
+    writeFileSync(join(root, 'dist/index.html'), '<h1>home</h1>')
+    writeFileSync(join(root, 'dist/about/index.html'), '<h1>about</h1>')
+    writeFileSync(join(root, 'dist/changelog/roots/index.html'), '<h1>roots</h1>')
+    writeFileSync(join(root, 'dist/changelog/forest-polish/index.html'), '<h1>forest polish</h1>')
     execFileSync(
       process.execPath,
       [join(__dirname, 'build-sitemap.mjs'), root, 'https://example.com'],
@@ -32,11 +34,12 @@ describe('build-sitemap.mjs', () => {
     expect(xml.startsWith('<?xml version="1.0" encoding="UTF-8"?>')).toBe(true)
   })
 
-  it('includes one <loc> per route, index files collapsed to their directory', () => {
+  it('includes one <loc> per built page, including nested/dynamic-origin routes', () => {
     const xml = readFileSync(join(root, 'dist/sitemap.xml'), 'utf-8')
     expect(xml).toContain('<loc>https://example.com/</loc>')
     expect(xml).toContain('<loc>https://example.com/about</loc>')
-    expect(xml).toContain('<loc>https://example.com/blog</loc>')
+    expect(xml).toContain('<loc>https://example.com/changelog/roots</loc>')
+    expect(xml).toContain('<loc>https://example.com/changelog/forest-polish</loc>')
   })
 
   it('does not include a trailing slash on non-root routes', () => {
@@ -44,15 +47,18 @@ describe('build-sitemap.mjs', () => {
     expect(xml).not.toContain('<loc>https://example.com/about/</loc>')
   })
 
-  it('excludes dynamic [param] routes, which have no single known URL', () => {
-    const xml = readFileSync(join(root, 'dist/sitemap.xml'), 'utf-8')
-    expect(xml).not.toContain('[slug]')
-    expect(xml).not.toContain('<loc>https://example.com/blog/:slug</loc>')
-  })
-
   it('XML-escapes special characters in route URLs', () => {
-    const xml = readFileSync(join(root, 'dist/sitemap.xml'), 'utf-8')
+    const specialRoot = mkdtempSync(join(tmpdir(), 'wald-sitemap-special-'))
+    mkdirSync(join(specialRoot, 'dist/foo&bar'), { recursive: true })
+    writeFileSync(join(specialRoot, 'dist/foo&bar/index.html'), '<h1>x</h1>')
+    execFileSync(
+      process.execPath,
+      [join(__dirname, 'build-sitemap.mjs'), specialRoot, 'https://example.com'],
+      { stdio: 'pipe' },
+    )
+    const xml = readFileSync(join(specialRoot, 'dist/sitemap.xml'), 'utf-8')
     expect(xml).toContain('<loc>https://example.com/foo&amp;bar</loc>')
     expect(xml).not.toContain('<loc>https://example.com/foo&bar</loc>')
+    rmSync(specialRoot, { recursive: true, force: true })
   })
 })

@@ -1,0 +1,39 @@
+---
+import Layout from '../../layouts/Layout.wald'
+import Vergelijking from '../../components/Vergelijking.wald'
+---
+<Layout
+  title="WaldJS vs Astro — welke past bij jouw project?"
+  description="Een eerlijke vergelijking tussen WaldJS en Astro: single-file componenten, content collections, partial hydration en wanneer je welke kiest."
+  canonicalPath="/vs/astro"
+>
+  <section id="vs-astro-intro">
+    <div class="sectiekop">
+      <span class="tag"><span class="nl">Vergelijking</span><span class="en">Comparison</span></span>
+      <h1>WaldJS vs Astro</h1>
+      <p><span class="nl">Beide gebruiken single-file componenten, content collections en 0 KB JavaScript standaard. Het verschil zit 'm in scope en ecosysteem.</span><span class="en">Both use single-file components, content collections, and 0 KB JavaScript by default. The difference is in scope and ecosystem.</span></p>
+    </div>
+  </section>
+  <Vergelijking />
+  <section id="vs-astro-keuze">
+    <div class="sectiekop">
+      <h2><span class="nl">Wanneer kies je wat?</span><span class="en">When to choose which?</span></h2>
+    </div>
+    <div class="split">
+      <div>
+        <h3><span class="nl">Kies WaldJS als je...</span><span class="en">Choose WaldJS if you...</span></h3>
+        <ul>
+          <li><span class="nl">een kleiner, eenvoudiger formaat wilt zonder een groot integratie-ecosysteem nodig te hebben</span><span class="en">want a smaller, simpler format and don't need a large integration ecosystem</span></li>
+          <li><span class="nl">canopy-islands als gewone JS/TS-modules voldoende vindt, zonder losse framework-adapters</span><span class="en">are fine with canopy islands as plain JS/TS modules, without separate framework adapters</span></li>
+        </ul>
+      </div>
+      <div>
+        <h3><span class="nl">Kies Astro als je...</span><span class="en">Choose Astro if you...</span></h3>
+        <ul>
+          <li><span class="nl">een volwassen ecosysteem met veel officiële integraties nodig hebt (React, Vue, Svelte als islands)</span><span class="en">need a mature ecosystem with many official integrations (React, Vue, Svelte as islands)</span></li>
+          <li><span class="nl">een grotere community en meer bestaande plugins/templates wilt</span><span class="en">want a larger community and more existing plugins/templates</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</Layout>

@@ -86,4 +86,53 @@ describe('marketing site build', () => {
     expect(inlineLangScript).not.toBeNull()
     expect(inlineLangScript![0]).not.toContain('defer')
   })
+
+  it('genereert changelog-overzicht en 8 losse changelog-detailpagina\'s', () => {
+    expect(existsSync(join(ROOT, 'dist/changelog/index.html'))).toBe(true)
+    const overzicht = readFileSync(join(ROOT, 'dist/changelog/index.html'), 'utf-8')
+    for (const slug of ['roots', 'seed', 'sapling', 'branches', 'forest-vite-pipeline', 'canopy', 'forest-polish', 'forest-deployment-adapters']) {
+      expect(existsSync(join(ROOT, `dist/changelog/${slug}/index.html`)), `missing dist/changelog/${slug}/index.html`).toBe(true)
+      expect(overzicht).toContain(`/changelog/${slug}`)
+    }
+
+    const sitemap = readFileSync(join(ROOT, 'dist/sitemap.xml'), 'utf-8')
+    expect(sitemap).toContain('<loc>https://waldjs.steefan.nl/changelog</loc>')
+    expect(sitemap).toContain('<loc>https://waldjs.steefan.nl/changelog/roots</loc>')
+  })
+
+  it('toont nog maar de 3 recentste changelog-entries op de homepage', () => {
+    const html = readFileSync(join(ROOT, 'dist/index.html'), 'utf-8')
+    const kaarten = html.match(/class="log-kaart"/g) ?? []
+    expect(kaarten.length).toBe(3)
+    expect(html).toContain('href="/changelog"')
+  })
+
+  it('rendert changelog-body als echte HTML, niet ge-escaped', () => {
+    const detail = readFileSync(join(ROOT, 'dist/changelog/canopy/index.html'), 'utf-8')
+    expect(detail).toContain('<span class="nl">')
+    expect(detail).not.toContain('&lt;span')
+  })
+
+  it('produceert vergelijkingspagina\'s met eigen titel en canonical', () => {
+    for (const [slug, title] of [
+      ['astro', 'WaldJS vs Astro'],
+      ['eleventy', 'WaldJS vs Eleventy'],
+    ] as const) {
+      const path = join(ROOT, `dist/vs/${slug}/index.html`)
+      expect(existsSync(path), `missing dist/vs/${slug}/index.html`).toBe(true)
+      const html = readFileSync(path, 'utf-8')
+      expect(html).toContain(`<title>${title}`)
+      expect(html).toContain(`<link rel="canonical" href="https://waldjs.steefan.nl/vs/${slug}">`)
+    }
+
+    const sitemap = readFileSync(join(ROOT, 'dist/sitemap.xml'), 'utf-8')
+    expect(sitemap).toContain('<loc>https://waldjs.steefan.nl/vs/astro</loc>')
+    expect(sitemap).toContain('<loc>https://waldjs.steefan.nl/vs/eleventy</loc>')
+  })
+
+  it('gebruikt absolute homepage-anchors in nav/footer zodat ze ook werken op andere pagina\'s', () => {
+    const changelog = readFileSync(join(ROOT, 'dist/changelog/index.html'), 'utf-8')
+    expect(changelog).toContain('href="/#quickstart"')
+    expect(changelog).not.toContain('href="#quickstart"')
+  })
 })
