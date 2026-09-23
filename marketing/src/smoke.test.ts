@@ -129,4 +129,10 @@ describe('marketing site build', () => {
     expect(sitemap).toContain('<loc>https://waldjs.steefan.nl/vs/astro</loc>')
     expect(sitemap).toContain('<loc>https://waldjs.steefan.nl/vs/eleventy</loc>')
   })
+
+  it('gebruikt absolute homepage-anchors in nav/footer zodat ze ook werken op andere pagina\'s', () => {
+    const changelog = readFileSync(join(ROOT, 'dist/changelog/index.html'), 'utf-8')
+    expect(changelog).toContain('href="/#quickstart"')
+    expect(changelog).not.toContain('href="#quickstart"')
+  })
 })
