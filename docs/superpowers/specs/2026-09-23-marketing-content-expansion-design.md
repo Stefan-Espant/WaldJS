@@ -123,10 +123,21 @@ Extend `marketing/src/smoke.test.ts` (existing "build once, assert on real
   pages.
 - Each `dist/changelog/<slug>/index.html` exists (8 total).
 - The homepage's changelog section shows only the trimmed count, not all 8.
-- `dist/sitemap.xml` (from PR #61's build-time generator, which already
-  scans all of `src/pages/`) picks up all the new routes automatically — no
-  changes needed to `build-sitemap.mjs` itself, this is exactly the kind of
-  drift the build-time-generation approach was designed to prevent.
+- `dist/sitemap.xml` includes all the new routes, including the 8 dynamic
+  `/changelog/<slug>` pages.
+
+**Correction, found while writing the implementation plan:** the sentence
+that used to be here claimed PR #61's `build-sitemap.mjs` would pick up the
+new dynamic changelog routes automatically with no changes needed. That's
+wrong — that script explicitly filters OUT any route containing a `[param]`
+segment (there was no way to resolve dynamic routes to real URLs from
+`src/pages/` source files alone at the time it was written), which would
+silently exclude all 8 `/changelog/<slug>` pages from the sitemap. The
+implementation plan's Task 2 reworks `build-sitemap.mjs` to scan the
+*built* `dist/` directory instead of `src/pages/` source — since `dist/`
+only ever contains real, already-resolved pages, this picks up dynamic
+routes for free without reimplementing route resolution, and is simpler
+code than the source-scanning approach it replaces.
 
 ## Non-goals
 
