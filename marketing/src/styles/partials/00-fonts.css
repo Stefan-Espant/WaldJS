@@ -1,4 +1,6 @@
-@import url("https://p.typekit.net/p.css?s=1&k=jsq2abh&ht=tk&f=22798.22800.46854.46855.46857.46862&a=9068336&app=typekit&e=css");
+/* Adobe Typekit CSS (p.css) wordt niet meer via @import geladen: dat blokkeerde
+   het parsen van de rest van deze bundel totdat het opgehaald was. Layout.wald
+   laadt 'm nu als eigen <link rel="stylesheet">, parallel aan site.css. */
 
 /* ---------- fonts (Google Fonts + Adobe Typekit, inline gebundeld) ---------- */
 /* devanagari */

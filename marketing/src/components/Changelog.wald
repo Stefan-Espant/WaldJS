@@ -13,7 +13,7 @@ const recent = entries
     <p><span class="nl">Elke release een jaarring. Dit is er tot nu toe gegroeid.</span><span class="en">Every release a growth ring. Here's what has grown so far.</span></p>
     <p style="margin-top:.5rem">
       <a href="https://www.npmjs.com/package/@waldjs/cli" target="_blank" rel="noopener">
-        <img src="https://img.shields.io/npm/v/@waldjs/cli.svg" alt="npm version" style="vertical-align:middle" />
+        <img src="https://img.shields.io/npm/v/@waldjs/cli.svg" alt="npm version" width="80" height="20" style="vertical-align:middle" />
       </a>
       <span class="nl" style="margin-left:.5rem;opacity:.7;font-size:.85rem">huidige npm-versie — de fasenamen hieronder zijn mijlpalen, geen versienummers</span>
       <span class="en" style="margin-left:.5rem;opacity:.7;font-size:.85rem">current npm version — the phase names below are milestones, not version numbers</span>
