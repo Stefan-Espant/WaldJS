@@ -58,6 +58,8 @@ gtag('config', 'G-9EZEXC8XYQ');
 </script>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://use.typekit.net" crossorigin>
+<link rel="preconnect" href="https://p.typekit.net" crossorigin>
+<link rel="stylesheet" href="https://p.typekit.net/p.css?s=1&#38;k=jsq2abh&#38;ht=tk&#38;f=22798.22800.46854.46855.46857.46862&#38;a=9068336&#38;app=typekit&#38;e=css">
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>

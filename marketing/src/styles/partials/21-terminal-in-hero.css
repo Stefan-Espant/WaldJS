@@ -34,6 +34,6 @@
 .plant-hint {
   margin-top: 1.5rem;
   font-size: .8rem;
-  color: rgba(255, 255, 255, .45);
+  color: var(--wit-zacht);
   flex: none
 }

@@ -69,7 +69,9 @@
 }
 
 .staaf.wald .label b {
-  color: var(--rood)
+  /* lichtere rood-tint dan --rood: die haalt geen 4.5:1 contrast op deze
+     donkere kaart-achtergrond */
+  color: #FF6676
 }
 
 .bench .disclaimer {
