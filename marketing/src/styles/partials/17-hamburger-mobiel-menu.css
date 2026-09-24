@@ -50,7 +50,7 @@
   cursor: pointer
 }
 
-@media(max-width:47.5rem) {
+@media(max-width:80rem) {
   .hamburger {
     display: block
   }
