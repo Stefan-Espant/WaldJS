@@ -92,6 +92,12 @@
   font-style: italic
 }
 
+@media(prefers-contrast:more) {
+  .c-c {
+    color: var(--wit-zacht)
+  }
+}
+
 /* comments */
 .c-t {
   color: #FF7A89
