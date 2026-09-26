@@ -209,10 +209,14 @@ describe('marketing site build', () => {
     }
   })
 
-  it('zet aria-current="page" alleen op de nav-link van de huidige pagina', () => {
+  it('zet aria-current="page" alleen op de nav-link van de huidige pagina, in desktop en mobiel menu', () => {
     const changelog = readFileSync(join(ROOT, 'dist/changelog/index.html'), 'utf-8')
-    expect(changelog).toContain('href="/changelog" aria-current="page"')
-    expect(changelog).not.toContain('href="/waarom" aria-current="page"')
+    expect((changelog.match(/href="\/changelog"[^>]*aria-current="page"/g) ?? []).length, 'changelog links met aria-current=page').toBe(2)
+    expect(changelog).not.toMatch(/href="\/waarom"[^>]*aria-current="page"/)
+
+    const waarom = readFileSync(join(ROOT, 'dist/waarom/index.html'), 'utf-8')
+    expect((waarom.match(/href="\/waarom"[^>]*aria-current="page"/g) ?? []).length, 'waarom links met aria-current=page').toBe(2)
+    expect(waarom).not.toMatch(/href="\/changelog"[^>]*aria-current="page"/)
 
     const home = readFileSync(join(ROOT, 'dist/index.html'), 'utf-8')
     expect(home).not.toContain('aria-current="page"')
