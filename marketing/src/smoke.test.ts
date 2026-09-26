@@ -208,4 +208,13 @@ describe('marketing site build', () => {
       expect(html).toContain('<a class="skip-link" href="#main">')
     }
   })
+
+  it('heeft scope="col" op alle th-cellen van de vergelijkingstabel', () => {
+    const html = readFileSync(join(ROOT, 'dist/vs/astro/index.html'), 'utf-8')
+    const ths = html.match(/<th[^>]*>/g) ?? []
+    expect(ths.length).toBeGreaterThan(0)
+    for (const th of ths) {
+      expect(th, th).toContain('scope="col"')
+    }
+  })
 })
