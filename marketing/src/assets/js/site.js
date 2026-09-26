@@ -46,10 +46,41 @@ try {
   if (bewaard === 'nl' || bewaard === 'en') zetTaal(bewaard);
 } catch(e){}
 
+let vorigeFocusVoorMenu = null;
+
 function toggleMenu(open){
   const menu = document.getElementById('mobielmenu');
   menu.classList.toggle('open', open);
   menu.setAttribute('aria-hidden', String(!open));
+  if (open){
+    vorigeFocusVoorMenu = document.activeElement;
+    const sluitknop = menu.querySelector('.sluit');
+    if (sluitknop) sluitknop.focus();
+    document.addEventListener('keydown', vangFocusInMenu);
+  } else {
+    document.removeEventListener('keydown', vangFocusInMenu);
+    if (vorigeFocusVoorMenu && typeof vorigeFocusVoorMenu.focus === 'function') vorigeFocusVoorMenu.focus();
+  }
+}
+
+function vangFocusInMenu(e){
+  if (e.key === 'Escape'){
+    toggleMenu(false);
+    return;
+  }
+  if (e.key !== 'Tab') return;
+  const menu = document.getElementById('mobielmenu');
+  const focusbaar = Array.from(menu.querySelectorAll('a, button'));
+  if (focusbaar.length === 0) return;
+  const eerste = focusbaar[0];
+  const laatste = focusbaar[focusbaar.length - 1];
+  if (e.shiftKey && document.activeElement === eerste){
+    e.preventDefault();
+    laatste.focus();
+  } else if (!e.shiftKey && document.activeElement === laatste){
+    e.preventDefault();
+    eerste.focus();
+  }
 }
 
 /* ============================================================

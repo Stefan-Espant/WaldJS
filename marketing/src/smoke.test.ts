@@ -232,4 +232,12 @@ describe('marketing site build', () => {
       }
     }
   })
+
+  it('geeft het mobiele menu dialog-semantiek', () => {
+    const html = readFileSync(join(ROOT, 'dist/index.html'), 'utf-8')
+    expect(html).toContain('id="mobielmenu"')
+    const mobielmenuTag = html.match(/<div id="mobielmenu"[^>]*>/)?.[0] ?? ''
+    expect(mobielmenuTag).toContain('role="dialog"')
+    expect(mobielmenuTag).toContain('aria-modal="true"')
+  })
 })

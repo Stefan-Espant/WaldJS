@@ -32,7 +32,7 @@ const waaromCurrent = canonicalPath === '/waarom' ? 'page' : 'false'
   <button class="hamburger" onclick="toggleMenu(true)" aria-label="Menu">☰</button>
 </nav>
 
-<div id="mobielmenu" aria-hidden="true">
+<div id="mobielmenu" role="dialog" aria-modal="true" aria-label="Menu" aria-hidden="true">
   <button class="sluit" onclick="toggleMenu(false)" aria-label="Sluit menu">✕</button>
   <a href="/#formaat" onclick="toggleMenu(false)"><span class="nl">Het .wald-formaat</span><span class="en">The .wald format</span></a>
   <a href="/#playground" onclick="toggleMenu(false)">Playground</a>
