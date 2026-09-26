@@ -150,7 +150,7 @@ describe('marketing site build', () => {
 
   it('bevat een prefers-reduced-motion regel die transitions/animaties uitzet', () => {
     const css = readFileSync(join(ROOT, 'dist/assets/css/site.css'), 'utf-8')
-    expect(css).toContain('@media (prefers-reduced-motion:reduce)')
+    expect(css).toContain('@media(prefers-reduced-motion:reduce)')
     expect(css).toContain('scroll-behavior:auto !important')
   })
 })

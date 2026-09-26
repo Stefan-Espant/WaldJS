@@ -42,7 +42,7 @@ header p.sub,
   text-wrap: balance
 }
 
-@media (prefers-reduced-motion: reduce) {
+@media(prefers-reduced-motion:reduce) {
   *,
   *::before,
   *::after {
