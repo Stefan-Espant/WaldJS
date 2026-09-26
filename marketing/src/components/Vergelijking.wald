@@ -6,7 +6,7 @@
     <h2><span class="nl">Hoe verhoudt Wald zich?</span><span class="en">How does Wald compare?</span></h2>
   </div>
   <table class="vergelijk">
-    <tr><th>Feature</th><th>WaldJS</th><th>Astro</th><th>Eleventy</th></tr>
+    <tr><th scope="col">Feature</th><th scope="col">WaldJS</th><th scope="col">Astro</th><th scope="col">Eleventy</th></tr>
     <tr><td><span class="nl">Single-file formaat (frontmatter + template)</span><span class="en">Single-file format (frontmatter + template)</span></td><td class="ja">✓ .wald</td><td class="ja">✓ .astro</td><td class="nee">—</td></tr>
     <tr><td>File-based routing</td><td class="ja">✓</td><td class="ja">✓</td><td class="ja">✓</td></tr>
     <tr><td>Content collections</td><td class="ja">✓</td><td class="ja">✓</td><td class="deels"><span class="nl">deels</span><span class="en">partial</span></td></tr>

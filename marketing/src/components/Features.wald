@@ -15,7 +15,7 @@
       <span class="en">Every file in <b>src/pages/</b> automatically becomes a route. No router configuration, no fuss.</span></p>
     </div>
     <table>
-      <tr><th><span class="nl">Bestand</span><span class="en">File</span></th><th>Route</th></tr>
+      <tr><th scope="col"><span class="nl">Bestand</span><span class="en">File</span></th><th scope="col">Route</th></tr>
       <tr><td><code>src/pages/index.wald</code></td><td><code>/</code></td></tr>
       <tr><td><code>src/pages/about.wald</code></td><td><code>/about</code></td></tr>
       <tr><td><code>src/pages/blog/index.wald</code></td><td><code>/blog</code></td></tr>

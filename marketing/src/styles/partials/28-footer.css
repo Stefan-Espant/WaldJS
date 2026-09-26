@@ -68,7 +68,7 @@ footer {
   max-width: 20rem
 }
 
-.footer-grid h4 {
+.footer-grid h2 {
   font-size: var(--byz-text-xs);
   text-transform: uppercase;
   letter-spacing: .14em;

@@ -5,6 +5,13 @@ import { join } from 'node:path'
 
 const ROOT = join(__dirname, '..')
 
+function checkHeadingOrder(html: string, label: string): void {
+  const levels = [...html.matchAll(/<h([1-6])[ >]/g)].map(m => Number(m[1]))
+  for (let i = 1; i < levels.length; i++) {
+    expect(levels[i] - levels[i - 1], `${label}: heading jumps from h${levels[i - 1]} to h${levels[i]} (position ${i})`).toBeLessThanOrEqual(1)
+  }
+}
+
 describe('marketing site build', () => {
   beforeAll(() => {
     execSync('node ../packages/cli/bin/wald.js build', { cwd: ROOT, stdio: 'pipe' })
@@ -167,5 +174,78 @@ describe('marketing site build', () => {
     for (const selector of ['.log-kop .datum', '.footer-onder', '.c-c', '.vergelijk .nee', '.bench .disclaimer']) {
       expect(css, `${selector} mist een prefers-contrast:more override`).toContain(`${selector}{color:var(--wit-zacht)}`)
     }
+  })
+
+  it('heeft geldige koppen-volgorde (geen niveau overslaan) op elk paginatype', () => {
+    const pages = [
+      'dist/index.html',
+      'dist/waarom/index.html',
+      'dist/vs/astro/index.html',
+      'dist/vs/eleventy/index.html',
+      'dist/changelog/index.html',
+      'dist/changelog/roots/index.html',
+    ]
+    for (const page of pages) {
+      const html = readFileSync(join(ROOT, page), 'utf-8')
+      checkHeadingOrder(html, page)
+    }
+  })
+
+  it('gebruikt h2 voor changelog-kaarttitels en footer-kolomtitels, geen h3/h4', () => {
+    const changelog = readFileSync(join(ROOT, 'dist/changelog/index.html'), 'utf-8')
+    expect(changelog).toContain('<h2><a href="/changelog/roots">')
+    expect(changelog).not.toContain('<h3><a href="/changelog/')
+
+    const html = readFileSync(join(ROOT, 'dist/index.html'), 'utf-8')
+    expect((html.match(/class="footer-grid"[\s\S]*?<h2>/g) ?? []).length).toBeGreaterThan(0)
+  })
+
+  it('heeft precies een <main id="main"> landmark en een skip-link ernaartoe', () => {
+    for (const page of ['dist/index.html', 'dist/waarom/index.html']) {
+      const html = readFileSync(join(ROOT, page), 'utf-8')
+      expect((html.match(/<main id="main"[^>]*>/g) ?? []).length, `${page} main count`).toBe(1)
+      expect(html).toContain('<main id="main" tabindex="-1">')
+      expect(html).toContain('<a class="skip-link" href="#main">')
+    }
+  })
+
+  it('zet aria-current="page" alleen op de nav-link van de huidige pagina, in desktop en mobiel menu', () => {
+    const changelog = readFileSync(join(ROOT, 'dist/changelog/index.html'), 'utf-8')
+    expect((changelog.match(/href="\/changelog"[^>]*aria-current="page"/g) ?? []).length, 'changelog links met aria-current=page').toBe(2)
+    expect(changelog).not.toMatch(/href="\/waarom"[^>]*aria-current="page"/)
+
+    const waarom = readFileSync(join(ROOT, 'dist/waarom/index.html'), 'utf-8')
+    expect((waarom.match(/href="\/waarom"[^>]*aria-current="page"/g) ?? []).length, 'waarom links met aria-current=page').toBe(2)
+    expect(waarom).not.toMatch(/href="\/changelog"[^>]*aria-current="page"/)
+
+    const home = readFileSync(join(ROOT, 'dist/index.html'), 'utf-8')
+    expect(home).not.toContain('aria-current="page"')
+  })
+
+  it('heeft scope="col" op alle th-cellen, ook in de Features-tabel op de homepage', () => {
+    for (const page of ['dist/vs/astro/index.html', 'dist/index.html']) {
+      const html = readFileSync(join(ROOT, page), 'utf-8')
+      const ths = html.match(/<th[^>]*>/g) ?? []
+      expect(ths.length, page).toBeGreaterThan(0)
+      for (const th of ths) {
+        expect(th, `${page}: ${th}`).toContain('scope="col"')
+      }
+    }
+  })
+
+  it('geeft het mobiele menu dialog-semantiek en start inert (niet met Tab bereikbaar) tot het open is', () => {
+    const html = readFileSync(join(ROOT, 'dist/index.html'), 'utf-8')
+    expect(html).toContain('id="mobielmenu"')
+    const mobielmenuTag = html.match(/<div id="mobielmenu"[^>]*>/)?.[0] ?? ''
+    expect(mobielmenuTag).toContain('role="dialog"')
+    expect(mobielmenuTag).toContain('aria-modal="true"')
+    expect(mobielmenuTag).toMatch(/\binert\b/)
+  })
+
+  it('sluit ook het mobiele menu als je op de GitHub-link erin klikt', () => {
+    const html = readFileSync(join(ROOT, 'dist/index.html'), 'utf-8')
+    const mobielmenu = html.match(/<div id="mobielmenu"[\s\S]*?<\/div>/)?.[0] ?? ''
+    const githubLink = mobielmenu.match(/<a[^>]*github\.com[^>]*>/i)?.[0] ?? ''
+    expect(githubLink, mobielmenu).toContain('onclick="toggleMenu(false)"')
   })
 })
