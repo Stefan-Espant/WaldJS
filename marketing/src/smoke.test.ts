@@ -209,12 +209,14 @@ describe('marketing site build', () => {
     }
   })
 
-  it('heeft scope="col" op alle th-cellen van de vergelijkingstabel', () => {
-    const html = readFileSync(join(ROOT, 'dist/vs/astro/index.html'), 'utf-8')
-    const ths = html.match(/<th[^>]*>/g) ?? []
-    expect(ths.length).toBeGreaterThan(0)
-    for (const th of ths) {
-      expect(th, th).toContain('scope="col"')
+  it('heeft scope="col" op alle th-cellen, ook in de Features-tabel op de homepage', () => {
+    for (const page of ['dist/vs/astro/index.html', 'dist/index.html']) {
+      const html = readFileSync(join(ROOT, page), 'utf-8')
+      const ths = html.match(/<th[^>]*>/g) ?? []
+      expect(ths.length, page).toBeGreaterThan(0)
+      for (const th of ths) {
+        expect(th, `${page}: ${th}`).toContain('scope="col"')
+      }
     }
   })
 })
