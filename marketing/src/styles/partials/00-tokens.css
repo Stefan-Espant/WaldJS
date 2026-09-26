@@ -72,3 +72,10 @@
   --mono: var(--byz-font-mono);
   --script: var(--byz-font-script);
 }
+
+@media(prefers-contrast:more) {
+  :root {
+    --rand: rgba(255, 255, 255, 0.4);
+    --wit-zacht: rgba(255, 255, 255, 0.92)
+  }
+}

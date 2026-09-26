@@ -74,6 +74,12 @@
   color: #FF6676
 }
 
+@media(prefers-contrast:more) {
+  .staaf.wald .label b {
+    color: var(--wit)
+  }
+}
+
 .bench .disclaimer {
   margin-top: 2rem;
   font-size: .78rem;

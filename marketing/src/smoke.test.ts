@@ -153,4 +153,11 @@ describe('marketing site build', () => {
     expect(css).toContain('@media(prefers-reduced-motion:reduce)')
     expect(css).toContain('scroll-behavior:auto !important')
   })
+
+  it('bevat een prefers-contrast:more boost voor randen, gedempte tekst en het benchmark-label', () => {
+    const css = readFileSync(join(ROOT, 'dist/assets/css/site.css'), 'utf-8')
+    expect(css).toContain('@media(prefers-contrast:more)')
+    expect(css).toContain('--rand:rgba(255,255,255,0.4)')
+    expect(css).toContain('--wit-zacht:rgba(255,255,255,0.92)')
+  })
 })
