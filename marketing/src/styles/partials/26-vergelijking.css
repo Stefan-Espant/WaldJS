@@ -13,6 +13,12 @@
   color: rgba(255, 255, 255, .35)
 }
 
+@media(prefers-contrast:more) {
+  .vergelijk .nee {
+    color: var(--wit-zacht)
+  }
+}
+
 .vergelijk .deels {
   color: var(--rood);
   font-weight: 700;

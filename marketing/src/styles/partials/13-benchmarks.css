@@ -86,3 +86,9 @@
   color: rgba(255, 255, 255, .45);
   text-align: center
 }
+
+@media(prefers-contrast:more) {
+  .bench .disclaimer {
+    color: var(--wit-zacht)
+  }
+}

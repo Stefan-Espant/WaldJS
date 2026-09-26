@@ -139,6 +139,12 @@ footer {
   z-index: 2;
 }
 
+@media(prefers-contrast:more) {
+  .footer-onder {
+    color: var(--wit-zacht)
+  }
+}
+
 @media(max-width:47.5rem) {
   .footer-grid {
     grid-template-columns: 1fr;

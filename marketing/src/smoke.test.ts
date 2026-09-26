@@ -159,5 +159,13 @@ describe('marketing site build', () => {
     expect(css).toContain('@media(prefers-contrast:more)')
     expect(css).toContain('--rand:rgba(255,255,255,0.4)')
     expect(css).toContain('--wit-zacht:rgba(255,255,255,0.92)')
+    expect(css).toContain('.staaf.wald .label b{color:var(--wit)}')
+  })
+
+  it('boost ook de losse, niet-getokeniseerde gedempte teksten onder prefers-contrast:more', () => {
+    const css = readFileSync(join(ROOT, 'dist/assets/css/site.css'), 'utf-8')
+    for (const selector of ['.log-kop .datum', '.footer-onder', '.c-c', '.vergelijk .nee', '.bench .disclaimer']) {
+      expect(css, `${selector} mist een prefers-contrast:more override`).toContain(`${selector}{color:var(--wit-zacht)}`)
+    }
   })
 })

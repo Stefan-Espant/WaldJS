@@ -108,6 +108,12 @@
   font-size: .8rem
 }
 
+@media(prefers-contrast:more) {
+  .log-kop .datum {
+    color: var(--wit-zacht)
+  }
+}
+
 .log-kaart ul {
   list-style: none;
   color: var(--wit-zacht);
