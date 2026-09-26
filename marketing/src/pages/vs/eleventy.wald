@@ -7,7 +7,7 @@ import Vergelijking from '../../components/Vergelijking.wald'
   description="Een eerlijke vergelijking tussen WaldJS en Eleventy: single-file componenten, Vite-integratie, partial hydration en wanneer je welke kiest."
   canonicalPath="/vs/eleventy"
 >
-  <section id="vs-eleventy-intro">
+  <section id="vs-eleventy-intro" class="pagina-intro">
     <div class="sectiekop">
       <span class="tag"><span class="nl">Vergelijking</span><span class="en">Comparison</span></span>
       <h1>WaldJS vs Eleventy</h1>

@@ -14,7 +14,7 @@ const entry = await getEntry('changelog', $$props.slug)
   description={`WaldJS changelog-entry: ${entry.data.title}, ${entry.data.dateLabel}.`}
   canonicalPath={`/changelog/${$$props.slug}`}
 >
-  <section id="changelog-entry">
+  <section id="changelog-entry" class="pagina-intro">
     <div class="sectiekop">
       <span class="tag"><span class="nl">Groeidagboek</span><span class="en">Growth log</span></span>
       <h1>{entry.data.title}</h1>

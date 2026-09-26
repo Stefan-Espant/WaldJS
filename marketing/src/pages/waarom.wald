@@ -6,7 +6,7 @@ import Layout from '../layouts/Layout.wald'
   description="WaldJS in het kort: bouwsnelheid, geen framework-lock-in voor interactiviteit, en één klein formaat zonder extra tooling."
   canonicalPath="/waarom"
 >
-  <section id="waarom-intro">
+  <section id="waarom-intro" class="pagina-intro">
     <div class="sectiekop">
       <span class="tag"><span class="nl">Filosofie</span><span class="en">Philosophy</span></span>
       <h1><span class="nl">Waarom WaldJS?</span><span class="en">Why WaldJS?</span></h1>

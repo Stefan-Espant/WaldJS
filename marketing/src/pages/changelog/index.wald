@@ -9,7 +9,7 @@ const sorted = entries.slice().sort((a, b) => new Date(b.data.date).getTime() - 
   description="Elke release een jaarring: het volledige groeidagboek van WaldJS."
   canonicalPath="/changelog"
 >
-  <section id="changelog-overzicht">
+  <section id="changelog-overzicht" class="pagina-intro">
     <div class="sectiekop">
       <span class="tag"><span class="nl">Groeidagboek</span><span class="en">Growth log</span></span>
       <h1>Changelog</h1>
