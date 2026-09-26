@@ -7,7 +7,7 @@ import Vergelijking from '../../components/Vergelijking.wald'
   description="Een eerlijke vergelijking tussen WaldJS en Astro: single-file componenten, content collections, partial hydration en wanneer je welke kiest."
   canonicalPath="/vs/astro"
 >
-  <section id="vs-astro-intro">
+  <section id="vs-astro-intro" class="pagina-intro">
     <div class="sectiekop">
       <span class="tag"><span class="nl">Vergelijking</span><span class="en">Comparison</span></span>
       <h1>WaldJS vs Astro</h1>

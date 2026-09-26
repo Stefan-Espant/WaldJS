@@ -12,6 +12,12 @@ section.vol {
   padding-right: 0
 }
 
+/* eerste sectie op een pagina zonder eigen <header>-hero: de vaste nav
+   overlapt anders de titel, dus extra ruimte erboven */
+.pagina-intro {
+  padding-top: calc(var(--byz-space-24) + 4rem)
+}
+
 .sectiekop {
   text-align: center;
   margin-bottom: var(--byz-space-16)
