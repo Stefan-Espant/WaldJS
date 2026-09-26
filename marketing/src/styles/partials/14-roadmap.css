@@ -91,3 +91,11 @@
   background: var(--rood);
   color: var(--wit)
 }
+
+.roadmap-note {
+  max-width: 40rem;
+  margin: 0.5rem auto 0;
+  color: var(--wit-zacht);
+  font-size: .82rem;
+  font-style: italic
+}

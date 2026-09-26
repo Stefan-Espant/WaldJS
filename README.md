@@ -381,3 +381,4 @@ Phases:
 - **Phase 4a — Forest:** Vite plugin (`vite-plugin-wald`) ✅
 - **Phase 4b — Forest:** `wald.config.ts` + Vite SSR build pipeline ✅
 - **Phase 4c — Forest:** Deployment adapters ✅
+- **Phase 5 — Ecosystem:** API routes, View Transitions, i18n routing, official sitemap/RSS CLI integration, middleware. Ideas, not yet written up as GitHub issues — a direction, not a promise.
