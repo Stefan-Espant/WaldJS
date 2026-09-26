@@ -147,4 +147,10 @@ describe('marketing site build', () => {
     const sitemap = readFileSync(join(ROOT, 'dist/sitemap.xml'), 'utf-8')
     expect(sitemap).toContain('<loc>https://waldjs.steefan.nl/waarom</loc>')
   })
+
+  it('bevat een prefers-reduced-motion regel die transitions/animaties uitzet', () => {
+    const css = readFileSync(join(ROOT, 'dist/assets/css/site.css'), 'utf-8')
+    expect(css).toContain('@media (prefers-reduced-motion:reduce)')
+    expect(css).toContain('scroll-behavior:auto !important')
+  })
 })
