@@ -199,4 +199,12 @@ describe('marketing site build', () => {
     const html = readFileSync(join(ROOT, 'dist/index.html'), 'utf-8')
     expect((html.match(/class="footer-grid"[\s\S]*?<h2>/g) ?? []).length).toBeGreaterThan(0)
   })
+
+  it('heeft precies een <main id="main"> landmark en een skip-link ernaartoe', () => {
+    for (const page of ['dist/index.html', 'dist/waarom/index.html']) {
+      const html = readFileSync(join(ROOT, page), 'utf-8')
+      expect((html.match(/<main id="main">/g) ?? []).length, `${page} main count`).toBe(1)
+      expect(html).toContain('<a class="skip-link" href="#main">')
+    }
+  })
 })

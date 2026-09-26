@@ -66,6 +66,7 @@ gtag('config', 'G-9EZEXC8XYQ');
 <link rel="stylesheet" href="/assets/css/site.css">
 </head>
 <body>
+<a class="skip-link" href="#main"><span class="nl">Ga naar inhoud</span><span class="en">Skip to content</span></a>
 <!-- logo-definitie (onzichtbaar; nav & footer verwijzen ernaar) -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
     <defs>
@@ -94,7 +95,9 @@ gtag('config', 'G-9EZEXC8XYQ');
 <div id="groeiblad" aria-hidden="true"></div>
 <div id="cursorvlieg" aria-hidden="true"></div>
 <Nav />
+<main id="main">
 {pond}
+</main>
 <Footer canonicalPath={canonicalPath} />
 <CanopyPing canopy:load />
 <script defer src="/assets/js/site.js"></script>

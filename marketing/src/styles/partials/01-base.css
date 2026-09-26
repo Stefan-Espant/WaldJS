@@ -33,6 +33,24 @@ p a:not(.btn):focus-visible {
   color: var(--wit)
 }
 
+.skip-link {
+  position: absolute;
+  top: -3rem;
+  left: 1rem;
+  z-index: var(--byz-z-tooltip);
+  background: var(--rood);
+  color: var(--wit);
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  font-weight: 700;
+  transition: top .2s
+}
+
+.skip-link:focus {
+  top: 1rem
+}
+
 h1,
 h2,
 h3,
