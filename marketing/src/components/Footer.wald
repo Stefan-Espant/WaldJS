@@ -30,7 +30,7 @@ const bronnenVsLinksHtml = footerPageLinks.filter(link => link.section === 'bron
       </p>
     </div>
     <div class="kolom">
-      <h4><span class="nl">Verken</span><span class="en">Explore</span></h4>
+      <h2><span class="nl">Verken</span><span class="en">Explore</span></h2>
       <ul>
         <li><a href="/#quickstart">Quick start</a></li>
         <li><a href="/#formaat"><span class="nl">Het .wald-formaat</span><span class="en">The .wald format</span></a></li>
@@ -41,7 +41,7 @@ const bronnenVsLinksHtml = footerPageLinks.filter(link => link.section === 'bron
       </ul>
     </div>
     <div class="kolom">
-      <h4><span class="nl">Bronnen</span><span class="en">Resources</span></h4>
+      <h2><span class="nl">Bronnen</span><span class="en">Resources</span></h2>
       <ul>
         <li>
           <a class="gh-link" href="https://github.com/Stefan-Espant/WaldJS/" target="_blank" rel="noopener">

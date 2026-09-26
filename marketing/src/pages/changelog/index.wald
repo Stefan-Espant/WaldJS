@@ -17,7 +17,7 @@ const sorted = entries.slice().sort((a, b) => new Date(b.data.date).getTime() - 
     <div class="changelog">
       {new SafeHtml(sorted.map(entry => `
         <div class="log-kaart">
-          <div class="log-kop"><h3><a href="/changelog/${entry.slug}">${entry.data.title}</a></h3><span class="datum">${entry.data.dateLabel}</span></div>
+          <div class="log-kop"><h2><a href="/changelog/${entry.slug}">${entry.data.title}</a></h2><span class="datum">${entry.data.dateLabel}</span></div>
         </div>
       `).join(''))}
     </div>

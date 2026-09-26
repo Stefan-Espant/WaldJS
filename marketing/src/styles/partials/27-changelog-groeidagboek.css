@@ -85,20 +85,20 @@
     0 0.5rem 1rem rgba(0, 0, 0, .12);
 }
 
-.log-kop h3 {
+.log-kop h2 {
   font-size: 1.02rem;
   text-transform: uppercase;
   letter-spacing: .03em
 }
 
-.log-kop h3 a,
-.log-kop h3 a:visited {
+.log-kop h2 a,
+.log-kop h2 a:visited {
   color: var(--wit);
   text-decoration: none
 }
 
-.log-kop h3 a:hover,
-.log-kop h3 a:focus-visible {
+.log-kop h2 a:hover,
+.log-kop h2 a:focus-visible {
   color: var(--rood)
 }
 

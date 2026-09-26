@@ -5,6 +5,13 @@ import { join } from 'node:path'
 
 const ROOT = join(__dirname, '..')
 
+function checkHeadingOrder(html: string, label: string): void {
+  const levels = [...html.matchAll(/<h([1-6])[ >]/g)].map(m => Number(m[1]))
+  for (let i = 1; i < levels.length; i++) {
+    expect(levels[i] - levels[i - 1], `${label}: heading jumps from h${levels[i - 1]} to h${levels[i]} (position ${i})`).toBeLessThanOrEqual(1)
+  }
+}
+
 describe('marketing site build', () => {
   beforeAll(() => {
     execSync('node ../packages/cli/bin/wald.js build', { cwd: ROOT, stdio: 'pipe' })
@@ -167,5 +174,29 @@ describe('marketing site build', () => {
     for (const selector of ['.log-kop .datum', '.footer-onder', '.c-c', '.vergelijk .nee', '.bench .disclaimer']) {
       expect(css, `${selector} mist een prefers-contrast:more override`).toContain(`${selector}{color:var(--wit-zacht)}`)
     }
+  })
+
+  it('heeft geldige koppen-volgorde (geen niveau overslaan) op elk paginatype', () => {
+    const pages = [
+      'dist/index.html',
+      'dist/waarom/index.html',
+      'dist/vs/astro/index.html',
+      'dist/vs/eleventy/index.html',
+      'dist/changelog/index.html',
+      'dist/changelog/roots/index.html',
+    ]
+    for (const page of pages) {
+      const html = readFileSync(join(ROOT, page), 'utf-8')
+      checkHeadingOrder(html, page)
+    }
+  })
+
+  it('gebruikt h2 voor changelog-kaarttitels en footer-kolomtitels, geen h3/h4', () => {
+    const changelog = readFileSync(join(ROOT, 'dist/changelog/index.html'), 'utf-8')
+    expect(changelog).toContain('<h2><a href="/changelog/roots">')
+    expect(changelog).not.toContain('<h3><a href="/changelog/')
+
+    const html = readFileSync(join(ROOT, 'dist/index.html'), 'utf-8')
+    expect((html.match(/class="footer-grid"[\s\S]*?<h2>/g) ?? []).length).toBeGreaterThan(0)
   })
 })
