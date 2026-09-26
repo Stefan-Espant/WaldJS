@@ -1,4 +1,7 @@
 ---
+const { canonicalPath } = $$props
+const changelogCurrent = canonicalPath === '/changelog' ? ' aria-current="page"' : ''
+const waaromCurrent = canonicalPath === '/waarom' ? ' aria-current="page"' : ''
 ---
 <nav>
   <a class="brand" href="/#top" aria-label="WaldJS">
@@ -12,8 +15,8 @@
     <li class="verberg"><a href="/#playground">Playground</a></li>
     <li class="verberg"><a href="/#features">Features</a></li>
     <li class="verberg"><a href="/#benchmarks">Benchmarks</a></li>
-    <li class="verberg"><a href="/changelog">Changelog</a></li>
-    <li class="verberg"><a href="/waarom"><span class="nl">Waarom WaldJS</span><span class="en">Why WaldJS</span></a></li>
+    {new SafeHtml(`<li class="verberg"><a href="/changelog"${changelogCurrent}>Changelog</a></li>`)}
+    {new SafeHtml(`<li class="verberg"><a href="/waarom"${waaromCurrent}><span class="nl">Waarom WaldJS</span><span class="en">Why WaldJS</span></a></li>`)}
   </ul>
   <ul class="rechts-kant">
     <li><button id="btn-geluid" class="dagnacht" onclick="zetGeluid()" aria-label="Bosgeluiden aan/uit">🔇</button></li>
@@ -36,7 +39,7 @@
   <a href="/#features" onclick="toggleMenu(false)">Features</a>
   <a href="/#benchmarks" onclick="toggleMenu(false)">Benchmarks</a>
   <a href="/#roadmap" onclick="toggleMenu(false)">Roadmap</a>
-  <a href="/changelog" onclick="toggleMenu(false)">Changelog</a>
-  <a href="/waarom" onclick="toggleMenu(false)"><span class="nl">Waarom WaldJS</span><span class="en">Why WaldJS</span></a>
+  {new SafeHtml(`<a href="/changelog" onclick="toggleMenu(false)"${changelogCurrent}>Changelog</a>`)}
+  {new SafeHtml(`<a href="/waarom" onclick="toggleMenu(false)"${waaromCurrent}><span class="nl">Waarom WaldJS</span><span class="en">Why WaldJS</span></a>`)}
   <a href="https://github.com/Stefan-Espant/WaldJS/" target="_blank" rel="noopener">GitHub ↗</a>
 </div>

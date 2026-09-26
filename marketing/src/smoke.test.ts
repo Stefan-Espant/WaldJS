@@ -209,6 +209,15 @@ describe('marketing site build', () => {
     }
   })
 
+  it('zet aria-current="page" alleen op de nav-link van de huidige pagina', () => {
+    const changelog = readFileSync(join(ROOT, 'dist/changelog/index.html'), 'utf-8')
+    expect(changelog).toContain('href="/changelog" aria-current="page"')
+    expect(changelog).not.toContain('href="/waarom" aria-current="page"')
+
+    const home = readFileSync(join(ROOT, 'dist/index.html'), 'utf-8')
+    expect(home).not.toContain('aria-current="page"')
+  })
+
   it('heeft scope="col" op alle th-cellen, ook in de Features-tabel op de homepage', () => {
     for (const page of ['dist/vs/astro/index.html', 'dist/index.html']) {
       const html = readFileSync(join(ROOT, page), 'utf-8')

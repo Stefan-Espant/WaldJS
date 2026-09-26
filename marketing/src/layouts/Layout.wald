@@ -94,7 +94,7 @@ gtag('config', 'G-9EZEXC8XYQ');
 <div id="groeibalk" aria-hidden="true"></div>
 <div id="groeiblad" aria-hidden="true"></div>
 <div id="cursorvlieg" aria-hidden="true"></div>
-<Nav />
+<Nav canonicalPath={canonicalPath} />
 <main id="main" tabindex="-1">
 {pond}
 </main>
