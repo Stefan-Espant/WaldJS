@@ -52,6 +52,10 @@ function toggleMenu(open){
   const menu = document.getElementById('mobielmenu');
   menu.classList.toggle('open', open);
   menu.setAttribute('aria-hidden', String(!open));
+  // inert voorkomt dat links/knoppen in het gesloten menu nog met Tab
+  // bereikbaar zijn — anders staat aria-hidden op een element met
+  // focusbare kinderen, wat screenreaders inconsistent afhandelen.
+  menu.toggleAttribute('inert', !open);
   if (open){
     vorigeFocusVoorMenu = document.activeElement;
     const sluitknop = menu.querySelector('.sluit');

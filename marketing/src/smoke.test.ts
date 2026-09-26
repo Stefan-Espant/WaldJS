@@ -233,11 +233,19 @@ describe('marketing site build', () => {
     }
   })
 
-  it('geeft het mobiele menu dialog-semantiek', () => {
+  it('geeft het mobiele menu dialog-semantiek en start inert (niet met Tab bereikbaar) tot het open is', () => {
     const html = readFileSync(join(ROOT, 'dist/index.html'), 'utf-8')
     expect(html).toContain('id="mobielmenu"')
     const mobielmenuTag = html.match(/<div id="mobielmenu"[^>]*>/)?.[0] ?? ''
     expect(mobielmenuTag).toContain('role="dialog"')
     expect(mobielmenuTag).toContain('aria-modal="true"')
+    expect(mobielmenuTag).toMatch(/\binert\b/)
+  })
+
+  it('sluit ook het mobiele menu als je op de GitHub-link erin klikt', () => {
+    const html = readFileSync(join(ROOT, 'dist/index.html'), 'utf-8')
+    const mobielmenu = html.match(/<div id="mobielmenu"[\s\S]*?<\/div>/)?.[0] ?? ''
+    const githubLink = mobielmenu.match(/<a[^>]*github\.com[^>]*>/i)?.[0] ?? ''
+    expect(githubLink, mobielmenu).toContain('onclick="toggleMenu(false)"')
   })
 })
