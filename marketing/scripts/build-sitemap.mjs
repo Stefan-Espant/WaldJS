@@ -10,7 +10,7 @@ import { readdirSync, writeFileSync } from 'node:fs'
 import { join, relative } from 'node:path'
 
 const root = process.argv[2] ?? process.cwd()
-const baseUrl = (process.argv[3] ?? 'https://waldjs.steefan.nl').replace(/\/$/, '')
+const baseUrl = (process.argv[3] ?? 'https://waldjs.eu').replace(/\/$/, '')
 const distDir = join(root, 'dist')
 
 function escapeXml(s) {

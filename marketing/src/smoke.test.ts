@@ -55,7 +55,7 @@ describe('marketing site build', () => {
 
   it('bevat canonical, og:image en geldige JSON-LD structured data', () => {
     const html = readFileSync(join(ROOT, 'dist/index.html'), 'utf-8')
-    expect(html).toContain('<link rel="canonical" href="https://waldjs.steefan.nl/">')
+    expect(html).toContain('<link rel="canonical" href="https://waldjs.eu/">')
     expect(html).toContain('property="og:image"')
     expect(html).toContain('name="twitter:image"')
 
@@ -63,15 +63,15 @@ describe('marketing site build', () => {
     expect(match).not.toBeNull()
     const data = JSON.parse(match![1])
     expect(data['@type']).toBe('SoftwareApplication')
-    expect(data.url).toBe('https://waldjs.steefan.nl/')
+    expect(data.url).toBe('https://waldjs.eu/')
   })
 
   it('produceert robots.txt en sitemap.xml met de juiste canonical host', () => {
     const robots = readFileSync(join(ROOT, 'dist/robots.txt'), 'utf-8')
-    expect(robots).toContain('Sitemap: https://waldjs.steefan.nl/sitemap.xml')
+    expect(robots).toContain('Sitemap: https://waldjs.eu/sitemap.xml')
 
     const sitemap = readFileSync(join(ROOT, 'dist/sitemap.xml'), 'utf-8')
-    expect(sitemap).toContain('<loc>https://waldjs.steefan.nl/</loc>')
+    expect(sitemap).toContain('<loc>https://waldjs.eu/</loc>')
   })
 
   it('laadt alle externe scripts met defer, behalve de inline taal-bootstrap', () => {
@@ -103,8 +103,8 @@ describe('marketing site build', () => {
     }
 
     const sitemap = readFileSync(join(ROOT, 'dist/sitemap.xml'), 'utf-8')
-    expect(sitemap).toContain('<loc>https://waldjs.steefan.nl/changelog</loc>')
-    expect(sitemap).toContain('<loc>https://waldjs.steefan.nl/changelog/roots</loc>')
+    expect(sitemap).toContain('<loc>https://waldjs.eu/changelog</loc>')
+    expect(sitemap).toContain('<loc>https://waldjs.eu/changelog/roots</loc>')
   })
 
   it('toont nog maar de 3 recentste changelog-entries op de homepage', () => {
@@ -129,12 +129,12 @@ describe('marketing site build', () => {
       expect(existsSync(path), `missing dist/vs/${slug}/index.html`).toBe(true)
       const html = readFileSync(path, 'utf-8')
       expect(html).toContain(`<title>${title}`)
-      expect(html).toContain(`<link rel="canonical" href="https://waldjs.steefan.nl/vs/${slug}">`)
+      expect(html).toContain(`<link rel="canonical" href="https://waldjs.eu/vs/${slug}">`)
     }
 
     const sitemap = readFileSync(join(ROOT, 'dist/sitemap.xml'), 'utf-8')
-    expect(sitemap).toContain('<loc>https://waldjs.steefan.nl/vs/astro</loc>')
-    expect(sitemap).toContain('<loc>https://waldjs.steefan.nl/vs/eleventy</loc>')
+    expect(sitemap).toContain('<loc>https://waldjs.eu/vs/astro</loc>')
+    expect(sitemap).toContain('<loc>https://waldjs.eu/vs/eleventy</loc>')
   })
 
   it('gebruikt absolute homepage-anchors in nav/footer zodat ze ook werken op andere pagina\'s', () => {
@@ -147,12 +147,12 @@ describe('marketing site build', () => {
     const path = join(ROOT, 'dist/waarom/index.html')
     expect(existsSync(path)).toBe(true)
     const html = readFileSync(path, 'utf-8')
-    expect(html).toContain('<link rel="canonical" href="https://waldjs.steefan.nl/waarom">')
+    expect(html).toContain('<link rel="canonical" href="https://waldjs.eu/waarom">')
     expect(html.toLowerCase()).not.toContain('astro')
     expect(html.toLowerCase()).not.toContain('eleventy')
 
     const sitemap = readFileSync(join(ROOT, 'dist/sitemap.xml'), 'utf-8')
-    expect(sitemap).toContain('<loc>https://waldjs.steefan.nl/waarom</loc>')
+    expect(sitemap).toContain('<loc>https://waldjs.eu/waarom</loc>')
   })
 
   it('bevat een prefers-reduced-motion regel die transitions/animaties uitzet', () => {

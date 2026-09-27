@@ -3,8 +3,8 @@ import Nav from '../components/Nav.wald'
 import Footer from '../components/Footer.wald'
 import CanopyPing from '../components/CanopyPing.wald'
 const { title, description, canonicalPath, pond } = $$props
-const canonicalUrl = 'https://waldjs.steefan.nl' + canonicalPath
-const ogImage = 'https://waldjs.steefan.nl/assets/og-image.png'
+const canonicalUrl = 'https://waldjs.eu' + canonicalPath
+const ogImage = 'https://waldjs.eu/assets/og-image.png'
 ---
 <!DOCTYPE html>
 <html lang="nl" data-lang="nl">
@@ -35,7 +35,7 @@ const ogImage = 'https://waldjs.steefan.nl/assets/og-image.png'
   "description": "WaldJS is een content-first webframework voor razendsnelle, statische websites. Schrijf .wald-bestanden en WaldJS compileert ze tot een statische site.",
   "applicationCategory": "DeveloperApplication",
   "operatingSystem": "Cross-platform",
-  "url": "https://waldjs.steefan.nl/",
+  "url": "https://waldjs.eu/",
   "author": {
     "@type": "Organization",
     "name": "WaldJS",

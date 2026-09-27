@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://waldjs.steefan.nl/sitemap.xml
+Sitemap: https://waldjs.eu/sitemap.xml
