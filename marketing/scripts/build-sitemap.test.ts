@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, rmSync } from 'node:fs'
-import { join } from 'node:path'
+import { dirname, join } from 'node:path'
 import { tmpdir } from 'node:os'
 import { execFileSync } from 'node:child_process'
 
@@ -60,5 +60,21 @@ describe('build-sitemap.mjs', () => {
     expect(xml).toContain('<loc>https://example.com/foo&amp;bar</loc>')
     expect(xml).not.toContain('<loc>https://example.com/foo&bar</loc>')
     rmSync(specialRoot, { recursive: true, force: true })
+  })
+
+  it('runs as part of both supported Vercel build entrypoints', () => {
+    const marketingDir = dirname(__dirname)
+    const repositoryRoot = dirname(marketingDir)
+    const entrypoints = [
+      join(marketingDir, 'scripts/vercel-build.mjs'),
+      join(repositoryRoot, 'scripts/vercel-build.mjs'),
+    ]
+
+    for (const entrypoint of entrypoints) {
+      const source = readFileSync(entrypoint, 'utf-8')
+      expect(source).toContain('build-sitemap.mjs')
+      expect(source).toContain('https://waldjs.eu')
+      expect(source.indexOf('build-sitemap.mjs')).toBeGreaterThan(source.indexOf("'build'"))
+    }
   })
 })

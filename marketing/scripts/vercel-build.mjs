@@ -36,3 +36,11 @@ execFileSync(node, [join(marketingDir, 'scripts', 'build-css.js'), 'dist'], {
   cwd: marketingDir,
   stdio: 'inherit',
 })
+
+// Genereer de sitemap uit de daadwerkelijk gebouwde pagina's, inclusief
+// dynamische routes zoals changelog/[slug].
+execFileSync(
+  node,
+  [join(marketingDir, 'scripts', 'build-sitemap.mjs'), marketingDir, 'https://waldjs.eu'],
+  { cwd: marketingDir, stdio: 'inherit' },
+)
