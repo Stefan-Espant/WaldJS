@@ -96,10 +96,11 @@ export function waldPlugin(options: WaldPluginOptions = {}): Plugin[] {
         if (id !== VIRTUAL_CONTENT_ID) return
         const contentDir = JSON.stringify(join(process.cwd(), 'content'))
         return [
-          `import { readCollection as _rc, readEntry as _re } from '@waldjs/content'`,
+          `import { readCollection as _rc, readEntry as _re, readTranslations as _rt } from '@waldjs/content'`,
           `const contentDir = ${contentDir}`,
-          `export const getCollection = (name) => _rc(name, contentDir)`,
-          `export const getEntry = (collection, slug) => _re(collection, slug, contentDir)`,
+          `export const getCollection = (name, options) => _rc(name, contentDir, options)`,
+          `export const getEntry = (collection, slug, options) => _re(collection, slug, contentDir, options)`,
+          `export const getTranslations = (collection, slug) => _rt(collection, slug, contentDir)`,
         ].join('\n')
       },
     },

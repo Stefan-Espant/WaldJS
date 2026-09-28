@@ -87,6 +87,33 @@ const posts = await getCollection('blog')
     expect(checkProject(root)).toEqual([])
   })
 
+  it('accepts the locale-aware wald:content API via the shim', () => {
+    const root = makeProject({
+      'src/pages/en/blog.wald': `---
+import { getCollection, getEntry, getTranslations } from 'wald:content'
+const posts = await getCollection('blog', { locale: 'en' })
+const first = await getEntry('blog', 'hello', { locale: 'en' })
+const translations = await getTranslations('blog', 'hello')
+const locale: string | undefined = first.locale
+---
+<p>{posts.length} {Object.keys(translations).length} {locale}</p>`,
+    })
+    roots.push(root)
+    expect(checkProject(root)).toEqual([])
+  })
+
+  it('rejects a non-string locale in the wald:content shim', () => {
+    const root = makeProject({
+      'src/pages/en/blog.wald': `---
+import { getCollection } from 'wald:content'
+const posts = await getCollection('blog', { locale: 42 })
+---
+<p>{posts.length}</p>`,
+    })
+    roots.push(root)
+    expect(checkProject(root)).toHaveLength(1)
+  })
+
   it('remaps column accurately on an indented body line', () => {
     const root = makeProject({
       'src/pages/index.wald': `---
