@@ -248,4 +248,12 @@ describe('marketing site build', () => {
     const githubLink = mobielmenu.match(/<a[^>]*github\.com[^>]*>/i)?.[0] ?? ''
     expect(githubLink, mobielmenu).toContain('onclick="toggleMenu(false)"')
   })
+
+  it('houdt de taal-bootstrap op pagina\'s zonder vaste taal en linkt naar de blog', () => {
+    const html = readFileSync(join(ROOT, 'dist/index.html'), 'utf-8')
+    expect(html).toContain('<html lang="nl" data-lang="nl" data-lang-fixed="">')
+    expect(html).toContain(`localStorage.getItem('wald-taal')`)
+    expect(html).toContain(`<button id="btn-nl" class="actief" onclick="zetTaal('nl')">NL</button>`)
+    expect((html.match(/<a href="\/blog"/g) ?? []).length, 'blog links in desktop + mobile nav').toBe(2)
+  })
 })

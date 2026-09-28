@@ -42,8 +42,14 @@ function zetTaal(t){
   try { localStorage.setItem('wald-taal', t); } catch(e){}
 }
 try {
-  const bewaard = localStorage.getItem('wald-taal');
-  if (bewaard === 'nl' || bewaard === 'en') zetTaal(bewaard);
+  // Pagina's met een vaste taal (de blog) negeren de bewaarde voorkeur en
+  // onthouden juist hun eigen taal, zodat de rest van de site daarna meegaat.
+  const vast = document.documentElement.dataset.langFixed;
+  if (vast === 'nl' || vast === 'en') localStorage.setItem('wald-taal', vast);
+  else {
+    const bewaard = localStorage.getItem('wald-taal');
+    if (bewaard === 'nl' || bewaard === 'en') zetTaal(bewaard);
+  }
 } catch(e){}
 
 let vorigeFocusVoorMenu = null;

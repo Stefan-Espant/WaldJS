@@ -2,52 +2,41 @@
 import Nav from '../components/Nav.wald'
 import Footer from '../components/Footer.wald'
 import CanopyPing from '../components/CanopyPing.wald'
-const { title, description, canonicalPath, pond } = $$props
-const canonicalUrl = 'https://waldjs.eu' + canonicalPath
-const ogImage = 'https://waldjs.eu/assets/og-image.png'
+import { SITE_URL, DEFAULT_OG_IMAGE, LANG_BOOTSTRAP_SCRIPT, SOFTWARE_APPLICATION_JSON_LD, alternateLinksHtml, jsonLdTag, rssLinkHtml } from '../lib/head'
+// lang: set only on pages whose URL fixes the language (the blog). Then the
+// HTML is correct without JS and the localStorage bootstrap is left out.
+const { title, description, canonicalPath, pond, lang, alternates, langLinks, ogImage, ogType, jsonLd, rss } = $$props
+const canonicalUrl = SITE_URL + canonicalPath
+const ogImageUrl = ogImage ?? DEFAULT_OG_IMAGE
+const htmlLang = lang ?? 'nl'
+const fixedLang = lang ?? ''
+const bootstrapScript = new SafeHtml(lang ? '' : LANG_BOOTSTRAP_SCRIPT)
+const headLinks = new SafeHtml([alternateLinksHtml(alternates), rssLinkHtml(rss)].filter(Boolean).join('\n'))
+const structuredData = new SafeHtml(jsonLdTag(jsonLd ?? SOFTWARE_APPLICATION_JSON_LD))
 ---
 <!DOCTYPE html>
-<html lang="nl" data-lang="nl">
+<html lang={htmlLang} data-lang={htmlLang} data-lang-fixed={fixedLang}>
 <head>
 <meta charset="UTF-8">
-<script data-wald-no-hoist>try{var t=localStorage.getItem('wald-taal');if(t==='nl'||t==='en'){document.documentElement.dataset.lang=t;document.documentElement.lang=t;}}catch(e){}</script>
+{bootstrapScript}
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{title}</title>
 <meta name="description" content={description}>
 <meta property="og:title" content={title}>
 <meta property="og:description" content={description}>
-<meta property="og:type" content="website">
+<meta property="og:type" content={ogType ?? 'website'}>
 <meta property="og:site_name" content="WaldJS">
 <link rel="canonical" href={canonicalUrl}>
+{headLinks}
 <meta property="og:url" content={canonicalUrl}>
-<meta property="og:image" content={ogImage}>
+<meta property="og:image" content={ogImageUrl}>
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content={ogImage}>
+<meta name="twitter:image" content={ogImageUrl}>
 <meta name="theme-color" content="#023B2D">
 <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  "name": "WaldJS",
-  "description": "WaldJS is een content-first webframework voor razendsnelle, statische websites. Schrijf .wald-bestanden en WaldJS compileert ze tot een statische site.",
-  "applicationCategory": "DeveloperApplication",
-  "operatingSystem": "Cross-platform",
-  "url": "https://waldjs.eu/",
-  "author": {
-    "@type": "Organization",
-    "name": "WaldJS",
-    "url": "https://github.com/Stefan-Espant/WaldJS"
-  },
-  "offers": {
-    "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "USD"
-  }
-}
-</script>
+{structuredData}
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-9EZEXC8XYQ"></script>
 <script>
@@ -94,7 +83,7 @@ gtag('config', 'G-9EZEXC8XYQ');
 <div id="groeibalk" aria-hidden="true"></div>
 <div id="groeiblad" aria-hidden="true"></div>
 <div id="cursorvlieg" aria-hidden="true"></div>
-<Nav canonicalPath={canonicalPath} />
+<Nav canonicalPath={canonicalPath} lang={lang} langLinks={langLinks} />
 <main id="main" tabindex="-1">
 {pond}
 </main>
