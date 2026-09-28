@@ -184,6 +184,9 @@ describe('marketing site build', () => {
       'dist/vs/eleventy/index.html',
       'dist/changelog/index.html',
       'dist/changelog/roots/index.html',
+      'dist/blog/index.html',
+      'dist/en/blog/content-locales/index.html',
+      'dist/blog/tag/release/index.html',
     ]
     for (const page of pages) {
       const html = readFileSync(join(ROOT, page), 'utf-8')
@@ -255,5 +258,53 @@ describe('marketing site build', () => {
     expect(html).toContain(`localStorage.getItem('wald-taal')`)
     expect(html).toContain(`<button id="btn-nl" class="actief" onclick="zetTaal('nl')">NL</button>`)
     expect((html.match(/<a href="\/blog"/g) ?? []).length, 'blog links in desktop + mobile nav').toBe(2)
+  })
+
+  it('genereert de blog in NL en EN: index, post en tagpagina', () => {
+    for (const page of [
+      'dist/blog/index.html',
+      'dist/en/blog/index.html',
+      'dist/blog/content-locales/index.html',
+      'dist/en/blog/content-locales/index.html',
+      'dist/blog/tag/release/index.html',
+      'dist/en/blog/tag/release/index.html',
+    ]) {
+      expect(existsSync(join(ROOT, page)), `missing ${page}`).toBe(true)
+    }
+    const nlIndex = readFileSync(join(ROOT, 'dist/blog/index.html'), 'utf-8')
+    expect(nlIndex).toContain('<h2><a href="/blog/content-locales">')
+    const enIndex = readFileSync(join(ROOT, 'dist/en/blog/index.html'), 'utf-8')
+    expect(enIndex).toContain('<h2><a href="/en/blog/content-locales">')
+  })
+
+  it('zet de taal vast in de HTML van blogpagina\'s, zonder taal-bootstrap', () => {
+    const en = readFileSync(join(ROOT, 'dist/en/blog/content-locales/index.html'), 'utf-8')
+    expect(en).toContain('<html lang="en" data-lang="en" data-lang-fixed="en">')
+    expect(en).not.toContain(`localStorage.getItem('wald-taal')`)
+    const nl = readFileSync(join(ROOT, 'dist/blog/content-locales/index.html'), 'utf-8')
+    expect(nl).toContain('<html lang="nl" data-lang="nl" data-lang-fixed="nl">')
+  })
+
+  it('koppelt NL- en EN-versies via hreflang en de taalschakelaar', () => {
+    const nl = readFileSync(join(ROOT, 'dist/blog/content-locales/index.html'), 'utf-8')
+    expect(nl).toContain('<link rel="alternate" hreflang="en" href="https://waldjs.eu/en/blog/content-locales">')
+    expect(nl).toContain('<link rel="alternate" hreflang="x-default" href="https://waldjs.eu/blog/content-locales">')
+    expect(nl).toContain('<a id="btn-en" href="/en/blog/content-locales" hreflang="en"')
+    expect(nl).toContain('<link rel="alternate" type="application/rss+xml" title="WaldJS Blog" href="/blog/rss.xml">')
+  })
+
+  it('geeft een blogpost een cover, og:image en BlogPosting JSON-LD', () => {
+    const en = readFileSync(join(ROOT, 'dist/en/blog/content-locales/index.html'), 'utf-8')
+    expect(en).toContain('<meta property="og:type" content="article">')
+    expect(en).toContain('content="https://waldjs.eu/assets/blog/content-locales.jpg"')
+    expect(en).toMatch(/<img[^>]*srcset="[^"]*\.webp/)
+    const ld = en.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)
+    expect(JSON.parse(ld![1])['@type']).toBe('BlogPosting')
+    expect(existsSync(join(ROOT, 'dist/assets/blog/content-locales.jpg'))).toBe(true)
+  })
+
+  it('zet aria-current op de Blog-link van de blog-index', () => {
+    const html = readFileSync(join(ROOT, 'dist/en/blog/index.html'), 'utf-8')
+    expect((html.match(/href="\/en\/blog"[^>]*aria-current="page"/g) ?? []).length).toBe(2)
   })
 })

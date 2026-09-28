@@ -1,0 +1,78 @@
+/* ---------- blog ---------- */
+.blog-kaart h2 {
+  margin: 0 0 .5rem;
+  font-size: 1.5rem
+}
+
+.blog-kaart h2 a {
+  color: inherit;
+  text-decoration: none
+}
+
+.blog-kaart h2 a:hover,
+.blog-kaart h2 a:focus-visible {
+  text-decoration: underline
+}
+
+.blog-cover img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: .75rem;
+  margin-bottom: 1rem
+}
+
+.blog-post .blog-cover {
+  max-width: 47.5rem;
+  margin: 0 auto 1.5rem
+}
+
+.blog-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem;
+  color: var(--wit-zacht);
+  font-size: .9rem
+}
+
+.blog-avatar {
+  border-radius: 50%
+}
+
+.blog-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .375rem;
+  list-style: none;
+  margin: 0;
+  padding: 0
+}
+
+.blog-tags a {
+  color: var(--wit-zacht);
+  text-decoration: none;
+  border: 0.0625rem solid rgba(255, 255, 255, .18);
+  border-radius: 999rem;
+  padding: .125rem .5rem
+}
+
+.blog-tags a:hover,
+.blog-tags a:focus-visible {
+  color: var(--wit);
+  border-color: var(--rood)
+}
+
+.blog-body {
+  max-width: 47.5rem;
+  margin: 0 auto 1.5rem;
+  line-height: 1.7
+}
+
+.blog-body h2 {
+  margin-top: 2rem
+}
+
+.blog-body pre {
+  overflow-x: auto
+}
