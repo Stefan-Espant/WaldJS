@@ -17,11 +17,14 @@ const norm = (p: string) => p.replace(/\\/g, '/')
 const CONTENT_SHIM = `declare module 'wald:content' {
   export type Entry = {
     slug: string
+    locale?: string
     data: Record<string, unknown>
     body: string
   }
-  export function getCollection(name: string): Promise<Entry[]>
-  export function getEntry(collection: string, slug: string): Promise<Entry>
+  export type LocaleOptions = { locale?: string }
+  export function getCollection(name: string, options?: LocaleOptions): Promise<Entry[]>
+  export function getEntry(collection: string, slug: string, options?: LocaleOptions): Promise<Entry>
+  export function getTranslations(collection: string, slug: string): Promise<Record<string, Entry>>
 }
 `
 

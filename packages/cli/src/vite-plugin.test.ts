@@ -123,6 +123,13 @@ describe('vite-plugin-wald-content', () => {
     expect(code).toContain('export const getEntry')
   })
 
+  it('forwards locale options and exports getTranslations from wald:content', async () => {
+    const code = await callHook('vite-plugin-wald-content', 'load', '\0wald:content')
+    expect(code).toContain('export const getCollection = (name, options) => _rc(name, contentDir, options)')
+    expect(code).toContain('export const getEntry = (collection, slug, options) => _re(collection, slug, contentDir, options)')
+    expect(code).toContain('export const getTranslations = (collection, slug) => _rt(collection, slug, contentDir)')
+  })
+
   it('returns undefined for other virtual ids in load', async () => {
     const code = await callHook('vite-plugin-wald-content', 'load', '\0other:module')
     expect(code).toBeUndefined()
