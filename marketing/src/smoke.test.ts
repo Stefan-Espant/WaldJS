@@ -303,6 +303,12 @@ describe('marketing site build', () => {
     expect(existsSync(join(ROOT, 'dist/assets/blog/content-locales.jpg'))).toBe(true)
   })
 
+  it('stijlt de taalschakelaar voor knoppen en links (minifier breekt `.x :is()`)', () => {
+    const css = readFileSync(join(ROOT, 'dist/assets/css/site.css'), 'utf-8')
+    expect(css).toContain('.lang-switch button.actief,.lang-switch a.actief{')
+    expect(css).not.toMatch(/\.lang-switch:is\(/)
+  })
+
   it('zet aria-current op de Blog-link van de blog-index', () => {
     const html = readFileSync(join(ROOT, 'dist/en/blog/index.html'), 'utf-8')
     expect((html.match(/href="\/en\/blog"[^>]*aria-current="page"/g) ?? []).length).toBe(2)

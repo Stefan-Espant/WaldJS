@@ -76,3 +76,26 @@
 .blog-body pre {
   overflow-x: auto
 }
+
+.log-kaart .blog-tags li {
+  padding-left: 0;
+  margin-bottom: 0
+}
+
+.log-kaart .blog-tags li::before {
+  content: none
+}
+
+.sectiekop .blog-meta {
+  justify-content: center
+}
+
+.blog-body p,
+.blog-body pre {
+  margin: 0 0 1rem
+}
+
+.blog-post article > p {
+  max-width: 47.5rem;
+  margin: 0 auto
+}

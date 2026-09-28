@@ -47,7 +47,8 @@
     font-size: .92rem
   }
 
-  .lang-switch button {
+  .lang-switch button,
+  .lang-switch a {
     font-size: .72rem;
     padding: 0.25rem 0.5rem
   }
