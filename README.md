@@ -107,10 +107,35 @@ Each entry has three fields:
 ```ts
 type Entry = {
   slug: string                   // filename without .md
+  locale?: string                // locale directory (see Locales below), if any
   data: Record<string, unknown>  // frontmatter fields
   body: string                   // rendered HTML
 }
 ```
+
+### Locales
+
+A collection can hold one subdirectory per language. Any subdirectory named like a locale code (`nl`, `en`, `en-GB`) is a locale; entries with the same file name in different locale directories are translations of each other:
+
+```
+content/
+└── blog/
+    ├── nl/
+    │   └── hello.md
+    └── en/
+        └── hello.md
+```
+
+```wald
+---
+import { getCollection, getEntry, getTranslations } from 'wald:content'
+const posts = await getCollection('blog', { locale: 'en' })   // only content/blog/en/
+const post = await getEntry('blog', 'hello', { locale: 'en' })
+const translations = await getTranslations('blog', 'hello')    // { nl: Entry, en: Entry }
+---
+```
+
+Each entry carries its `locale`. `getCollection('blog')` without options returns every entry in every locale. `getEntry` on a collection with locales needs `{ locale }` and throws a clear error without it. Collections without locale directories work exactly as before. Locale-prefixed routes are not generated for you (yet) — create them as pages, e.g. `src/pages/en/blog/[slug].wald`.
 
 ---
 
