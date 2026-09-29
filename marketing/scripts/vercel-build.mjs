@@ -44,3 +44,10 @@ execFileSync(
   [join(marketingDir, 'scripts', 'build-sitemap.mjs'), marketingDir, 'https://waldjs.eu'],
   { cwd: marketingDir, stdio: 'inherit' },
 )
+
+// RSS-feeds per taal uit de blog-collectie.
+execFileSync(
+  node,
+  [join(marketingDir, 'scripts', 'build-rss.mjs'), marketingDir, 'https://waldjs.eu'],
+  { cwd: marketingDir, stdio: 'inherit' },
+)

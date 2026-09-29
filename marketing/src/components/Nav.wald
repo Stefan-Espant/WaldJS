@@ -1,7 +1,11 @@
 ---
-const { canonicalPath } = $$props
+import { langSwitchHtml } from '../lib/head'
+const { canonicalPath, lang, langLinks } = $$props
 const changelogCurrent = canonicalPath === '/changelog' ? 'page' : 'false'
 const waaromCurrent = canonicalPath === '/waarom' ? 'page' : 'false'
+const blogHref = lang === 'en' ? '/en/blog' : '/blog'
+const blogCurrent = canonicalPath === blogHref ? 'page' : 'false'
+const langSwitch = new SafeHtml(langSwitchHtml(lang, langLinks))
 ---
 <nav>
   <a class="brand" href="/#top" aria-label="WaldJS">
@@ -16,17 +20,13 @@ const waaromCurrent = canonicalPath === '/waarom' ? 'page' : 'false'
     <li class="verberg"><a href="/#features">Features</a></li>
     <li class="verberg"><a href="/#benchmarks">Benchmarks</a></li>
     <li class="verberg"><a href="/changelog" aria-current={changelogCurrent}>Changelog</a></li>
+    <li class="verberg"><a href={blogHref} aria-current={blogCurrent}>Blog</a></li>
     <li class="verberg"><a href="/waarom" aria-current={waaromCurrent}><span class="nl">Waarom WaldJS</span><span class="en">Why WaldJS</span></a></li>
   </ul>
   <ul class="rechts-kant">
     <li><button id="btn-geluid" class="dagnacht" onclick="zetGeluid()" aria-label="Bosgeluiden aan/uit">🔇</button></li>
     <li><button id="btn-dagnacht" class="dagnacht" onclick="zetDagNacht()" aria-label="Dag / nacht">🌙</button></li>
-    <li>
-      <div class="lang-switch" role="group" aria-label="Taal / Language">
-        <button id="btn-nl" class="actief" onclick="zetTaal('nl')">NL</button>
-        <button id="btn-en" onclick="zetTaal('en')">EN</button>
-      </div>
-    </li>
+    <li>{langSwitch}</li>
     <li><a class="btn" href="https://github.com/Stefan-Espant/WaldJS/" target="_blank" rel="noopener">GitHub ↗</a></li>
   </ul>
   <button class="hamburger" onclick="toggleMenu(true)" aria-label="Menu">☰</button>
@@ -40,6 +40,7 @@ const waaromCurrent = canonicalPath === '/waarom' ? 'page' : 'false'
   <a href="/#benchmarks" onclick="toggleMenu(false)">Benchmarks</a>
   <a href="/#roadmap" onclick="toggleMenu(false)">Roadmap</a>
   <a href="/changelog" onclick="toggleMenu(false)" aria-current={changelogCurrent}>Changelog</a>
+  <a href={blogHref} onclick="toggleMenu(false)" aria-current={blogCurrent}>Blog</a>
   <a href="/waarom" onclick="toggleMenu(false)" aria-current={waaromCurrent}><span class="nl">Waarom WaldJS</span><span class="en">Why WaldJS</span></a>
   <a href="https://github.com/Stefan-Espant/WaldJS/" target="_blank" rel="noopener" onclick="toggleMenu(false)">GitHub ↗</a>
 </div>

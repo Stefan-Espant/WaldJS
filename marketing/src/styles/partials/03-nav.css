@@ -80,7 +80,8 @@ nav ul a:hover {
     0 0.625rem 1.125rem rgba(0, 0, 0, .12);
 }
 
-.lang-switch button {
+.lang-switch button,
+.lang-switch a {
   background: none;
   border: none;
   color: var(--wit-zacht);
@@ -94,14 +95,17 @@ nav ul a:hover {
     background var(--byz-duration-fast) var(--byz-ease-out),
     color var(--byz-duration-fast) var(--byz-ease-out),
     box-shadow var(--byz-duration-fast) var(--byz-ease-out);
+  text-decoration: none;
 }
 
-.lang-switch button:hover {
+.lang-switch button:hover,
+.lang-switch a:hover {
   color: var(--wit);
   background: rgba(255, 255, 255, .06)
 }
 
-.lang-switch button:focus-visible {
+.lang-switch button:focus-visible,
+.lang-switch a:focus-visible {
   outline: none;
   position: relative;
   z-index: 1;
@@ -111,7 +115,8 @@ nav ul a:hover {
     0 0 0 0.375rem rgba(255, 51, 71, .22);
 }
 
-.lang-switch button.actief {
+.lang-switch button.actief,
+.lang-switch a.actief {
   background: linear-gradient(180deg, #FF5B6C 0%, #FF3347 58%, #D91A31 100%);
   color: var(--wit);
   box-shadow:

@@ -5,12 +5,13 @@
   "scripts": {
     "build:css": "node scripts/build-css.js dist",
     "dev": "node scripts/build-css.js public --watch",
-    "build": "wald build && node scripts/build-css.js dist && node scripts/build-sitemap.mjs . https://waldjs.eu",
+    "build": "wald build && node scripts/build-css.js dist && node scripts/build-sitemap.mjs . https://waldjs.eu && node scripts/build-rss.mjs . https://waldjs.eu",
     "test": "vitest run"
   },
   "dependencies": {
     "@waldjs/canopy": "workspace:*",
     "@waldjs/cli": "workspace:*",
+    "@waldjs/content": "workspace:*",
     "@waldjs/runtime": "workspace:*"
   },
   "devDependencies": {

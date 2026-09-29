@@ -1,0 +1,10 @@
+---
+import BlogPostPage from '../../../components/BlogPostPage.wald'
+import { getCollection } from 'wald:content'
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', { locale: 'en' })
+  return posts.map(post => ({ params: { slug: post.slug } }))
+}
+---
+<BlogPostPage locale="en" slug={$$props.slug} />

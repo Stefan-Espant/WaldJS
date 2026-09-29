@@ -1,0 +1,27 @@
+---
+import Layout from '../layouts/Layout.wald'
+import BlogList from './BlogList.wald'
+import { getCollection } from 'wald:content'
+import { toPostMeta, blogPath, rssPath, t } from '../lib/blog'
+const { locale } = $$props
+const posts = (await getCollection('blog', { locale })).map(toPostMeta)
+const paths = { nl: blogPath('nl'), en: blogPath('en') }
+---
+<Layout
+  title="Blog — WaldJS"
+  description={t(locale, 'intro')}
+  canonicalPath={blogPath(locale)}
+  lang={locale}
+  alternates={paths}
+  langLinks={paths}
+  rss={rssPath(locale)}
+>
+  <section id="blog" class="pagina-intro">
+    <div class="sectiekop">
+      <span class="tag">{t(locale, 'tag')}</span>
+      <h1>{t(locale, 'title')}</h1>
+      <p>{t(locale, 'intro')}</p>
+    </div>
+    <BlogList posts={posts} locale={locale} />
+  </section>
+</Layout>

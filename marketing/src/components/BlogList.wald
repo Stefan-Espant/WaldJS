@@ -1,0 +1,16 @@
+---
+import { Image } from 'wald:image'
+import { postCardHtml, sortByDate } from '../lib/blog'
+const { posts, locale } = $$props
+const cards = await Promise.all(
+  sortByDate(posts).map(async post => {
+    const cover = post.cover
+      ? await Image.render({ src: post.cover, alt: post.coverAlt, widths: [400, 800], sizes: '(max-width: 47.5rem) 100vw, 47.5rem' })
+      : ''
+    return postCardHtml(post, locale, cover)
+  }),
+)
+---
+<div class="changelog blog-lijst">
+  {new SafeHtml(cards.join(''))}
+</div>

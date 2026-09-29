@@ -57,6 +57,9 @@ importers:
       '@waldjs/cli':
         specifier: workspace:*
         version: link:../packages/cli
+      '@waldjs/content':
+        specifier: workspace:*
+        version: link:../packages/content
       '@waldjs/runtime':
         specifier: workspace:*
         version: link:../packages/runtime
