@@ -7,31 +7,31 @@ if (location.hash){
   const nav = performance.getEntriesByType('navigation')[0];
   const isHardRefresh = nav ? nav.type === 'reload' : true; // conservatieve fallback als de API ontbreekt
   if (isHardRefresh){
-    const schoneUrl = location.pathname + location.search;
-    const zetBovenaan = () => window.scrollTo(0, 0);
-    history.replaceState(null, '', schoneUrl);
-    zetBovenaan();
+    const cleanUrl = location.pathname + location.search;
+    const scrollToTop = () => window.scrollTo(0, 0);
+    history.replaceState(null, '', cleanUrl);
+    scrollToTop();
     // history.scrollRestoration='manual' voorkomt de restauratie niet altijd op tijd
     // bij een harde refresh — Chrome herstelt de oude scrollpositie soms nog een
     // paar frames later. Herhaal de reset daarom een tijdje via rAF om die late,
     // niet van ons komende scrollTo altijd te overschrijven.
-    const eind = performance.now() + 800;
-    (function blijfBovenaan(){
-      zetBovenaan();
-      if (performance.now() < eind) requestAnimationFrame(blijfBovenaan);
+    const end = performance.now() + 800;
+    (function stayAtTop(){
+      scrollToTop();
+      if (performance.now() < end) requestAnimationFrame(stayAtTop);
     })();
     // { once: true }: dit mag alleen de late restauratie van DEZE harde
     // refresh opvangen — niet een latere pageshow (bv. bfcache-restore na
     // "terug" in de browser), anders resetten we dan onterecht ook.
-    window.addEventListener('pageshow', zetBovenaan, { once: true });
+    window.addEventListener('pageshow', scrollToTop, { once: true });
   }
 }
 /* Soepel scrollen naar secties zonder dat de anker in de URL komt */
 document.addEventListener('click', e => {
   const a = e.target.closest('a[href^="#"]');
   if (!a) return;
-  const doel = document.querySelector(a.getAttribute('href'));
-  if (doel){ e.preventDefault(); doel.scrollIntoView({ behavior:'smooth' }); }
+  const target = document.querySelector(a.getAttribute('href'));
+  if (target){ e.preventDefault(); target.scrollIntoView({ behavior:'smooth' }); }
 });
 
 function setLanguage(t){
@@ -44,11 +44,11 @@ function setLanguage(t){
 try {
   // Pagina's met een vaste taal (de blog) negeren de bewaarde voorkeur en
   // onthouden juist hun eigen taal, zodat de rest van de site daarna meegaat.
-  const vast = document.documentElement.dataset.langFixed;
-  if (vast === 'nl' || vast === 'en') localStorage.setItem('wald-taal', vast);
+  const fixedLang = document.documentElement.dataset.langFixed;
+  if (fixedLang === 'nl' || fixedLang === 'en') localStorage.setItem('wald-taal', fixedLang);
   else {
-    const bewaard = localStorage.getItem('wald-taal');
-    if (bewaard === 'nl' || bewaard === 'en') setLanguage(bewaard);
+    const savedLang = localStorage.getItem('wald-taal');
+    if (savedLang === 'nl' || savedLang === 'en') setLanguage(savedLang);
   }
 } catch(e){}
 
@@ -64,8 +64,8 @@ function toggleMenu(open){
   menu.toggleAttribute('inert', !open);
   if (open){
     previousFocusBeforeMenu = document.activeElement;
-    const sluitknop = menu.querySelector('.close');
-    if (sluitknop) sluitknop.focus();
+    const closeButton = menu.querySelector('.close');
+    if (closeButton) closeButton.focus();
     document.addEventListener('keydown', trapFocusInMenu);
   } else {
     document.removeEventListener('keydown', trapFocusInMenu);
@@ -80,16 +80,16 @@ function trapFocusInMenu(e){
   }
   if (e.key !== 'Tab') return;
   const menu = document.getElementById('mobile-menu');
-  const focusbaar = Array.from(menu.querySelectorAll('a, button'));
-  if (focusbaar.length === 0) return;
-  const eerste = focusbaar[0];
-  const laatste = focusbaar[focusbaar.length - 1];
-  if (e.shiftKey && document.activeElement === eerste){
+  const focusable = Array.from(menu.querySelectorAll('a, button'));
+  if (focusable.length === 0) return;
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+  if (e.shiftKey && document.activeElement === first){
     e.preventDefault();
-    laatste.focus();
-  } else if (!e.shiftKey && document.activeElement === laatste){
+    last.focus();
+  } else if (!e.shiftKey && document.activeElement === last){
     e.preventDefault();
-    eerste.focus();
+    first.focus();
   }
 }
 
@@ -104,11 +104,11 @@ function trapFocusInMenu(e){
     g.setAttribute('fill', 'none');
     g.setAttribute('stroke-linecap', 'round');
     // hoofdstam
-    const stam = document.createElementNS(NS, 'path');
-    stam.setAttribute('d', 'M100 300 C 96 220, 110 140, 94 24');
-    stam.setAttribute('stroke', '#7FD8BE');
-    stam.setAttribute('stroke-width', '3');
-    g.appendChild(stam);
+    const stem = document.createElementNS(NS, 'path');
+    stem.setAttribute('d', 'M100 300 C 96 220, 110 140, 94 24');
+    stem.setAttribute('stroke', '#7FD8BE');
+    stem.setAttribute('stroke-width', '3');
+    g.appendChild(stem);
     // bladveren langs de stam
     const N = 16;
     for (let i = 0; i < N; i++){
@@ -116,21 +116,21 @@ function trapFocusInMenu(e){
       const y = 292 - t * 258;
       const x = 100 + Math.sin(t * 3.1) * 7 - t * 4;
       const len = 54 * (1 - t * 0.82) + 6;
-      [-1, 1].forEach(kant => {
+      [-1, 1].forEach(side => {
         const p = document.createElementNS(NS, 'path');
-        const ex = x + kant * len * 0.95;
+        const ex = x + side * len * 0.95;
         const ey = y - len * (0.35 + t * 0.3);
-        p.setAttribute('d', `M${x} ${y} Q ${x + kant * len * 0.55} ${y - len * 0.1}, ${ex.toFixed(1)} ${ey.toFixed(1)}`);
+        p.setAttribute('d', `M${x} ${y} Q ${x + side * len * 0.55} ${y - len * 0.1}, ${ex.toFixed(1)} ${ey.toFixed(1)}`);
         p.setAttribute('stroke', i % 2 ? '#7FD8BE' : '#4FAE8F');
         p.setAttribute('stroke-width', (2.4 - t * 1.3).toFixed(2));
         g.appendChild(p);
         // kleine zijblaadjes
-        const zb = document.createElementNS(NS, 'path');
-        const mx = x + kant * len * 0.45, my = y - len * 0.12;
-        zb.setAttribute('d', `M${mx.toFixed(1)} ${my.toFixed(1)} l ${(kant * len * 0.18).toFixed(1)} ${(-len * 0.28).toFixed(1)}`);
-        zb.setAttribute('stroke', '#3E9578');
-        zb.setAttribute('stroke-width', (1.6 - t * 0.9).toFixed(2));
-        g.appendChild(zb);
+        const leaflet = document.createElementNS(NS, 'path');
+        const mx = x + side * len * 0.45, my = y - len * 0.12;
+        leaflet.setAttribute('d', `M${mx.toFixed(1)} ${my.toFixed(1)} l ${(side * len * 0.18).toFixed(1)} ${(-len * 0.28).toFixed(1)}`);
+        leaflet.setAttribute('stroke', '#3E9578');
+        leaflet.setAttribute('stroke-width', (1.6 - t * 0.9).toFixed(2));
+        g.appendChild(leaflet);
       });
     }
     svg.appendChild(g);
@@ -173,27 +173,27 @@ function trapFocusInMenu(e){
    ============================================================ */
 (function(){
   const cmdEl = document.getElementById('term-text');
-  const uitEl = document.getElementById('term-output');
-  if (!cmdEl || !uitEl) return;
+  const outputEl = document.getElementById('term-output');
+  if (!cmdEl || !outputEl) return;
   const cmd = 'wald plant my-forest';
-  const regels = [
+  const lines = [
     '🌱  Planting forest in ./my-forest',
     '🌲  4 trees · 2 branches · 1 canopy',
     '✓   Done in 0.4s — happy growing!'
   ];
   let i = 0, r = 0;
-  function tik(){
+  function tick(){
     cmdEl.textContent = '$ ' + cmd.slice(0, i);
-    if (i <= cmd.length){ i++; setTimeout(tik, 50 + Math.random() * 75); }
-    else setTimeout(toon, 500);
+    if (i <= cmd.length){ i++; setTimeout(tick, 50 + Math.random() * 75); }
+    else setTimeout(show, 500);
   }
-  function toon(){
-    if (r < regels.length){
-      uitEl.textContent += regels[r] + '\n';
-      r++; setTimeout(toon, 430);
+  function show(){
+    if (r < lines.length){
+      outputEl.textContent += lines[r] + '\n';
+      r++; setTimeout(show, 430);
     }
   }
-  setTimeout(tik, 1400);
+  setTimeout(tick, 1400);
 })();
 
 /* ============================================================
@@ -214,8 +214,8 @@ const species = ["oak", "beech", "pine"]
 </ul>`;
   function compile(source){
     let fm = '', tpl = source;
-    const delen = source.split(/^---\s*$/m);
-    if (delen.length >= 3){ fm = delen[1]; tpl = delen.slice(2).join('---'); }
+    const parts = source.split(/^---\s*$/m);
+    if (parts.length >= 3){ fm = parts[1]; tpl = parts.slice(2).join('---'); }
     const vars = {};
     try {
       const code = fm.replace(/\b(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=/g, 'vars.$1 =');
@@ -237,17 +237,17 @@ const species = ["oak", "beech", "pine"]
    Growth bar + scrim (scroll progress & readability)
    ============================================================ */
 (function(){
-  const balk = document.getElementById('growth-bar');
-  const blad = document.getElementById('growth-leaf');
+  const bar = document.getElementById('growth-bar');
+  const leaf = document.getElementById('growth-leaf');
   const scrim = document.getElementById('scrim');
   function update(){
     const h = document.documentElement;
     const max = h.scrollHeight - h.clientHeight;
     const p = max > 0 ? h.scrollTop / max : 0;
-    if (balk) balk.style.width = (p * 100) + '%';
-    if (blad){
-      blad.style.left = (p * 100) + 'vw';
-      blad.style.opacity = p > 0.004 ? 1 : 0;
+    if (bar) bar.style.width = (p * 100) + '%';
+    if (leaf){
+      leaf.style.left = (p * 100) + 'vw';
+      leaf.style.opacity = p > 0.004 ? 1 : 0;
     }
     // overlay wordt zichtbaar zodra je voorbij de hero scrolt
     if (scrim){
@@ -264,22 +264,22 @@ const species = ["oak", "beech", "pine"]
    Cursor firefly in the hero
    ============================================================ */
 (function(){
-  const vlieg = document.getElementById('cursor-firefly');
+  const firefly = document.getElementById('cursor-firefly');
   const hero = document.querySelector('header');
-  if (!vlieg || !hero) return;
+  if (!firefly || !hero) return;
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   let mx = innerWidth / 2, my = innerHeight / 2, x = mx, y = my;
   window.addEventListener('pointermove', e => {
     mx = e.clientX; my = e.clientY;
     const r = hero.getBoundingClientRect();
-    vlieg.style.opacity = (e.clientY < r.bottom && r.bottom > 0) ? 1 : 0;
+    firefly.style.opacity = (e.clientY < r.bottom && r.bottom > 0) ? 1 : 0;
   });
-  (function volg(){
+  (function follow(){
     x += (mx - x) * 0.1;
     y += (my - y) * 0.1;
     const t = performance.now() / 1000;
-    vlieg.style.transform = 'translate(' + (x + Math.sin(t * 3) * 7 - 6) + 'px,' + (y + Math.cos(t * 2.2) * 7 - 6) + 'px)';
-    requestAnimationFrame(volg);
+    firefly.style.transform = 'translate(' + (x + Math.sin(t * 3) * 7 - 6) + 'px,' + (y + Math.cos(t * 2.2) * 7 - 6) + 'px)';
+    requestAnimationFrame(follow);
   })();
 })();
 
@@ -306,37 +306,37 @@ const species = ["oak", "beech", "pine"]
    vogels (dag) en af en toe een koekoek. Standaard uit.
    ============================================================ */
 (function(){
-  const knop = document.getElementById('btn-sound');
+  const button = document.getElementById('btn-sound');
   const AC = window.AudioContext || window.webkitAudioContext;
-  if (!knop) return;
-  if (!AC){ knop.style.display = 'none'; return; } // progressive enhancement
-  let ctx = null, meester = null, aan = false;
-  const dag = () => (window.WaldDag ? window.WaldDag.v : 0);
+  if (!button) return;
+  if (!AC){ button.style.display = 'none'; return; } // progressive enhancement
+  let ctx = null, masterGain = null, isOn = false;
+  const day = () => (window.WaldDay ? window.WaldDay.v : 0);
 
-  function zorgVoorCtx(){
+  function ensureContext(){
     if (ctx) return;
     ctx = new AC();
-    meester = ctx.createGain();
-    meester.gain.value = 0;
-    meester.connect(ctx.destination);
+    masterGain = ctx.createGain();
+    masterGain.gain.value = 0;
+    masterGain.connect(ctx.destination);
 
     /* wind: geluste bruine ruis door een lowpass, met trage vlagen */
-    const duurS = 3;
-    const buf = ctx.createBuffer(1, ctx.sampleRate * duurS, ctx.sampleRate);
+    const durationSec = 3;
+    const buf = ctx.createBuffer(1, ctx.sampleRate * durationSec, ctx.sampleRate);
     const data = buf.getChannelData(0);
     let v = 0;
     for (let i = 0; i < data.length; i++){
       v = v * 0.985 + (Math.random() * 2 - 1) * 0.03;
       data[i] = v * 2.5;
     }
-    const bron = ctx.createBufferSource();
-    bron.buffer = buf; bron.loop = true;
+    const source = ctx.createBufferSource();
+    source.buffer = buf; source.loop = true;
     const filt = ctx.createBiquadFilter();
     filt.type = 'lowpass'; filt.frequency.value = 320; filt.Q.value = 0.4;
     const windGain = ctx.createGain();
     windGain.gain.value = 0.06;
-    bron.connect(filt); filt.connect(windGain); windGain.connect(meester);
-    bron.start();
+    source.connect(filt); filt.connect(windGain); windGain.connect(masterGain);
+    source.start();
     const lfo = ctx.createOscillator();
     lfo.frequency.value = 0.06;
     const lfoGain = ctx.createGain();
@@ -344,76 +344,76 @@ const species = ["oak", "beech", "pine"]
     lfo.connect(lfoGain); lfoGain.connect(windGain.gain);
     lfo.start();
 
-    krekelLus(); vogelLus(); koekoekLus();
+    cricketLoop(); birdLoop(); cuckooLoop();
   }
 
   /* hulpjes */
-  function piep(t0, f0, f1, duur, vol, type){
+  function chirp(t0, f0, f1, duration, volume, type){
     const o = ctx.createOscillator();
     o.type = type || 'sine';
     o.frequency.setValueAtTime(f0, t0);
-    o.frequency.exponentialRampToValueAtTime(Math.max(f1, 1), t0 + duur);
+    o.frequency.exponentialRampToValueAtTime(Math.max(f1, 1), t0 + duration);
     const g = ctx.createGain();
     g.gain.setValueAtTime(0.0001, t0);
-    g.gain.exponentialRampToValueAtTime(vol, t0 + duur * 0.25);
-    g.gain.exponentialRampToValueAtTime(0.0001, t0 + duur);
-    o.connect(g); g.connect(meester);
-    o.start(t0); o.stop(t0 + duur + 0.05);
+    g.gain.exponentialRampToValueAtTime(volume, t0 + duration * 0.25);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + duration);
+    o.connect(g); g.connect(masterGain);
+    o.start(t0); o.stop(t0 + duration + 0.05);
   }
 
   /* krekels — alleen 's nachts */
-  function krekelLus(){
-    if (aan){
-      const sterkte = (1 - dag());
-      if (sterkte > 0.15){
+  function cricketLoop(){
+    if (isOn){
+      const strength = (1 - day());
+      if (strength > 0.15){
         const n = 5 + Math.floor(Math.random() * 7);
         const basis = 4100 + Math.random() * 500;
         for (let i = 0; i < n; i++){
-          piep(ctx.currentTime + i * 0.048, basis, basis * 0.97, 0.035, 0.028 * sterkte, 'triangle');
+          chirp(ctx.currentTime + i * 0.048, basis, basis * 0.97, 0.035, 0.028 * strength, 'triangle');
         }
       }
     }
-    setTimeout(krekelLus, 600 + Math.random() * 1800);
+    setTimeout(cricketLoop, 600 + Math.random() * 1800);
   }
 
   /* vogels — alleen overdag */
-  function vogelLus(){
-    if (aan && dag() > 0.3){
+  function birdLoop(){
+    if (isOn && day() > 0.3){
       const n = 2 + Math.floor(Math.random() * 4);
       let t0 = ctx.currentTime;
       for (let i = 0; i < n; i++){
         const f = 2200 + Math.random() * 1400;
-        piep(t0, f, f * (0.7 + Math.random() * 0.5), 0.09 + Math.random() * 0.08, 0.035 * dag(), 'sine');
+        chirp(t0, f, f * (0.7 + Math.random() * 0.5), 0.09 + Math.random() * 0.08, 0.035 * day(), 'sine');
         t0 += 0.12 + Math.random() * 0.1;
       }
     }
-    setTimeout(vogelLus, 2500 + Math.random() * 5000);
+    setTimeout(birdLoop, 2500 + Math.random() * 5000);
   }
 
   /* de koekoek — af en toe, dag én nacht (maar zachter in het donker) */
-  function koekoekLus(){
-    if (aan){
-      const vol = 0.05 * (0.4 + 0.6 * dag());
+  function cuckooLoop(){
+    if (isOn){
+      const volume = 0.05 * (0.4 + 0.6 * day());
       const t0 = ctx.currentTime + 0.1;
-      piep(t0, 740, 720, 0.28, vol, 'sine');          // "koe-"
-      piep(t0 + 0.42, 590, 575, 0.34, vol, 'sine');    // "-koek"
+      chirp(t0, 740, 720, 0.28, volume, 'sine');          // "koe-"
+      chirp(t0 + 0.42, 590, 575, 0.34, volume, 'sine');    // "-koek"
       // soms twee keer
       if (Math.random() < 0.4){
-        piep(t0 + 1.15, 740, 720, 0.28, vol * 0.8, 'sine');
-        piep(t0 + 1.57, 590, 575, 0.34, vol * 0.8, 'sine');
+        chirp(t0 + 1.15, 740, 720, 0.28, volume * 0.8, 'sine');
+        chirp(t0 + 1.57, 590, 575, 0.34, volume * 0.8, 'sine');
       }
     }
-    setTimeout(koekoekLus, 18000 + Math.random() * 30000);
+    setTimeout(cuckooLoop, 18000 + Math.random() * 30000);
   }
 
   window.setSound = function(){
-    zorgVoorCtx();
+    ensureContext();
     if (ctx.state === 'suspended') ctx.resume();
-    aan = !aan;
-    knop.textContent = aan ? '🔊' : '🔇';
-    const nu = ctx.currentTime;
-    meester.gain.cancelScheduledValues(nu);
-    meester.gain.setValueAtTime(meester.gain.value, nu);
-    meester.gain.linearRampToValueAtTime(aan ? 0.5 : 0, nu + 1.2);
+    isOn = !isOn;
+    button.textContent = isOn ? '🔊' : '🔇';
+    const now = ctx.currentTime;
+    masterGain.gain.cancelScheduledValues(now);
+    masterGain.gain.setValueAtTime(masterGain.gain.value, now);
+    masterGain.gain.linearRampToValueAtTime(isOn ? 0.5 : 0, now + 1.2);
   };
 })();
