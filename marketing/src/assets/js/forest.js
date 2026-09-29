@@ -162,7 +162,7 @@
       uniform float day;
       varying vec3 vP;
       float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
-      float ruis(vec2 p){
+      float noiseVal(vec2 p){
         vec2 i = floor(p), f = fract(p);
         f = f * f * (3.0 - 2.0 * f);
         return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), f.x),
@@ -177,20 +177,20 @@
         vec3 horizonD = vec3(1.00, 0.74, 0.44);
         vec3 zenitD   = vec3(0.42, 0.70, 0.62);
         vec3 horizon = mix(horizonN, horizonD, day);
-        vec3 zenit   = mix(zenitN, zenitD, day);
-        vec3 k = mix(horizon, zenit, pow(h, 0.6));
+        vec3 zenith   = mix(zenitN, zenitD, day);
+        vec3 k = mix(horizon, zenith, pow(h, 0.6));
         // aurora-band (alleen 's nachts)
         float band = exp(-pow((vP.y - 0.30 - 0.06 * sin(vP.x * 4.0 + time * 0.15)) * 6.0, 2.0));
-        float golf = ruis(vec2(vP.x * 6.0 + time * 0.08, vP.z * 6.0));
-        k += vec3(0.05, 0.32, 0.20) * band * golf * 0.55 * (1.0 - day);
+        float wave = noiseVal(vec2(vP.x * 6.0 + time * 0.08, vP.z * 6.0));
+        k += vec3(0.05, 0.32, 0.20) * band * wave * 0.55 * (1.0 - day);
         // sterren met twinkel (alleen 's nachts)
         vec2 sp = vP.xz / (vP.y + 0.35);
         float star = step(0.9985, hash(floor(sp * 260.0)));
         float twinkel = 0.5 + 0.5 * sin(time * 2.0 + hash(floor(sp * 260.0) + 7.0) * 6.28);
         k += vec3(0.85, 0.92, 1.0) * star * twinkel * smoothstep(0.05, 0.45, vP.y) * (1.0 - day);
         // laagstaande ochtendzon
-        float zon = pow(max(dot(vP, normalize(vec3(-0.5, 0.30, -0.65))), 0.0), 90.0);
-        k += vec3(1.0, 0.85, 0.55) * zon * day * 1.4;
+        float sun = pow(max(dot(vP, normalize(vec3(-0.5, 0.30, -0.65))), 0.0), 90.0);
+        k += vec3(1.0, 0.85, 0.55) * sun * day * 1.4;
         gl_FragColor = vec4(k, 1.0);
       }`
   });
@@ -221,8 +221,8 @@
     scales[i] = 0.45 + Math.random() * 1.15;
     tints[i]  = Math.random();
   }
-  bladeGeo.setAttribute('fase',   new THREE.InstancedBufferAttribute(phases, 1));
-  bladeGeo.setAttribute('schaal', new THREE.InstancedBufferAttribute(scales, 1));
+  bladeGeo.setAttribute('phase',   new THREE.InstancedBufferAttribute(phases, 1));
+  bladeGeo.setAttribute('bladeScale', new THREE.InstancedBufferAttribute(scales, 1));
   bladeGeo.setAttribute('tint',   new THREE.InstancedBufferAttribute(tints, 1));
   const grassMat = new THREE.ShaderMaterial({
     side: THREE.DoubleSide,
@@ -236,31 +236,31 @@
     },
     vertexShader: `
       uniform float time;
-      attribute float fase;
-      attribute float schaal;
+      attribute float phase;
+      attribute float bladeScale;
       attribute float tint;
-      varying float vH;
-      varying float vDiep;
+      varying float vHeight;
+      varying float vDepth;
       varying float vTint;
       void main(){
-        vH = position.y;
+        vHeight = position.y;
         vTint = tint;
         vec3 p = position;
-        p.y *= schaal;
+        p.y *= bladeScale;
         #ifdef USE_INSTANCING
           vec4 wp = instanceMatrix * vec4(p, 1.0);
         #else
           vec4 wp = vec4(p, 1.0);
         #endif
         // gelaagde wind: brede vlagen over het veld + snelle lokale trilling
-        float buig = vH * vH;
-        float vlaag = sin(time * 1.25 + wp.x * 0.30 + wp.z * 0.22);
-        float tril  = sin(time * 2.60 + wp.x * 0.90 + fase);
-        float wind  = vlaag * 0.7 + tril * 0.3;
-        wp.x += wind * 0.22 * buig;
-        wp.z += cos(time * 0.85 + fase) * 0.07 * buig;
+        float bend = vHeight * vHeight;
+        float gust = sin(time * 1.25 + wp.x * 0.30 + wp.z * 0.22);
+        float jitter  = sin(time * 2.60 + wp.x * 0.90 + phase);
+        float wind  = gust * 0.7 + jitter * 0.3;
+        wp.x += wind * 0.22 * bend;
+        wp.z += cos(time * 0.85 + phase) * 0.07 * bend;
         vec4 mv = viewMatrix * wp;
-        vDiep = -mv.z;
+        vDepth = -mv.z;
         gl_Position = projectionMatrix * mv;
       }`,
     fragmentShader: `
@@ -269,15 +269,15 @@
       uniform vec3 colorTip;
       uniform vec3 fogColor;
       uniform float fogDensity;
-      varying float vH;
-      varying float vDiep;
+      varying float vHeight;
+      varying float vDepth;
       varying float vTint;
       void main(){
         vec3 basis = mix(colorA, colorB, vTint);
         // ambient occlusion onderin, lichte toppen (nep-doorschijnendheid)
-        vec3 k = mix(basis * 0.30, basis, smoothstep(0.0, 0.5, vH));
-        k = mix(k, colorTip, pow(vH, 2.4) * 0.85);
-        float f = 1.0 - exp(-fogDensity * fogDensity * vDiep * vDiep);
+        vec3 k = mix(basis * 0.30, basis, smoothstep(0.0, 0.5, vHeight));
+        k = mix(k, colorTip, pow(vHeight, 2.4) * 0.85);
+        float f = 1.0 - exp(-fogDensity * fogDensity * vDepth * vDepth);
         k = mix(k, fogColor, clamp(f, 0.0, 1.0));
         gl_FragColor = vec4(k, 1.0);
       }`
@@ -334,8 +334,8 @@
       void main(){
         float x = smoothstep(0.0, 0.5, vUv.x) * smoothstep(1.0, 0.5, vUv.x);
         float y = smoothstep(0.0, 0.35, vUv.y) * smoothstep(1.0, 0.75, vUv.y);
-        float puls = 0.7 + 0.3 * sin(time * 0.6 + vUv.x * 3.0);
-        gl_FragColor = vec4(color, x * y * strength * puls);
+        float pulse = 0.7 + 0.3 * sin(time * 0.6 + vUv.x * 3.0);
+        gl_FragColor = vec4(color, x * y * strength * pulse);
       }`
   });
   for (let i = 0; i < 6; i++){
