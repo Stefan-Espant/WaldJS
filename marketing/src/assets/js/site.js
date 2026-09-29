@@ -204,17 +204,17 @@ function trapFocusInMenu(e){
   const preview = document.getElementById('pg-preview');
   if (!editor || !preview) return;
   editor.value = `---
-const titel = "Mijn eerste boom"
-const soorten = ["eik", "beuk", "den"]
+const title = "My first tree"
+const species = ["oak", "beech", "pine"]
 ---
-<h1>{titel}</h1>
-<p>Er groeien {soorten.length} soorten in dit bos:</p>
+<h1>{title}</h1>
+<p>{species.length} species grow in this forest:</p>
 <ul>
-  {soorten.map(s => '<li>' + s + '</li>').join('')}
+  {species.map(s => '<li>' + s + '</li>').join('')}
 </ul>`;
-  function compileer(bron){
-    let fm = '', tpl = bron;
-    const delen = bron.split(/^---\s*$/m);
+  function compile(source){
+    let fm = '', tpl = source;
+    const delen = source.split(/^---\s*$/m);
     if (delen.length >= 3){ fm = delen[1]; tpl = delen.slice(2).join('---'); }
     const vars = {};
     try {
@@ -228,9 +228,9 @@ const soorten = ["eik", "beuk", "den"]
       catch(e){ return '<code style="color:#FF3347">{' + expr + '}</code>'; }
     });
   }
-  function ververs(){ preview.innerHTML = compileer(editor.value); }
-  editor.addEventListener('input', ververs);
-  ververs();
+  function refresh(){ preview.innerHTML = compile(editor.value); }
+  editor.addEventListener('input', refresh);
+  refresh();
 })();
 
 /* ============================================================
