@@ -15,7 +15,7 @@ import Vergelijking from '../../components/Vergelijking.wald'
     </div>
   </section>
   <Vergelijking />
-  <section id="vs-astro-keuze">
+  <section id="vs-astro-choice">
     <div class="section-heading">
       <h2><span class="nl">Wanneer kies je wat?</span><span class="en">When to choose which?</span></h2>
     </div>

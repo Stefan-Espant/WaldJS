@@ -3,7 +3,7 @@
    Mistig nachtbos: maanlicht, rode gloed, vuurvliegjes
    ============================================================ */
 (function(){
-  const canvas = document.getElementById('bos3d');
+  const canvas = document.getElementById('forest3d');
   if (!canvas || typeof THREE === 'undefined') return;
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const dagState = { v: 0 }; // 0 = nacht, 1 = dag

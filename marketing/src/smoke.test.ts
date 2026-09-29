@@ -24,7 +24,7 @@ describe('marketing site build', () => {
   it('begint met een doctype en bevat de secties', () => {
     const html = readFileSync(join(ROOT, 'dist/index.html'), 'utf-8')
     expect(html.trimStart().startsWith('<!DOCTYPE html>')).toBe(true)
-    for (const id of ['quickstart', 'format', 'playground', 'metaphor', 'features', 'vergelijking', 'benchmarks', 'cli', 'structure', 'packages', 'roadmap', 'faq', 'changelog']) {
+    for (const id of ['quickstart', 'format', 'playground', 'metaphor', 'features', 'comparison', 'benchmarks', 'cli', 'structure', 'packages', 'roadmap', 'faq', 'changelog']) {
       expect(html).toContain(`id="${id}"`)
     }
   })
