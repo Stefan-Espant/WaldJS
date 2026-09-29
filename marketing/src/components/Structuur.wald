@@ -1,9 +1,10 @@
 ---
+import { ui } from '../lib/strings'
 ---
 <section id="structure">
   <div class="split">
     <div class="code-block">
-      <div class="title"><span class="dot"></span><span class="nl">projectstructuur</span><span class="en">project structure</span></div>
+      <div class="title"><span class="dot"></span>{ui.structure.caption}</div>
       <pre>my-forest/
 ├── content/
 │   └── blog/
@@ -18,16 +19,14 @@
 │       └── blog/
 │           ├── index.wald
 │           └── [slug].wald
-├── public/           <span class="c-c"># <span class="nl">1-op-1 naar dist/</span><span class="en">copied to dist/ as-is</span></span>
-├── wald.config.ts    <span class="c-c"># <span class="nl">optioneel</span><span class="en">optional</span></span>
+├── public/           <span class="c-c"># {ui.structure.publicNote}</span>
+├── wald.config.ts    <span class="c-c"># {ui.structure.optional}</span>
 └── package.json</pre>
     </div>
     <div class="text">
-      <h2><span class="tag"><span class="nl">Structuur &amp; config</span><span class="en">Structure &amp; config</span></span>
-        <span class="nl">Overzichtelijk als een aangeplant bos</span>
-        <span class="en">As orderly as a planted forest</span></h2>
-      <p><span class="nl">Configureren kan met een optionele <b>wald.config.ts</b> in de projectroot — <b>adapter</b>, <b>outDir</b>, <b>base</b> voor sub-directory-deploys, en een <b>vite</b>-blok dat rechtstreeks naar Vite gaat (plugins, resolve, etc.). Zonder config gebruikt WaldJS verstandige standaardwaarden.</span>
-      <span class="en">Configure via an optional <b>wald.config.ts</b> in your project root — <b>adapter</b>, <b>outDir</b>, <b>base</b> for sub-directory deploys, and a <b>vite</b> block passed straight to Vite (plugins, resolve, etc.). Without a config file WaldJS uses sensible defaults.</span></p>
+      <h2><span class="tag">{ui.structure.tag}</span>
+        {ui.structure.title}</h2>
+      <p>{ui.structure.config}</p>
       <div class="code-block" style="margin-top:18px">
         <div class="title"><span class="dot"></span>wald.config.ts</div>
         <pre><span class="c-k">import</span> &#123; defineConfig, vercelAdapter &#125; <span class="c-k">from</span> <span class="c-s">'@waldjs/cli'</span>

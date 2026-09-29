@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'wald:content'
+import { ui } from '../lib/strings'
 const entries = await getCollection('changelog')
 const recent = entries
   .slice()
@@ -8,15 +9,14 @@ const recent = entries
 ---
 <section id="changelog">
   <div class="section-heading">
-    <span class="tag"><span class="nl">Groeidagboek</span><span class="en">Growth log</span></span>
+    <span class="tag">{ui.common.growthLog}</span>
     <h2>Changelog</h2>
-    <p><span class="nl">Elke release een jaarring. Dit is er tot nu toe gegroeid.</span><span class="en">Every release a growth ring. Here's what has grown so far.</span></p>
+    <p>{ui.changelog.intro}</p>
     <p style="margin-top:.5rem">
       <a href="https://www.npmjs.com/package/@waldjs/cli" target="_blank" rel="noopener">
         <img src="https://img.shields.io/npm/v/@waldjs/cli.svg" alt="npm version" width="80" height="20" style="vertical-align:middle" />
       </a>
-      <span class="nl" style="margin-left:.5rem;opacity:.7;font-size:.85rem">huidige npm-versie — de fasenamen hieronder zijn mijlpalen, geen versienummers</span>
-      <span class="en" style="margin-left:.5rem;opacity:.7;font-size:.85rem">current npm version — the phase names below are milestones, not version numbers</span>
+      <span style="margin-left:.5rem;opacity:.7;font-size:.85rem">{ui.changelog.npmNote}</span>
     </p>
   </div>
   <div class="changelog">
@@ -28,6 +28,6 @@ const recent = entries
     `).join(''))}
   </div>
   <p style="margin-top:1.5rem">
-    <a class="btn ghost" href="/changelog"><span class="nl">Bekijk alle updates</span><span class="en">See all updates</span></a>
+    <a class="btn ghost" href="/changelog">{ui.changelog.seeAll}</a>
   </p>
 </section>

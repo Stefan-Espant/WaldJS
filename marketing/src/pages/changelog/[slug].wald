@@ -1,6 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.wald'
 import { getCollection, getEntry } from 'wald:content'
+import { ui } from '../../lib/strings'
 
 export async function getStaticPaths() {
   const entries = await getCollection('changelog')
@@ -16,13 +17,13 @@ const entry = await getEntry('changelog', $$props.slug)
 >
   <section id="changelog-entry" class="page-intro">
     <div class="section-heading">
-      <span class="tag"><span class="nl">Groeidagboek</span><span class="en">Growth log</span></span>
+      <span class="tag">{ui.common.growthLog}</span>
       <h1>{entry.data.title}</h1>
       <span class="date">{entry.data.dateLabel}</span>
     </div>
     <div class="log-card">
       {new SafeHtml(entry.body)}
     </div>
-    <p><a href="/changelog">← <span class="nl">Terug naar alle updates</span><span class="en">Back to all updates</span></a></p>
+    <p><a href="/changelog">← {ui.changelogPost.back}</a></p>
   </section>
 </Layout>

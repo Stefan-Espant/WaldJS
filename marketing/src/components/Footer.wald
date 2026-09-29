@@ -1,10 +1,11 @@
 ---
+import { ui } from '../lib/strings'
 const { canonicalPath } = $$props
 // Any footer link that points at a real page (not a homepage #anchor) is
 // dropped when it would point at the page currently being rendered, so the
 // footer never links to itself — one general rule instead of a per-page case.
 const footerPageLinks = [
-  { href: '/waarom', section: 'explore', html: '<li><a href="/waarom"><span class="nl">Waarom WaldJS</span><span class="en">Why WaldJS</span></a></li>' },
+  { href: '/waarom', section: 'explore', html: `<li><a href="/waarom">${ui.common.why.value}</a></li>` },
   { href: '/vs/astro', section: 'resources', html: '<li><a href="/vs/astro">WaldJS vs Astro</a></li>' },
   { href: '/vs/eleventy', section: 'resources', html: '<li><a href="/vs/eleventy">WaldJS vs Eleventy</a></li>' },
 ]
@@ -25,15 +26,14 @@ const resourceLinksHtml = footerPageLinks.filter(link => link.section === 'resou
     <div class="footer-brand">
       <svg viewBox="0 0 563.03 496.47" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="WaldJS"><use href="#waldlogo"/></svg>
       <p>
-        <span class="nl">Een content-first webframework voor razendsnelle, statische websites. Plant je site en laat hem groeien.</span>
-        <span class="en">A content-first web framework for blazing-fast, static websites. Plant your site and watch it grow.</span>
+        {ui.footer.tagline}
       </p>
     </div>
     <div class="column">
-      <h2><span class="nl">Verken</span><span class="en">Explore</span></h2>
+      <h2>{ui.footer.explore}</h2>
       <ul>
         <li><a href="/#quickstart">Quick start</a></li>
-        <li><a href="/#format"><span class="nl">Het .wald-formaat</span><span class="en">The .wald format</span></a></li>
+        <li><a href="/#format">{ui.common.format}</a></li>
         <li><a href="/#features">Features</a></li>
         <li><a href="/#benchmarks">Benchmarks</a></li>
         <li><a href="/#roadmap">Roadmap</a></li>
@@ -41,7 +41,7 @@ const resourceLinksHtml = footerPageLinks.filter(link => link.section === 'resou
       </ul>
     </div>
     <div class="column">
-      <h2><span class="nl">Bronnen</span><span class="en">Resources</span></h2>
+      <h2>{ui.footer.resources}</h2>
       <ul>
         <li>
           <a class="gh-link" href="https://github.com/Stefan-Espant/WaldJS/" target="_blank" rel="noopener">
@@ -51,12 +51,12 @@ const resourceLinksHtml = footerPageLinks.filter(link => link.section === 'resou
         </li>
         <li><a href="/#packages">Packages</a></li>
         <li><a href="/#cli">CLI</a></li>
-        <li><a href="/#structure"><span class="nl">Projectstructuur</span><span class="en">Project structure</span></a></li>
+        <li><a href="/#structure">{ui.footer.structure}</a></li>
         {new SafeHtml(resourceLinksHtml)}
       </ul>
     </div>
   </div>
   <div class="footer-bottom">
-    <span>© 2026 WaldJS · <span class="nl">Geplant met liefde</span><span class="en">Planted with love</span> 🌱</span>
+    <span>© 2026 WaldJS · {ui.footer.plantedWithLove} 🌱</span>
   </div>
 </footer>
