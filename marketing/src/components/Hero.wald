@@ -1,29 +1,28 @@
 ---
+import { ui } from '../lib/strings'
 ---
 <header id="top">
   <h1>
-    <span class="nl">Plant je site.<br><em>Laat hem groeien.</em></span>
-    <span class="en">Plant your site.<br><em>Watch it grow.</em></span>
+    {ui.hero.title}
   </h1>
   <p class="sub">
-    <span class="nl">WaldJS is een content-first webframework voor razendsnelle, statische websites. Schrijf <code style="font-family:var(--mono);font-size:.9em">.wald</code>-bestanden — deels frontmatter, deels HTML-template — en WaldJS compileert ze tot een statische site.</span>
-    <span class="en">WaldJS is a content-first web framework for blazing-fast, static-first websites. Write <code style="font-family:var(--mono);font-size:.9em">.wald</code> files — part frontmatter, part HTML template — and WaldJS compiles them into a static site.</span>
+    {ui.hero.lead}
   </p>
   <div class="cta">
-    <a class="btn" href="#quickstart"><span class="nl">Plant je eerste bos 🌱</span><span class="en">Plant your first forest 🌱</span></a>
-    <a class="btn ghost" href="https://github.com/Stefan-Espant/WaldJS/" target="_blank" rel="noopener"><span class="nl">Bekijk op GitHub</span><span class="en">View on GitHub</span></a>
+    <a class="btn" href="#quickstart">{ui.hero.cta}</a>
+    <a class="btn ghost" href="https://github.com/Stefan-Espant/WaldJS/" target="_blank" rel="noopener">{ui.hero.github}</a>
   </div>
   <div id="gh-stats" class="gh-stats">
     <span>⭐ <b id="gh-stars">–</b> stars</span>
     <span>🍴 <b id="gh-forks">–</b> forks</span>
-    <span><span class="nl">Open source</span><span class="en">Open source</span> · <b>MIT</b></span>
+    <span>{ui.hero.openSource} · <b>MIT</b></span>
   </div>
   <div class="terminal code-block">
     <div class="title"><span class="dot"></span>terminal</div>
     <pre><span id="term-text" class="term-cursor">$ </span>
 <span id="term-output" class="term-output"></span></pre>
   </div>
-  <p class="plant-hint"><span class="nl">🌱 Tip: klik ergens in het bos om een boom te planten</span><span class="en">🌱 Tip: click anywhere in the forest to plant a tree</span></p>
+  <p class="plant-hint">{ui.hero.tip}</p>
 </header>
 
 <!-- QUICK START -->

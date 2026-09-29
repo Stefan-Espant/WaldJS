@@ -1,21 +1,20 @@
 ---
+import { ui } from '../lib/strings'
 ---
 <section id="features">
   <div class="section-heading">
     <span class="tag">Features</span>
-    <h2><span class="nl">Alles wat een bos nodig heeft</span><span class="en">Everything a forest needs</span></h2>
+    <h2>{ui.features.title}</h2>
   </div>
 
   <div class="split" style="margin-bottom:70px">
     <div class="text">
-      <h2><span class="tag"><span class="nl">Pagina's</span><span class="en">Pages</span></span>
-        <span class="nl">Bestanden worden vanzelf routes</span>
-        <span class="en">Files become routes automatically</span></h2>
-      <p><span class="nl">Elk bestand in <b>src/pages/</b> wordt automatisch een route. Geen router-configuratie, geen gedoe.</span>
-      <span class="en">Every file in <b>src/pages/</b> automatically becomes a route. No router configuration, no fuss.</span></p>
+      <h2><span class="tag">{ui.features.pagesTag}</span>
+        {ui.features.pagesTitle}</h2>
+      <p>{ui.features.pagesBody}</p>
     </div>
     <table>
-      <tr><th scope="col"><span class="nl">Bestand</span><span class="en">File</span></th><th scope="col">Route</th></tr>
+      <tr><th scope="col">{ui.features.contentTag}</th><th scope="col">Route</th></tr>
       <tr><td><code>src/pages/index.wald</code></td><td><code>/</code></td></tr>
       <tr><td><code>src/pages/about.wald</code></td><td><code>/about</code></td></tr>
       <tr><td><code>src/pages/blog/index.wald</code></td><td><code>/blog</code></td></tr>
@@ -36,20 +35,16 @@
     </div>
     <div class="text">
       <h2><span class="tag">Content collections</span>
-        <span class="nl">Markdown als voedingsbodem</span>
-        <span class="en">Markdown as fertile soil</span></h2>
-      <p><span class="nl">Zet Markdown-bestanden in <b>content/&lt;collectie&gt;/</b> en importeer <b>getCollection</b> en <b>getEntry</b> uit <b>wald:content</b>. Elk item heeft een <b>slug</b>, <b>data</b> (frontmatter) en <b>body</b> (gerenderde HTML).</span>
-      <span class="en">Put Markdown files in <b>content/&lt;collection&gt;/</b> and import <b>getCollection</b> and <b>getEntry</b> from <b>wald:content</b>. Each entry has a <b>slug</b>, <b>data</b> (frontmatter) and <b>body</b> (rendered HTML).</span></p>
+        {ui.features.contentTitle}</h2>
+      <p>{ui.features.contentBody}</p>
     </div>
   </div>
 
   <div class="split">
     <div class="text">
-      <h2><span class="tag"><span class="nl">Dynamische routes</span><span class="en">Dynamic routes</span></span>
-        <span class="nl">getStaticPaths() bepaalt wat er groeit</span>
-        <span class="en">getStaticPaths() decides what grows</span></h2>
-      <p><span class="nl">Exporteer <b>getStaticPaths()</b> vanuit de frontmatter van een dynamische route zoals <b>[slug].wald</b>. Bij <b>wald build</b> wordt die aangeroepen om te bepalen welke pagina's gegenereerd worden. <b>$$props</b> bevat de route-parameters tijdens het renderen.</span>
-      <span class="en">Export <b>getStaticPaths()</b> from the frontmatter of a dynamic route like <b>[slug].wald</b>. <b>wald build</b> calls it to know which pages to generate. <b>$$props</b> contains the route params during rendering.</span></p>
+      <h2><span class="tag">{ui.features.dynamicTag}</span>
+        {ui.features.dynamicTitle}</h2>
+      <p>{ui.features.dynamicBody}</p>
     </div>
     <div class="code-block">
       <div class="title"><span class="dot"></span>src/pages/blog/[slug].wald</div>

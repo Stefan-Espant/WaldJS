@@ -3,6 +3,7 @@ import Nav from '../components/Nav.wald'
 import Footer from '../components/Footer.wald'
 import CanopyPing from '../components/CanopyPing.wald'
 import { SITE_URL, DEFAULT_OG_IMAGE, LANG_BOOTSTRAP_SCRIPT, SOFTWARE_APPLICATION_JSON_LD, alternateLinksHtml, jsonLdTag, rssLinkHtml } from '../lib/head'
+import { ui } from '../lib/strings'
 // lang: set only on pages whose URL fixes the language (the blog). Then the
 // HTML is correct without JS and the localStorage bootstrap is left out.
 const { title, description, canonicalPath, pond, lang, alternates, langLinks, ogImage, ogType, jsonLd, rss } = $$props
@@ -55,7 +56,7 @@ gtag('config', 'G-9EZEXC8XYQ');
 <link rel="stylesheet" href="/assets/css/site.css">
 </head>
 <body>
-<a class="skip-link" href="#main"><span class="nl">Ga naar inhoud</span><span class="en">Skip to content</span></a>
+<a class="skip-link" href="#main">{ui.layout.skipLink}</a>
 <!-- logo-definitie (onzichtbaar; nav & footer verwijzen ernaar) -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
     <defs>

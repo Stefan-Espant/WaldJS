@@ -1,6 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.wald'
 import Vergelijking from '../../components/Vergelijking.wald'
+import { ui } from '../../lib/strings'
 ---
 <Layout
   title="WaldJS vs Astro — welke past bij jouw project?"
@@ -9,32 +10,32 @@ import Vergelijking from '../../components/Vergelijking.wald'
 >
   <section id="vs-astro-intro" class="page-intro">
     <div class="section-heading">
-      <span class="tag"><span class="nl">Vergelijking</span><span class="en">Comparison</span></span>
+      <span class="tag">{ui.vs.tag}</span>
       <h1>WaldJS vs Astro</h1>
-      <p><span class="nl">Beide gebruiken single-file componenten, content collections en 0 KB JavaScript standaard. Het verschil zit 'm in scope en ecosysteem.</span><span class="en">Both use single-file components, content collections, and 0 KB JavaScript by default. The difference is in scope and ecosystem.</span></p>
+      <p>{ui.vsAstro.intro}</p>
     </div>
   </section>
   <Vergelijking />
   <section id="vs-astro-choice">
     <div class="section-heading">
-      <h2><span class="nl">Wanneer kies je wat?</span><span class="en">When to choose which?</span></h2>
+      <h2>{ui.vs.whenWhich}</h2>
     </div>
     <div class="split">
       <div>
-        <h3><span class="nl">Kies WaldJS als je...</span><span class="en">Choose WaldJS if you...</span></h3>
+        <h3>{ui.vs.chooseWald}</h3>
         <ul>
-          <li><span class="nl">bouwsnelheid zwaar laat wegen — 1,62s versus 138,92s voor dezelfde 50-posts-blogsite in onze eigen benchmarks</span><span class="en">weigh build speed heavily — 1.62s vs. 138.92s for the same 50-post blog site in our own benchmarks</span></li>
-          <li><span class="nl">geen framework-adapter wilt kiezen voor interactiviteit — canopy's zijn gewone JS/TS, geen React/Vue/Svelte-laag erbovenop</span><span class="en">don't want to choose a framework adapter for interactivity — canopies are plain JS/TS, no React/Vue/Svelte layer on top</span></li>
+          <li>{ui.vsAstro.wald1}</li>
+          <li>{ui.vsAstro.wald2}</li>
         </ul>
       </div>
       <div>
-        <h3><span class="nl">Kies Astro als je...</span><span class="en">Choose Astro if you...</span></h3>
+        <h3>{ui.vsAstro.chooseAstro}</h3>
         <ul>
-          <li><span class="nl">een volwassen ecosysteem met veel officiële integraties nodig hebt (React, Vue, Svelte als islands)</span><span class="en">need a mature ecosystem with many official integrations (React, Vue, Svelte as islands)</span></li>
-          <li><span class="nl">een grotere community en meer bestaande plugins/templates wilt</span><span class="en">want a larger community and more existing plugins/templates</span></li>
+          <li>{ui.vsAstro.astro1}</li>
+          <li>{ui.vsAstro.astro2}</li>
         </ul>
       </div>
     </div>
-    <p style="margin-top:1.5rem"><a href="/waarom"><span class="nl">Lees het hele verhaal van WaldJS →</span><span class="en">Read WaldJS's full story →</span></a></p>
+    <p style="margin-top:1.5rem"><a href="/waarom">{ui.vs.readStory}</a></p>
   </section>
 </Layout>

@@ -1,10 +1,11 @@
 ---
+import { ui } from '../lib/strings'
 ---
 <section id="playground">
   <div class="section-heading">
     <span class="tag">Playground</span>
-    <h2><span class="nl">Probeer het zelf</span><span class="en">Try it yourself</span></h2>
-    <p><span class="nl">Bewerk het .wald-bestand links en zie de pagina rechts direct meegroeien.</span><span class="en">Edit the .wald file on the left and watch the page grow on the right.</span></p>
+    <h2>{ui.playground.title}</h2>
+    <p>{ui.playground.intro}</p>
   </div>
   <div class="pg-grid">
     <div class="code-block">
