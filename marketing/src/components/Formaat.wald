@@ -1,8 +1,8 @@
 ---
 ---
-<section id="formaat">
+<section id="format">
   <div class="split">
-    <div class="tekst">
+    <div class="text">
       <h2><span class="tag"><span class="nl">Het bestandsformaat</span><span class="en">The file format</span></span>
         <span class="nl">Eén <span style="color:var(--rood)">.wald</span>-bestand, twee delen</span>
         <span class="en">One <span style="color:var(--rood)">.wald</span> file, two parts</span>
@@ -12,8 +12,8 @@
       <p><span class="nl">Alle geïnterpoleerde waarden worden standaard HTML-escaped. Veilig vanaf de wortel.</span>
       <span class="en">All interpolated values are HTML-escaped by default. Safe from the roots up.</span></p>
     </div>
-    <div class="codeblok">
-      <div class="titel"><span class="dot"></span>src/pages/index.wald</div>
+    <div class="code-block">
+      <div class="title"><span class="dot"></span>src/pages/index.wald</div>
       <pre><span class="c-c">---</span>
 <span class="c-k">const</span> title = <span class="c-s">"Hello World"</span>
 <span class="c-c">---</span>

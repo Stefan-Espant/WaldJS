@@ -24,7 +24,7 @@ describe('marketing site build', () => {
   it('begint met een doctype en bevat de secties', () => {
     const html = readFileSync(join(ROOT, 'dist/index.html'), 'utf-8')
     expect(html.trimStart().startsWith('<!DOCTYPE html>')).toBe(true)
-    for (const id of ['quickstart', 'formaat', 'playground', 'metafoor', 'features', 'vergelijking', 'benchmarks', 'cli', 'structuur', 'packages', 'roadmap', 'faq', 'changelog']) {
+    for (const id of ['quickstart', 'format', 'playground', 'metaphor', 'features', 'comparison', 'benchmarks', 'cli', 'structure', 'packages', 'roadmap', 'faq', 'changelog']) {
       expect(html).toContain(`id="${id}"`)
     }
   })
@@ -109,7 +109,7 @@ describe('marketing site build', () => {
 
   it('toont nog maar de 3 recentste changelog-entries op de homepage', () => {
     const html = readFileSync(join(ROOT, 'dist/index.html'), 'utf-8')
-    const kaarten = html.match(/class="log-kaart"/g) ?? []
+    const kaarten = html.match(/class="log-card"/g) ?? []
     expect(kaarten.length).toBe(3)
     expect(html).toContain('href="/changelog"')
   })
@@ -166,12 +166,12 @@ describe('marketing site build', () => {
     expect(css).toContain('@media(prefers-contrast:more)')
     expect(css).toContain('--rand:rgba(255,255,255,0.4)')
     expect(css).toContain('--wit-zacht:rgba(255,255,255,0.92)')
-    expect(css).toContain('.staaf.wald .label b{color:var(--wit)}')
+    expect(css).toContain('.stat.wald .label b{color:var(--wit)}')
   })
 
   it('boost ook de losse, niet-getokeniseerde gedempte teksten onder prefers-contrast:more', () => {
     const css = readFileSync(join(ROOT, 'dist/assets/css/site.css'), 'utf-8')
-    for (const selector of ['.log-kop .datum', '.footer-onder', '.c-c', '.vergelijk .nee', '.bench .disclaimer']) {
+    for (const selector of ['.log-header .date', '.footer-bottom', '.c-c', '.compare .no', '.bench .disclaimer']) {
       expect(css, `${selector} mist een prefers-contrast:more override`).toContain(`${selector}{color:var(--wit-zacht)}`)
     }
   })
@@ -238,25 +238,33 @@ describe('marketing site build', () => {
 
   it('geeft het mobiele menu dialog-semantiek en start inert (niet met Tab bereikbaar) tot het open is', () => {
     const html = readFileSync(join(ROOT, 'dist/index.html'), 'utf-8')
-    expect(html).toContain('id="mobielmenu"')
-    const mobielmenuTag = html.match(/<div id="mobielmenu"[^>]*>/)?.[0] ?? ''
-    expect(mobielmenuTag).toContain('role="dialog"')
-    expect(mobielmenuTag).toContain('aria-modal="true"')
-    expect(mobielmenuTag).toMatch(/\binert\b/)
+    expect(html).toContain('id="mobile-menu"')
+    const mobileMenuTag = html.match(/<div id="mobile-menu"[^>]*>/)?.[0] ?? ''
+    expect(mobileMenuTag).toContain('role="dialog"')
+    expect(mobileMenuTag).toContain('aria-modal="true"')
+    expect(mobileMenuTag).toMatch(/\binert\b/)
   })
 
   it('sluit ook het mobiele menu als je op de GitHub-link erin klikt', () => {
     const html = readFileSync(join(ROOT, 'dist/index.html'), 'utf-8')
-    const mobielmenu = html.match(/<div id="mobielmenu"[\s\S]*?<\/div>/)?.[0] ?? ''
-    const githubLink = mobielmenu.match(/<a[^>]*github\.com[^>]*>/i)?.[0] ?? ''
-    expect(githubLink, mobielmenu).toContain('onclick="toggleMenu(false)"')
+    const mobileMenu = html.match(/<div id="mobile-menu"[\s\S]*?<\/div>/)?.[0] ?? ''
+    const githubLink = mobileMenu.match(/<a[^>]*github\.com[^>]*>/i)?.[0] ?? ''
+    expect(githubLink, mobileMenu).toContain('onclick="toggleMenu(false)"')
+  })
+
+  it('gebruikt alleen phrasing content (geen div) binnen de hero h1', () => {
+    const html = readFileSync(join(ROOT, 'dist/index.html'), 'utf-8')
+    const h1 = html.match(/<h1>[\s\S]*?<\/h1>/)?.[0] ?? ''
+    expect(h1).not.toContain('<div')
+    expect(h1).toContain('<span class="nl">')
+    expect(h1).toContain('<span class="en">')
   })
 
   it('houdt de taal-bootstrap op pagina\'s zonder vaste taal en linkt naar de blog', () => {
     const html = readFileSync(join(ROOT, 'dist/index.html'), 'utf-8')
     expect(html).toContain('<html lang="nl" data-lang="nl" data-lang-fixed="">')
     expect(html).toContain(`localStorage.getItem('wald-taal')`)
-    expect(html).toContain(`<button id="btn-nl" class="actief" onclick="zetTaal('nl')">NL</button>`)
+    expect(html).toContain(`<button id="btn-nl" class="active" onclick="setLanguage('nl')">NL</button>`)
     expect((html.match(/<a href="\/blog"/g) ?? []).length, 'blog links in desktop + mobile nav').toBe(2)
   })
 
@@ -305,7 +313,7 @@ describe('marketing site build', () => {
 
   it('stijlt de taalschakelaar voor knoppen en links (minifier breekt `.x :is()`)', () => {
     const css = readFileSync(join(ROOT, 'dist/assets/css/site.css'), 'utf-8')
-    expect(css).toContain('.lang-switch button.actief,.lang-switch a.actief{')
+    expect(css).toContain('.lang-switch button.active,.lang-switch a.active{')
     expect(css).not.toMatch(/\.lang-switch:is\(/)
   })
 

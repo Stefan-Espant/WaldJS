@@ -9,15 +9,15 @@ const sorted = entries.slice().sort((a, b) => new Date(b.data.date).getTime() - 
   description="Elke release een jaarring: het volledige groeidagboek van WaldJS."
   canonicalPath="/changelog"
 >
-  <section id="changelog-overzicht" class="pagina-intro">
-    <div class="sectiekop">
+  <section id="changelog-overview" class="page-intro">
+    <div class="section-heading">
       <span class="tag"><span class="nl">Groeidagboek</span><span class="en">Growth log</span></span>
       <h1>Changelog</h1>
     </div>
     <div class="changelog">
       {new SafeHtml(sorted.map(entry => `
-        <div class="log-kaart">
-          <div class="log-kop"><h2><a href="/changelog/${entry.slug}">${entry.data.title}</a></h2><span class="datum">${entry.data.dateLabel}</span></div>
+        <div class="log-card">
+          <div class="log-header"><h2><a href="/changelog/${entry.slug}">${entry.data.title}</a></h2><span class="date">${entry.data.dateLabel}</span></div>
         </div>
       `).join(''))}
     </div>

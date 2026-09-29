@@ -21,7 +21,7 @@ nav {
 }
 
 /* overdag: donkere glasbalk zodat witte links & logo leesbaar blijven */
-body.dag nav {
+body.day nav {
   background: rgba(2, 59, 45, .78);
   backdrop-filter: blur(0.75rem);
   -webkit-backdrop-filter: blur(0.75rem);
@@ -48,11 +48,11 @@ nav ul {
   align-items: center
 }
 
-nav ul.links-kant {
+nav ul.left-side {
   justify-content: center
 }
 
-nav ul.rechts-kant {
+nav ul.right-side {
   justify-content: flex-end
 }
 
@@ -115,8 +115,8 @@ nav ul a:hover {
     0 0 0 0.375rem rgba(255, 51, 71, .22);
 }
 
-.lang-switch button.actief,
-.lang-switch a.actief {
+.lang-switch button.active,
+.lang-switch a.active {
   background: linear-gradient(180deg, #FF5B6C 0%, #FF3347 58%, #D91A31 100%);
   color: var(--wit);
   box-shadow:

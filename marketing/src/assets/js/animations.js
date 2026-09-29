@@ -13,13 +13,13 @@
   gsap.from('header .cta .btn', { y:24, autoAlpha:0, duration:.7, stagger:.12, ease:'power3.out', delay:.85, clearProps:'transform,opacity,visibility' });
 
   /* sectiekoppen */
-  gsap.utils.toArray('.sectiekop').forEach(el => {
+  gsap.utils.toArray('.section-heading').forEach(el => {
     gsap.from(el, { y:50, autoAlpha:0, duration:.8, ease:'power3.out', clearProps:'transform,opacity,visibility',
       scrollTrigger:{ trigger:el, start:'top 85%' } });
   });
 
-  /* kaarten & codeblokken */
-  gsap.utils.toArray('.kaarten').forEach(grid => {
+  /* cards & code-blocks */
+  gsap.utils.toArray('.cards').forEach(grid => {
     gsap.from(grid.children, { y:44, autoAlpha:0, duration:.7, stagger:.09, ease:'power3.out', clearProps:'transform,opacity,visibility',
       scrollTrigger:{ trigger:grid, start:'top 85%' } });
   });
@@ -27,13 +27,13 @@
     gsap.from(sp.children, { y:50, autoAlpha:0, duration:.8, stagger:.15, ease:'power3.out', clearProps:'transform,opacity,visibility',
       scrollTrigger:{ trigger:sp, start:'top 82%' } });
   });
-  gsap.utils.toArray('.qs-grid .codeblok, .cli-grid .cli-kaart, .pkg span').forEach(el => {
+  gsap.utils.toArray('.qs-grid .code-block, .cli-grid .cli-card, .pkg span').forEach(el => {
     gsap.from(el, { y:34, autoAlpha:0, duration:.6, ease:'power3.out', clearProps:'transform,opacity,visibility',
       scrollTrigger:{ trigger:el, start:'top 90%' } });
   });
 
   /* benchmark-balken groeien */
-  gsap.utils.toArray('.balk i').forEach(b => {
+  gsap.utils.toArray('.bar i').forEach(b => {
     gsap.from(b, { scaleX:0, transformOrigin:'left center', duration:1.2, ease:'power4.out',
       scrollTrigger:{ trigger:b, start:'top 88%' } });
   });
@@ -50,9 +50,9 @@
   if (typeof gsap === 'undefined') return;
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   gsap.registerPlugin(ScrollTrigger);
-  gsap.from('.vergelijk tr', { y: 24, autoAlpha: 0, duration: .5, stagger: .06, ease: 'power3.out', clearProps:'transform,opacity,visibility',
-    scrollTrigger: { trigger: '.vergelijk', start: 'top 85%' } });
-  gsap.from('.log-kaart', { y: 40, autoAlpha: 0, duration: .6, stagger: .1, ease: 'power3.out', clearProps:'transform,opacity,visibility',
+  gsap.from('.compare tr', { y: 24, autoAlpha: 0, duration: .5, stagger: .06, ease: 'power3.out', clearProps:'transform,opacity,visibility',
+    scrollTrigger: { trigger: '.compare', start: 'top 85%' } });
+  gsap.from('.log-card', { y: 40, autoAlpha: 0, duration: .6, stagger: .1, ease: 'power3.out', clearProps:'transform,opacity,visibility',
     scrollTrigger: { trigger: '.changelog', start: 'top 85%' } });
   gsap.from('.pg-grid > *', { y: 44, autoAlpha: 0, duration: .7, stagger: .15, ease: 'power3.out', clearProps:'transform,opacity,visibility',
     scrollTrigger: { trigger: '.pg-grid', start: 'top 85%' } });

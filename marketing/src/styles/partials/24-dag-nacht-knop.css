@@ -1,5 +1,5 @@
 /* ---------- dag/nacht-knop ---------- */
-.dagnacht {
+.day-night {
   background: linear-gradient(180deg, rgba(255, 255, 255, .12), rgba(255, 255, 255, .04));
   border: 0.0938rem solid rgba(255, 255, 255, .14);
   border-radius: 50%;
@@ -16,7 +16,7 @@
   transition: border-color .2s, transform .2s, box-shadow .2s;
 }
 
-.dagnacht:hover {
+.day-night:hover {
   border-color: var(--rood);
   transform: translateY(-0.125rem) scale(1.04);
   box-shadow:
@@ -25,7 +25,7 @@
     0 0.75rem 1.25rem rgba(0, 0, 0, .16);
 }
 
-.dagnacht:focus-visible {
+.day-night:focus-visible {
   outline: none;
   border-color: #7FD8BE;
   box-shadow:

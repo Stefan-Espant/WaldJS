@@ -20,17 +20,17 @@
     gap: 0.5rem
   }
 
-  nav ul.links-kant {
+  nav ul.left-side {
     display: none
   }
 
-  nav ul.rechts-kant {
+  nav ul.right-side {
     justify-content: flex-end
   }
 
-  nav ul.rechts-kant li:nth-child(1),
-  nav ul.rechts-kant li:nth-child(2),
-  nav ul.rechts-kant li:last-child {
+  nav ul.right-side li:nth-child(1),
+  nav ul.right-side li:nth-child(2),
+  nav ul.right-side li:last-child {
     display: none
   }
 
@@ -41,7 +41,7 @@
     font-size: 1.45rem
   }
 
-  .dagnacht {
+  .day-night {
     width: 2rem;
     height: 2rem;
     font-size: .92rem
@@ -107,26 +107,26 @@
     padding: 4.5rem 1.125rem
   }
 
-  section.vol {
+  section.full {
     padding-left: 1.125rem;
     padding-right: 1.125rem
   }
 
-  .sectiekop {
+  .section-heading {
     margin-bottom: 2.625rem
   }
 
-  .sectiekop h2 {
+  .section-heading h2 {
     font-size: 1.55rem;
     line-height: 1.14
   }
 
-  .sectiekop p {
+  .section-heading p {
     font-size: .95rem
   }
 
-  .sectiekop .tag,
-  .split .tekst h2 .tag {
+  .section-heading .tag,
+  .split .text h2 .tag {
     font-size: 1.05rem
   }
 
@@ -139,19 +139,19 @@
     gap: 2rem
   }
 
-  .kaart,
-  .cli-kaart,
-  .log-kaart,
+  .card,
+  .cli-card,
+  .log-card,
   .faq details {
     padding: 1.25rem
   }
 
-  .codeblok pre {
+  .code-block pre {
     padding: 0.875rem 1rem;
     font-size: .78rem
   }
 
-  .codeblok .titel {
+  .code-block .title {
     padding: 0.5rem 0.75rem
   }
 
@@ -200,12 +200,12 @@
     padding: 1.25rem
   }
 
-  .log-kop .datum {
+  .log-header .date {
     margin-left: 0;
     width: 100%
   }
 
-  .footer-bos {
+  .footer-forest {
     margin-top: 2.5rem
   }
 

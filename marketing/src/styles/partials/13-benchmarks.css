@@ -18,64 +18,64 @@
   margin-top: var(--byz-space-10)
 }
 
-.staafgroep h3 {
+.stat-group h3 {
   font-size: 1rem;
   margin-bottom: 0.25rem
 }
 
-.staafgroep .metric {
+.stat-group .metric {
   color: var(--wit-zacht);
   font-size: .82rem;
   margin-bottom: 1rem;
   display: block
 }
 
-.staaf {
+.stat {
   margin-bottom: 0.875rem
 }
 
-.staaf .label {
+.stat .label {
   display: flex;
   justify-content: space-between;
   font-size: .85rem;
   margin-bottom: 0.3125rem
 }
 
-.staaf .label b {
+.stat .label b {
   font-weight: 700
 }
 
-.staaf .label .waarde {
+.stat .label .value {
   font-family: var(--mono);
   color: var(--wit-zacht)
 }
 
-.balk {
+.bar {
   height: 0.75rem;
   background: rgba(255, 255, 255, .08);
   border-radius: 999rem;
   overflow: hidden
 }
 
-.balk i {
+.bar i {
   display: block;
   height: 100%;
   border-radius: 999rem;
   background: rgba(255, 255, 255, .35)
 }
 
-.staaf.wald .balk i {
+.stat.wald .bar i {
   background: var(--rood)
 }
 
-.staaf.wald .label b {
+.stat.wald .label b {
   /* lichtere rood-tint dan --rood: die haalt geen 4.5:1 contrast op deze
      donkere kaart-achtergrond */
   color: #FF6676
 }
 
 @media(prefers-contrast:more) {
-  .staaf.wald .label b {
+  .stat.wald .label b {
     color: var(--wit)
   }
 }

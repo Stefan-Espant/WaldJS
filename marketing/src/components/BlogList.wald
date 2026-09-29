@@ -11,6 +11,6 @@ const cards = await Promise.all(
   }),
 )
 ---
-<div class="changelog blog-lijst">
+<div class="changelog blog-list">
   {new SafeHtml(cards.join(''))}
 </div>

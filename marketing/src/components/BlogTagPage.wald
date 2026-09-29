@@ -19,8 +19,8 @@ const langLinks = { [locale]: tagPath(locale, tag), [other]: otherHasTag ? tagPa
   langLinks={langLinks}
   rss={rssPath(locale)}
 >
-  <section id="blog-tag" class="pagina-intro">
-    <div class="sectiekop">
+  <section id="blog-tag" class="page-intro">
+    <div class="section-heading">
       <span class="tag">{t(locale, 'tag')}</span>
       <h1>{t(locale, 'tagged')} #{tag}</h1>
     </div>

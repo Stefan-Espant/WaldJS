@@ -7,7 +7,7 @@ const recent = entries
   .slice(0, 3)
 ---
 <section id="changelog">
-  <div class="sectiekop">
+  <div class="section-heading">
     <span class="tag"><span class="nl">Groeidagboek</span><span class="en">Growth log</span></span>
     <h2>Changelog</h2>
     <p><span class="nl">Elke release een jaarring. Dit is er tot nu toe gegroeid.</span><span class="en">Every release a growth ring. Here's what has grown so far.</span></p>
@@ -21,8 +21,8 @@ const recent = entries
   </div>
   <div class="changelog">
     {new SafeHtml(recent.map(entry => `
-      <div class="log-kaart">
-        <div class="log-kop"><h3>${entry.data.title}</h3><span class="datum">${entry.data.dateLabel}</span></div>
+      <div class="log-card">
+        <div class="log-header"><h3>${entry.data.title}</h3><span class="date">${entry.data.dateLabel}</span></div>
         ${entry.body}
       </div>
     `).join(''))}

@@ -7,16 +7,16 @@ import Vergelijking from '../../components/Vergelijking.wald'
   description="Een eerlijke vergelijking tussen WaldJS en Eleventy: single-file componenten, Vite-integratie, partial hydration en wanneer je welke kiest."
   canonicalPath="/vs/eleventy"
 >
-  <section id="vs-eleventy-intro" class="pagina-intro">
-    <div class="sectiekop">
+  <section id="vs-eleventy-intro" class="page-intro">
+    <div class="section-heading">
       <span class="tag"><span class="nl">Vergelijking</span><span class="en">Comparison</span></span>
       <h1>WaldJS vs Eleventy</h1>
       <p><span class="nl">Eleventy is een extreem volwassen, templating-taal-onafhankelijke generator. WaldJS kiest bewust voor één formaat en Vite-integratie.</span><span class="en">Eleventy is an extremely mature, templating-language-agnostic generator. WaldJS deliberately picks one format and Vite integration.</span></p>
     </div>
   </section>
   <Vergelijking />
-  <section id="vs-eleventy-keuze">
-    <div class="sectiekop">
+  <section id="vs-eleventy-choice">
+    <div class="section-heading">
       <h2><span class="nl">Wanneer kies je wat?</span><span class="en">When to choose which?</span></h2>
     </div>
     <div class="split">

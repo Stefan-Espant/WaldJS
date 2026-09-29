@@ -49,14 +49,14 @@ describe('rssLinkHtml', () => {
 describe('langSwitchHtml', () => {
   it('renders the client-side toggle buttons when the language is not fixed', () => {
     const html = langSwitchHtml(undefined, undefined)
-    expect(html).toContain(`<button id="btn-nl" class="actief" onclick="zetTaal('nl')">NL</button>`)
-    expect(html).toContain(`<button id="btn-en" onclick="zetTaal('en')">EN</button>`)
+    expect(html).toContain(`<button id="btn-nl" class="active" onclick="setLanguage('nl')">NL</button>`)
+    expect(html).toContain(`<button id="btn-en" onclick="setLanguage('en')">EN</button>`)
   })
 
   it('renders links to the other language when the language is fixed', () => {
     const html = langSwitchHtml('en', { nl: '/blog/a', en: '/en/blog/a' })
     expect(html).toContain('<a id="btn-nl" href="/blog/a" hreflang="nl"')
-    expect(html).toContain('<a id="btn-en" class="actief" aria-current="true" href="/en/blog/a" hreflang="en"')
+    expect(html).toContain('<a id="btn-en" class="active" aria-current="true" href="/en/blog/a" hreflang="en"')
     expect(html).toContain(`localStorage.setItem('wald-taal','nl')`)
     expect(html).not.toContain('<button')
   })

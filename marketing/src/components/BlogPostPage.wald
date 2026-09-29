@@ -32,15 +32,15 @@ const meta = new SafeHtml(postMetaHtml(post, locale))
   jsonLd={blogPostingJsonLd(post, locale)}
   rss={rssPath(locale)}
 >
-  <section id="blog-post" class="pagina-intro blog-post">
+  <section id="blog-post" class="page-intro blog-post">
     <article>
-      <div class="sectiekop">
+      <div class="section-heading">
         <span class="tag">{t(locale, 'tag')}</span>
         <h1>{post.title}</h1>
         {meta}
       </div>
       <div class="blog-cover">{new SafeHtml(cover)}</div>
-      <div class="log-kaart blog-body">
+      <div class="log-card blog-body">
         {new SafeHtml(entry.body)}
       </div>
       <p><a href={blogPath(locale)}>← {t(locale, 'back')}</a></p>
