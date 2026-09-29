@@ -7,7 +7,7 @@ const recent = entries
   .slice(0, 3)
 ---
 <section id="changelog">
-  <div class="sectiekop">
+  <div class="section-heading">
     <span class="tag"><span class="nl">Groeidagboek</span><span class="en">Growth log</span></span>
     <h2>Changelog</h2>
     <p><span class="nl">Elke release een jaarring. Dit is er tot nu toe gegroeid.</span><span class="en">Every release a growth ring. Here's what has grown so far.</span></p>

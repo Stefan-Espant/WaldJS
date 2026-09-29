@@ -112,20 +112,20 @@
     padding-right: 1.125rem
   }
 
-  .sectiekop {
+  .section-heading {
     margin-bottom: 2.625rem
   }
 
-  .sectiekop h2 {
+  .section-heading h2 {
     font-size: 1.55rem;
     line-height: 1.14
   }
 
-  .sectiekop p {
+  .section-heading p {
     font-size: .95rem
   }
 
-  .sectiekop .tag,
+  .section-heading .tag,
   .split .text h2 .tag {
     font-size: 1.05rem
   }

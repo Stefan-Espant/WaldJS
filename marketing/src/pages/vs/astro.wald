@@ -8,7 +8,7 @@ import Vergelijking from '../../components/Vergelijking.wald'
   canonicalPath="/vs/astro"
 >
   <section id="vs-astro-intro" class="page-intro">
-    <div class="sectiekop">
+    <div class="section-heading">
       <span class="tag"><span class="nl">Vergelijking</span><span class="en">Comparison</span></span>
       <h1>WaldJS vs Astro</h1>
       <p><span class="nl">Beide gebruiken single-file componenten, content collections en 0 KB JavaScript standaard. Het verschil zit 'm in scope en ecosysteem.</span><span class="en">Both use single-file components, content collections, and 0 KB JavaScript by default. The difference is in scope and ecosystem.</span></p>
@@ -16,7 +16,7 @@ import Vergelijking from '../../components/Vergelijking.wald'
   </section>
   <Vergelijking />
   <section id="vs-astro-keuze">
-    <div class="sectiekop">
+    <div class="section-heading">
       <h2><span class="nl">Wanneer kies je wat?</span><span class="en">When to choose which?</span></h2>
     </div>
     <div class="split">

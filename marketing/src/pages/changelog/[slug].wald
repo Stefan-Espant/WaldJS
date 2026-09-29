@@ -15,7 +15,7 @@ const entry = await getEntry('changelog', $$props.slug)
   canonicalPath={`/changelog/${$$props.slug}`}
 >
   <section id="changelog-entry" class="page-intro">
-    <div class="sectiekop">
+    <div class="section-heading">
       <span class="tag"><span class="nl">Groeidagboek</span><span class="en">Growth log</span></span>
       <h1>{entry.data.title}</h1>
       <span class="date">{entry.data.dateLabel}</span>

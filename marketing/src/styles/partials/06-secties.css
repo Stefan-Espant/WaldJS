@@ -18,12 +18,12 @@ section.full {
   padding-top: calc(var(--byz-space-24) + 4rem)
 }
 
-.sectiekop {
+.section-heading {
   text-align: center;
   margin-bottom: var(--byz-space-16)
 }
 
-.sectiekop .tag {
+.section-heading .tag {
   color: var(--rood);
   font-family: var(--script);
   font-weight: 400;
@@ -32,7 +32,7 @@ section.full {
   font-size: 1.2rem
 }
 
-.sectiekop h2 {
+.section-heading h2 {
   font-size: clamp(1.7rem, 3.4vw, 2.5rem);
   font-weight: 800;
   margin-top: 0.5rem;
@@ -40,13 +40,13 @@ section.full {
   letter-spacing: .03em
 }
 
-.sectiekop p {
+.section-heading p {
   color: var(--wit-zacht);
   max-width: 37.5rem;
   margin: 0.75rem auto 0
 }
 
-.sectiekop::after {
+.section-heading::after {
   content: "";
   display: block;
   width: 8.75rem;

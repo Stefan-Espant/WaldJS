@@ -1,7 +1,7 @@
 ---
 ---
 <section id="quickstart" style="background:transparent">
-  <div class="sectiekop">
+  <div class="section-heading">
     <span class="tag">Quick start</span>
     <h2><span class="nl">Van zaadje tot site in 30 seconden</span><span class="en">From seed to site in 30 seconds</span></h2>
     <p><span class="nl">Eén commando en je bos staat. Kies npm of pnpm.</span><span class="en">One command and your forest is planted. Choose npm or pnpm.</span></p>

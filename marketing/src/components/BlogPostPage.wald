@@ -34,7 +34,7 @@ const meta = new SafeHtml(postMetaHtml(post, locale))
 >
   <section id="blog-post" class="page-intro blog-post">
     <article>
-      <div class="sectiekop">
+      <div class="section-heading">
         <span class="tag">{t(locale, 'tag')}</span>
         <h1>{post.title}</h1>
         {meta}

@@ -2,7 +2,7 @@
 ---
 <section class="full" id="benchmarks" style="padding:90px 6vw">
   <div class="bench">
-    <div class="sectiekop" style="margin-bottom:0">
+    <div class="section-heading" style="margin-bottom:0">
       <span class="tag">Benchmarks</span>
       <h2><span class="nl">Snel als een sprintende hertenbok</span><span class="en">Fast as a sprinting deer</span></h2>
       <p><span class="nl">Interne metingen op een blog met 1.000 Markdown-pagina's, vergeleken met Astro en Eleventy.</span>

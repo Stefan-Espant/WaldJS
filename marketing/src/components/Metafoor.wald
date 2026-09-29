@@ -3,7 +3,7 @@
 <section id="metaphor">
   <svg class="fern left" aria-hidden="true"></svg>
   <svg class="fern right" aria-hidden="true"></svg>
-  <div class="sectiekop">
+  <div class="section-heading">
     <span class="tag"><span class="nl">De bos-metafoor</span><span class="en">The forest metaphor</span></span>
     <h2><span class="nl">Denk in bomen, niet in buzzwords</span><span class="en">Think in trees, not buzzwords</span></h2>
     <p><span class="nl">WaldJS gebruikt overal een bos-metafoor. Eén terminologie, van CLI tot compiler.</span><span class="en">WaldJS uses a forest metaphor throughout. One terminology, from CLI to compiler.</span></p>

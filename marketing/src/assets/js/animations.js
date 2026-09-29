@@ -13,7 +13,7 @@
   gsap.from('header .cta .btn', { y:24, autoAlpha:0, duration:.7, stagger:.12, ease:'power3.out', delay:.85, clearProps:'transform,opacity,visibility' });
 
   /* sectiekoppen */
-  gsap.utils.toArray('.sectiekop').forEach(el => {
+  gsap.utils.toArray('.section-heading').forEach(el => {
     gsap.from(el, { y:50, autoAlpha:0, duration:.8, ease:'power3.out', clearProps:'transform,opacity,visibility',
       scrollTrigger:{ trigger:el, start:'top 85%' } });
   });

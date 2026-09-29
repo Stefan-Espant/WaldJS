@@ -10,7 +10,7 @@ const sorted = entries.slice().sort((a, b) => new Date(b.data.date).getTime() - 
   canonicalPath="/changelog"
 >
   <section id="changelog-overview" class="page-intro">
-    <div class="sectiekop">
+    <div class="section-heading">
       <span class="tag"><span class="nl">Groeidagboek</span><span class="en">Growth log</span></span>
       <h1>Changelog</h1>
     </div>
