@@ -16,7 +16,7 @@ const paths = { nl: blogPath('nl'), en: blogPath('en') }
   langLinks={paths}
   rss={rssPath(locale)}
 >
-  <section id="blog" class="pagina-intro">
+  <section id="blog" class="page-intro">
     <div class="sectiekop">
       <span class="tag">{t(locale, 'tag')}</span>
       <h1>{t(locale, 'title')}</h1>

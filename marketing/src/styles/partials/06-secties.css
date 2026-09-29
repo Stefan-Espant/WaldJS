@@ -14,7 +14,7 @@ section.full {
 
 /* eerste sectie op een pagina zonder eigen <header>-hero: de vaste nav
    overlapt anders de titel, dus extra ruimte erboven */
-.pagina-intro {
+.page-intro {
   padding-top: calc(var(--byz-space-24) + 4rem)
 }
 
