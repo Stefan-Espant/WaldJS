@@ -2,7 +2,7 @@
 import { langSwitchHtml } from '../lib/head'
 const { canonicalPath, lang, langLinks } = $$props
 const changelogCurrent = canonicalPath === '/changelog' ? 'page' : 'false'
-const waaromCurrent = canonicalPath === '/waarom' ? 'page' : 'false'
+const whyCurrent = canonicalPath === '/waarom' ? 'page' : 'false'
 const blogHref = lang === 'en' ? '/en/blog' : '/blog'
 const blogCurrent = canonicalPath === blogHref ? 'page' : 'false'
 const langSwitch = new SafeHtml(langSwitchHtml(lang, langLinks))
@@ -21,7 +21,7 @@ const langSwitch = new SafeHtml(langSwitchHtml(lang, langLinks))
     <li class="hide"><a href="/#benchmarks">Benchmarks</a></li>
     <li class="hide"><a href="/changelog" aria-current={changelogCurrent}>Changelog</a></li>
     <li class="hide"><a href={blogHref} aria-current={blogCurrent}>Blog</a></li>
-    <li class="hide"><a href="/waarom" aria-current={waaromCurrent}><span class="nl">Waarom WaldJS</span><span class="en">Why WaldJS</span></a></li>
+    <li class="hide"><a href="/waarom" aria-current={whyCurrent}><span class="nl">Waarom WaldJS</span><span class="en">Why WaldJS</span></a></li>
   </ul>
   <ul class="right-side">
     <li><button id="btn-sound" class="day-night" onclick="setSound()" aria-label="Bosgeluiden aan/uit">🔇</button></li>
@@ -41,6 +41,6 @@ const langSwitch = new SafeHtml(langSwitchHtml(lang, langLinks))
   <a href="/#roadmap" onclick="toggleMenu(false)">Roadmap</a>
   <a href="/changelog" onclick="toggleMenu(false)" aria-current={changelogCurrent}>Changelog</a>
   <a href={blogHref} onclick="toggleMenu(false)" aria-current={blogCurrent}>Blog</a>
-  <a href="/waarom" onclick="toggleMenu(false)" aria-current={waaromCurrent}><span class="nl">Waarom WaldJS</span><span class="en">Why WaldJS</span></a>
+  <a href="/waarom" onclick="toggleMenu(false)" aria-current={whyCurrent}><span class="nl">Waarom WaldJS</span><span class="en">Why WaldJS</span></a>
   <a href="https://github.com/Stefan-Espant/WaldJS/" target="_blank" rel="noopener" onclick="toggleMenu(false)">GitHub ↗</a>
 </div>
