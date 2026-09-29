@@ -45,7 +45,7 @@
   margin-bottom: 0.625rem
 }
 
-.log-header .versie {
+.log-header .version {
   display: inline-block;
   position: relative;
   background: linear-gradient(180deg, #FF6676 0%, #FF3347 58%, #D91A31 100%);
@@ -63,7 +63,7 @@
     0 0.5rem 1rem rgba(255, 51, 71, .24);
 }
 
-.log-header .versie::before {
+.log-header .version::before {
   content: "";
   position: absolute;
   left: 12%;
@@ -75,7 +75,7 @@
   pointer-events: none;
 }
 
-.log-header .versie.aankomend {
+.log-header .version.upcoming {
   background: linear-gradient(180deg, rgba(255, 255, 255, .12), rgba(255, 255, 255, .04));
   border: 0.0938rem dashed rgba(255, 51, 71, .72);
   color: var(--rood);

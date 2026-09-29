@@ -9,7 +9,7 @@
   font-size: var(--byz-text-sm)
 }
 
-.gh-stats.zichtbaar {
+.gh-stats.visible {
   display: flex
 }
 

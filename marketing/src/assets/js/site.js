@@ -295,7 +295,7 @@ const species = ["oak", "beech", "pine"]
       if (!d) return;
       document.getElementById('gh-stars').textContent = d.stargazers_count;
       document.getElementById('gh-forks').textContent = d.forks_count;
-      el.classList.add('zichtbaar');
+      el.classList.add('visible');
     })
     .catch(() => {});
 })();
