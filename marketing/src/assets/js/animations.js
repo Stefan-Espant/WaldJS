@@ -33,7 +33,7 @@
   });
 
   /* benchmark-balken groeien */
-  gsap.utils.toArray('.balk i').forEach(b => {
+  gsap.utils.toArray('.bar i').forEach(b => {
     gsap.from(b, { scaleX:0, transformOrigin:'left center', duration:1.2, ease:'power4.out',
       scrollTrigger:{ trigger:b, start:'top 88%' } });
   });

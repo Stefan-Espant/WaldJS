@@ -166,7 +166,7 @@ describe('marketing site build', () => {
     expect(css).toContain('@media(prefers-contrast:more)')
     expect(css).toContain('--rand:rgba(255,255,255,0.4)')
     expect(css).toContain('--wit-zacht:rgba(255,255,255,0.92)')
-    expect(css).toContain('.staaf.wald .label b{color:var(--wit)}')
+    expect(css).toContain('.stat.wald .label b{color:var(--wit)}')
   })
 
   it('boost ook de losse, niet-getokeniseerde gedempte teksten onder prefers-contrast:more', () => {

@@ -6,7 +6,7 @@ section {
   position: relative
 }
 
-section.vol {
+section.full {
   max-width: none;
   padding-left: 0;
   padding-right: 0
