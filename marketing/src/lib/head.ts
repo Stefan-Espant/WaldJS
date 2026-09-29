@@ -56,10 +56,10 @@ export function rssLinkHtml(path: string | undefined): string {
 export function langSwitchHtml(lang: Locale | undefined, links: LocalePaths | undefined): string {
   const open = '<div class="lang-switch" role="group" aria-label="Taal / Language">'
   if (!lang || !links) {
-    return `${open}<button id="btn-nl" class="actief" onclick="zetTaal('nl')">NL</button><button id="btn-en" onclick="zetTaal('en')">EN</button></div>`
+    return `${open}<button id="btn-nl" class="active" onclick="setLanguage('nl')">NL</button><button id="btn-en" onclick="setLanguage('en')">EN</button></div>`
   }
   const link = (locale: Locale) => {
-    const current = locale === lang ? ' class="actief" aria-current="true"' : ''
+    const current = locale === lang ? ' class="active" aria-current="true"' : ''
     const href = escapeHtml(links[locale] ?? '/')
     return `<a id="btn-${locale}"${current} href="${href}" hreflang="${locale}" onclick="try{localStorage.setItem('wald-taal','${locale}')}catch(e){}">${locale.toUpperCase()}</a>`
   }

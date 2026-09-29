@@ -7,7 +7,7 @@
   </div>
 
   <div class="split" style="margin-bottom:70px">
-    <div class="tekst">
+    <div class="text">
       <h2><span class="tag"><span class="nl">Pagina's</span><span class="en">Pages</span></span>
         <span class="nl">Bestanden worden vanzelf routes</span>
         <span class="en">Files become routes automatically</span></h2>
@@ -24,8 +24,8 @@
   </div>
 
   <div class="split" style="margin-bottom:70px">
-    <div class="codeblok">
-      <div class="titel"><span class="dot"></span>src/pages/blog/index.wald</div>
+    <div class="code-block">
+      <div class="title"><span class="dot"></span>src/pages/blog/index.wald</div>
       <pre><span class="c-c">---</span>
 <span class="c-k">import</span> &#123; getCollection &#125; <span class="c-k">from</span> <span class="c-s">'wald:content'</span>
 <span class="c-k">const</span> posts = <span class="c-k">await</span> getCollection(<span class="c-s">'blog'</span>)
@@ -34,7 +34,7 @@
   &#123;posts.map(p =&gt; <span class="c-s">'&lt;li&gt;'</span> + p.data.title + <span class="c-s">'&lt;/li&gt;'</span>).join(<span class="c-s">''</span>)&#125;
 <span class="c-t">&lt;/ul&gt;</span></pre>
     </div>
-    <div class="tekst">
+    <div class="text">
       <h2><span class="tag">Content collections</span>
         <span class="nl">Markdown als voedingsbodem</span>
         <span class="en">Markdown as fertile soil</span></h2>
@@ -44,15 +44,15 @@
   </div>
 
   <div class="split">
-    <div class="tekst">
+    <div class="text">
       <h2><span class="tag"><span class="nl">Dynamische routes</span><span class="en">Dynamic routes</span></span>
         <span class="nl">getStaticPaths() bepaalt wat er groeit</span>
         <span class="en">getStaticPaths() decides what grows</span></h2>
       <p><span class="nl">Exporteer <b>getStaticPaths()</b> vanuit de frontmatter van een dynamische route zoals <b>[slug].wald</b>. Bij <b>wald build</b> wordt die aangeroepen om te bepalen welke pagina's gegenereerd worden. <b>$$props</b> bevat de route-parameters tijdens het renderen.</span>
       <span class="en">Export <b>getStaticPaths()</b> from the frontmatter of a dynamic route like <b>[slug].wald</b>. <b>wald build</b> calls it to know which pages to generate. <b>$$props</b> contains the route params during rendering.</span></p>
     </div>
-    <div class="codeblok">
-      <div class="titel"><span class="dot"></span>src/pages/blog/[slug].wald</div>
+    <div class="code-block">
+      <div class="title"><span class="dot"></span>src/pages/blog/[slug].wald</div>
       <pre><span class="c-c">---</span>
 <span class="c-k">import</span> &#123; getCollection, getEntry &#125; <span class="c-k">from</span> <span class="c-s">'wald:content'</span>
 

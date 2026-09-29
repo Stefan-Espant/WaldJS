@@ -11,7 +11,7 @@
   grid-column: span 6
 }
 
-.split .tekst h2 {
+.split .text h2 {
   font-size: clamp(1.5rem, 2.8vw, 2.1rem);
   font-weight: 800;
   margin-bottom: 0.875rem;
@@ -19,7 +19,7 @@
   letter-spacing: .03em
 }
 
-.split .tekst h2 .tag {
+.split .text h2 .tag {
   display: block;
   color: var(--rood);
   font-family: var(--script);
@@ -30,7 +30,7 @@
   margin-bottom: 0.5rem
 }
 
-.split .tekst p {
+.split .text p {
   color: var(--wit-zacht);
   margin-bottom: 0.75rem
 }

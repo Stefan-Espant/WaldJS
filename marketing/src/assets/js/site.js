@@ -34,11 +34,11 @@ document.addEventListener('click', e => {
   if (doel){ e.preventDefault(); doel.scrollIntoView({ behavior:'smooth' }); }
 });
 
-function zetTaal(t){
+function setLanguage(t){
   document.documentElement.dataset.lang = t;
   document.documentElement.lang = t;
-  document.getElementById('btn-nl').classList.toggle('actief', t==='nl');
-  document.getElementById('btn-en').classList.toggle('actief', t==='en');
+  document.getElementById('btn-nl').classList.toggle('active', t==='nl');
+  document.getElementById('btn-en').classList.toggle('active', t==='en');
   try { localStorage.setItem('wald-taal', t); } catch(e){}
 }
 try {
@@ -48,14 +48,14 @@ try {
   if (vast === 'nl' || vast === 'en') localStorage.setItem('wald-taal', vast);
   else {
     const bewaard = localStorage.getItem('wald-taal');
-    if (bewaard === 'nl' || bewaard === 'en') zetTaal(bewaard);
+    if (bewaard === 'nl' || bewaard === 'en') setLanguage(bewaard);
   }
 } catch(e){}
 
-let vorigeFocusVoorMenu = null;
+let previousFocusBeforeMenu = null;
 
 function toggleMenu(open){
-  const menu = document.getElementById('mobielmenu');
+  const menu = document.getElementById('mobile-menu');
   menu.classList.toggle('open', open);
   menu.setAttribute('aria-hidden', String(!open));
   // inert voorkomt dat links/knoppen in het gesloten menu nog met Tab
@@ -63,23 +63,23 @@ function toggleMenu(open){
   // focusbare kinderen, wat screenreaders inconsistent afhandelen.
   menu.toggleAttribute('inert', !open);
   if (open){
-    vorigeFocusVoorMenu = document.activeElement;
-    const sluitknop = menu.querySelector('.sluit');
+    previousFocusBeforeMenu = document.activeElement;
+    const sluitknop = menu.querySelector('.close');
     if (sluitknop) sluitknop.focus();
-    document.addEventListener('keydown', vangFocusInMenu);
+    document.addEventListener('keydown', trapFocusInMenu);
   } else {
-    document.removeEventListener('keydown', vangFocusInMenu);
-    if (vorigeFocusVoorMenu && typeof vorigeFocusVoorMenu.focus === 'function') vorigeFocusVoorMenu.focus();
+    document.removeEventListener('keydown', trapFocusInMenu);
+    if (previousFocusBeforeMenu && typeof previousFocusBeforeMenu.focus === 'function') previousFocusBeforeMenu.focus();
   }
 }
 
-function vangFocusInMenu(e){
+function trapFocusInMenu(e){
   if (e.key === 'Escape'){
     toggleMenu(false);
     return;
   }
   if (e.key !== 'Tab') return;
-  const menu = document.getElementById('mobielmenu');
+  const menu = document.getElementById('mobile-menu');
   const focusbaar = Array.from(menu.querySelectorAll('a, button'));
   if (focusbaar.length === 0) return;
   const eerste = focusbaar[0];
@@ -94,11 +94,11 @@ function vangFocusInMenu(e){
 }
 
 /* ============================================================
-   Procedurele varens — botanische decoratie
+   Procedural ferns — botanical decoration
    ============================================================ */
 (function(){
   const NS = 'http://www.w3.org/2000/svg';
-  document.querySelectorAll('svg.varen').forEach(svg => {
+  document.querySelectorAll('svg.fern').forEach(svg => {
     svg.setAttribute('viewBox', '0 0 200 300');
     const g = document.createElementNS(NS, 'g');
     g.setAttribute('fill', 'none');
@@ -137,7 +137,7 @@ function vangFocusInMenu(e){
   });
   // zachte wuif
   if (typeof gsap !== 'undefined' && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-    gsap.utils.toArray('svg.varen').forEach((v, i) => {
+    gsap.utils.toArray('svg.fern').forEach((v, i) => {
       gsap.to(v, { rotation: 2.5, transformOrigin: '50% 100%', duration: 2.8 + i * 0.4,
         yoyo: true, repeat: -1, ease: 'sine.inOut', delay: i * 0.3 });
     });
@@ -145,26 +145,26 @@ function vangFocusInMenu(e){
 })();
 
 /* ============================================================
-   Kopieerknoppen op codeblokken
+   Copy buttons on code blocks
    ============================================================ */
 (function(){
-  document.querySelectorAll('.codeblok').forEach(blok => {
-    if (blok.classList.contains('terminal') || blok.querySelector('.pg-editor')) return;
-    const titel = blok.querySelector('.titel');
-    const pre = blok.querySelector('pre');
-    if (!titel || !pre) return;
-    const knop = document.createElement('button');
-    knop.className = 'kopieer';
+  document.querySelectorAll('.code-block').forEach(block => {
+    if (block.classList.contains('terminal') || block.querySelector('.pg-editor')) return;
+    const titleEl = block.querySelector('.title');
+    const pre = block.querySelector('pre');
+    if (!titleEl || !pre) return;
+    const button = document.createElement('button');
+    button.className = 'copy';
     const label = '<span class="nl">Kopieer</span><span class="en">Copy</span>';
-    knop.innerHTML = label;
-    knop.addEventListener('click', () => {
+    button.innerHTML = label;
+    button.addEventListener('click', () => {
       navigator.clipboard.writeText(pre.innerText).then(() => {
-        knop.classList.add('ok');
-        knop.textContent = '✓';
-        setTimeout(() => { knop.classList.remove('ok'); knop.innerHTML = label; }, 1500);
+        button.classList.add('ok');
+        button.textContent = '✓';
+        setTimeout(() => { button.classList.remove('ok'); button.innerHTML = label; }, 1500);
       });
     });
-    titel.appendChild(knop);
+    titleEl.appendChild(button);
   });
 })();
 
@@ -172,8 +172,8 @@ function vangFocusInMenu(e){
    Terminal-animatie in de hero
    ============================================================ */
 (function(){
-  const cmdEl = document.getElementById('term-tekst');
-  const uitEl = document.getElementById('term-uit');
+  const cmdEl = document.getElementById('term-text');
+  const uitEl = document.getElementById('term-output');
   if (!cmdEl || !uitEl) return;
   const cmd = 'wald plant my-forest';
   const regels = [
@@ -234,11 +234,11 @@ const soorten = ["eik", "beuk", "den"]
 })();
 
 /* ============================================================
-   Groeibalk + scrim (scroll-voortgang & leesbaarheid)
+   Growth bar + scrim (scroll progress & readability)
    ============================================================ */
 (function(){
-  const balk = document.getElementById('groeibalk');
-  const blad = document.getElementById('groeiblad');
+  const balk = document.getElementById('growth-bar');
+  const blad = document.getElementById('growth-leaf');
   const scrim = document.getElementById('scrim');
   function update(){
     const h = document.documentElement;
@@ -261,10 +261,10 @@ const soorten = ["eik", "beuk", "den"]
 })();
 
 /* ============================================================
-   Cursor-vuurvliegje in de hero
+   Cursor firefly in the hero
    ============================================================ */
 (function(){
-  const vlieg = document.getElementById('cursorvlieg');
+  const vlieg = document.getElementById('cursor-firefly');
   const hero = document.querySelector('header');
   if (!vlieg || !hero) return;
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -293,7 +293,7 @@ const soorten = ["eik", "beuk", "den"]
     .then(r => r.ok ? r.json() : null)
     .then(d => {
       if (!d) return;
-      document.getElementById('gh-sterren').textContent = d.stargazers_count;
+      document.getElementById('gh-stars').textContent = d.stargazers_count;
       document.getElementById('gh-forks').textContent = d.forks_count;
       el.classList.add('zichtbaar');
     })
@@ -306,7 +306,7 @@ const soorten = ["eik", "beuk", "den"]
    vogels (dag) en af en toe een koekoek. Standaard uit.
    ============================================================ */
 (function(){
-  const knop = document.getElementById('btn-geluid');
+  const knop = document.getElementById('btn-sound');
   const AC = window.AudioContext || window.webkitAudioContext;
   if (!knop) return;
   if (!AC){ knop.style.display = 'none'; return; } // progressive enhancement
@@ -406,7 +406,7 @@ const soorten = ["eik", "beuk", "den"]
     setTimeout(koekoekLus, 18000 + Math.random() * 30000);
   }
 
-  window.zetGeluid = function(){
+  window.setSound = function(){
     zorgVoorCtx();
     if (ctx.state === 'suspended') ctx.resume();
     aan = !aan;

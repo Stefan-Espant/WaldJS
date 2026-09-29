@@ -14,27 +14,27 @@ const langSwitch = new SafeHtml(langSwitchHtml(lang, langLinks))
       <use href="#waldlogo"/>
     </svg>
   </a>
-  <ul class="links-kant">
-    <li class="verberg"><a href="/#formaat"><span class="nl">Het .wald-formaat</span><span class="en">The .wald format</span></a></li>
-    <li class="verberg"><a href="/#playground">Playground</a></li>
-    <li class="verberg"><a href="/#features">Features</a></li>
-    <li class="verberg"><a href="/#benchmarks">Benchmarks</a></li>
-    <li class="verberg"><a href="/changelog" aria-current={changelogCurrent}>Changelog</a></li>
-    <li class="verberg"><a href={blogHref} aria-current={blogCurrent}>Blog</a></li>
-    <li class="verberg"><a href="/waarom" aria-current={waaromCurrent}><span class="nl">Waarom WaldJS</span><span class="en">Why WaldJS</span></a></li>
+  <ul class="left-side">
+    <li class="hide"><a href="/#format"><span class="nl">Het .wald-formaat</span><span class="en">The .wald format</span></a></li>
+    <li class="hide"><a href="/#playground">Playground</a></li>
+    <li class="hide"><a href="/#features">Features</a></li>
+    <li class="hide"><a href="/#benchmarks">Benchmarks</a></li>
+    <li class="hide"><a href="/changelog" aria-current={changelogCurrent}>Changelog</a></li>
+    <li class="hide"><a href={blogHref} aria-current={blogCurrent}>Blog</a></li>
+    <li class="hide"><a href="/waarom" aria-current={waaromCurrent}><span class="nl">Waarom WaldJS</span><span class="en">Why WaldJS</span></a></li>
   </ul>
-  <ul class="rechts-kant">
-    <li><button id="btn-geluid" class="dagnacht" onclick="zetGeluid()" aria-label="Bosgeluiden aan/uit">🔇</button></li>
-    <li><button id="btn-dagnacht" class="dagnacht" onclick="zetDagNacht()" aria-label="Dag / nacht">🌙</button></li>
+  <ul class="right-side">
+    <li><button id="btn-sound" class="day-night" onclick="setSound()" aria-label="Bosgeluiden aan/uit">🔇</button></li>
+    <li><button id="btn-day-night" class="day-night" onclick="setDayNight()" aria-label="Dag / nacht">🌙</button></li>
     <li>{langSwitch}</li>
     <li><a class="btn" href="https://github.com/Stefan-Espant/WaldJS/" target="_blank" rel="noopener">GitHub ↗</a></li>
   </ul>
   <button class="hamburger" onclick="toggleMenu(true)" aria-label="Menu">☰</button>
 </nav>
 
-<div id="mobielmenu" role="dialog" aria-modal="true" aria-label="Menu" aria-hidden="true" inert>
-  <button class="sluit" onclick="toggleMenu(false)" aria-label="Sluit menu">✕</button>
-  <a href="/#formaat" onclick="toggleMenu(false)"><span class="nl">Het .wald-formaat</span><span class="en">The .wald format</span></a>
+<div id="mobile-menu" role="dialog" aria-modal="true" aria-label="Menu" aria-hidden="true" inert>
+  <button class="close" onclick="toggleMenu(false)" aria-label="Sluit menu">✕</button>
+  <a href="/#format" onclick="toggleMenu(false)"><span class="nl">Het .wald-formaat</span><span class="en">The .wald format</span></a>
   <a href="/#playground" onclick="toggleMenu(false)">Playground</a>
   <a href="/#features" onclick="toggleMenu(false)">Features</a>
   <a href="/#benchmarks" onclick="toggleMenu(false)">Benchmarks</a>

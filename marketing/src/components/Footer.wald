@@ -13,34 +13,34 @@ const footerPageLinks = [
 const verkenWaaromHtml = footerPageLinks.filter(link => link.section === 'verken').map(link => link.html).join('')
 const bronnenVsLinksHtml = footerPageLinks.filter(link => link.section === 'bronnen').map(link => link.html).join('')
 ---
-<div class="footer-bos" aria-hidden="true">
+<div class="footer-forest" aria-hidden="true">
   <svg viewBox="0 0 1200 72" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
     <path fill="#01271D" d="M0,72 L0,48 L25,48 L40,20 L55,48 L85,48 L105,8 L125,48 L160,48 L180,30 L200,48 L240,48 L262,4 L284,48 L320,48 L340,26 L360,48 L400,48 L422,14 L444,48 L485,48 L505,34 L525,48 L565,48 L590,2 L615,48 L655,48 L675,22 L695,48 L735,48 L755,38 L775,48 L815,48 L838,10 L861,48 L900,48 L920,30 L940,48 L980,48 L1005,16 L1030,48 L1070,48 L1090,26 L1110,48 L1150,48 L1170,36 L1190,48 L1200,48 L1200,72 Z"/>
   </svg>
 </div>
 <footer>
-  <svg class="varen links" aria-hidden="true"></svg>
-  <svg class="varen rechts" aria-hidden="true"></svg>
+  <svg class="fern left" aria-hidden="true"></svg>
+  <svg class="fern right" aria-hidden="true"></svg>
   <div class="footer-grid">
-    <div class="footer-merk">
+    <div class="footer-brand">
       <svg viewBox="0 0 563.03 496.47" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="WaldJS"><use href="#waldlogo"/></svg>
       <p>
         <span class="nl">Een content-first webframework voor razendsnelle, statische websites. Plant je site en laat hem groeien.</span>
         <span class="en">A content-first web framework for blazing-fast, static websites. Plant your site and watch it grow.</span>
       </p>
     </div>
-    <div class="kolom">
+    <div class="column">
       <h2><span class="nl">Verken</span><span class="en">Explore</span></h2>
       <ul>
         <li><a href="/#quickstart">Quick start</a></li>
-        <li><a href="/#formaat"><span class="nl">Het .wald-formaat</span><span class="en">The .wald format</span></a></li>
+        <li><a href="/#format"><span class="nl">Het .wald-formaat</span><span class="en">The .wald format</span></a></li>
         <li><a href="/#features">Features</a></li>
         <li><a href="/#benchmarks">Benchmarks</a></li>
         <li><a href="/#roadmap">Roadmap</a></li>
         {new SafeHtml(verkenWaaromHtml)}
       </ul>
     </div>
-    <div class="kolom">
+    <div class="column">
       <h2><span class="nl">Bronnen</span><span class="en">Resources</span></h2>
       <ul>
         <li>
@@ -51,12 +51,12 @@ const bronnenVsLinksHtml = footerPageLinks.filter(link => link.section === 'bron
         </li>
         <li><a href="/#packages">Packages</a></li>
         <li><a href="/#cli">CLI</a></li>
-        <li><a href="/#structuur"><span class="nl">Projectstructuur</span><span class="en">Project structure</span></a></li>
+        <li><a href="/#structure"><span class="nl">Projectstructuur</span><span class="en">Project structure</span></a></li>
         {new SafeHtml(bronnenVsLinksHtml)}
       </ul>
     </div>
   </div>
-  <div class="footer-onder">
+  <div class="footer-bottom">
     <span>© 2026 WaldJS · <span class="nl">Geplant met liefde</span><span class="en">Planted with love</span> 🌱</span>
   </div>
 </footer>

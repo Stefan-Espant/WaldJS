@@ -18,8 +18,8 @@
       scrollTrigger:{ trigger:el, start:'top 85%' } });
   });
 
-  /* kaarten & codeblokken */
-  gsap.utils.toArray('.kaarten').forEach(grid => {
+  /* cards & code-blocks */
+  gsap.utils.toArray('.cards').forEach(grid => {
     gsap.from(grid.children, { y:44, autoAlpha:0, duration:.7, stagger:.09, ease:'power3.out', clearProps:'transform,opacity,visibility',
       scrollTrigger:{ trigger:grid, start:'top 85%' } });
   });
@@ -27,7 +27,7 @@
     gsap.from(sp.children, { y:50, autoAlpha:0, duration:.8, stagger:.15, ease:'power3.out', clearProps:'transform,opacity,visibility',
       scrollTrigger:{ trigger:sp, start:'top 82%' } });
   });
-  gsap.utils.toArray('.qs-grid .codeblok, .cli-grid .cli-kaart, .pkg span').forEach(el => {
+  gsap.utils.toArray('.qs-grid .code-block, .cli-grid .cli-kaart, .pkg span').forEach(el => {
     gsap.from(el, { y:34, autoAlpha:0, duration:.6, ease:'power3.out', clearProps:'transform,opacity,visibility',
       scrollTrigger:{ trigger:el, start:'top 90%' } });
   });

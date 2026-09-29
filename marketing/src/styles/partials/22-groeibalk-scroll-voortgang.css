@@ -1,5 +1,5 @@
-/* ---------- groeibalk (scroll-voortgang) ---------- */
-#groeibalk {
+/* ---------- growth-bar (scroll progress) ---------- */
+#growth-bar {
   position: fixed;
   top: 0;
   left: 0;
@@ -10,6 +10,6 @@
   border-radius: 0 6.1875rem 6.1875rem 0
 }
 
-#groeiblad {
+#growth-leaf {
   display: none
 }

@@ -1,5 +1,5 @@
-/* ---------- varens (botanische decoratie) ---------- */
-svg.varen {
+/* ---------- ferns (botanical decoration) ---------- */
+svg.fern {
   position: absolute;
   width: 13.125rem;
   height: 18.75rem;
@@ -9,19 +9,19 @@ svg.varen {
   overflow: visible
 }
 
-svg.varen.links {
+svg.fern.left {
   left: 1.5vw;
   bottom: -0.625rem
 }
 
-svg.varen.rechts {
+svg.fern.right {
   right: 1.5vw;
   bottom: -0.625rem;
   transform: scaleX(-1)
 }
 
 @media(max-width:56.25rem) {
-  svg.varen {
+  svg.fern {
     display: none
   }
 }

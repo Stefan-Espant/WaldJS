@@ -7,8 +7,8 @@
     <p><span class="nl">Bewerk het .wald-bestand links en zie de pagina rechts direct meegroeien.</span><span class="en">Edit the .wald file on the left and watch the page grow on the right.</span></p>
   </div>
   <div class="pg-grid">
-    <div class="codeblok">
-      <div class="titel"><span class="dot"></span>speeltuin.wald</div>
+    <div class="code-block">
+      <div class="title"><span class="dot"></span>speeltuin.wald</div>
       <textarea id="pg-editor" class="pg-editor" spellcheck="false" aria-label="Wald editor"></textarea>
     </div>
     <div class="pg-preview" id="pg-preview" aria-live="polite"></div>

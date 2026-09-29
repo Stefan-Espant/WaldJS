@@ -2,8 +2,8 @@
 ---
 <header id="top">
   <h1>
-    <div class="nl">Plant je site.<br><em>Laat hem groeien.</em></div>
-    <div class="en">Plant your site.<br><em>Watch it grow.</em></div>
+    <span class="nl">Plant je site.<br><em>Laat hem groeien.</em></span>
+    <span class="en">Plant your site.<br><em>Watch it grow.</em></span>
   </h1>
   <p class="sub">
     <span class="nl">WaldJS is een content-first webframework voor razendsnelle, statische websites. Schrijf <code style="font-family:var(--mono);font-size:.9em">.wald</code>-bestanden — deels frontmatter, deels HTML-template — en WaldJS compileert ze tot een statische site.</span>
@@ -14,14 +14,14 @@
     <a class="btn ghost" href="https://github.com/Stefan-Espant/WaldJS/" target="_blank" rel="noopener"><span class="nl">Bekijk op GitHub</span><span class="en">View on GitHub</span></a>
   </div>
   <div id="gh-stats" class="gh-stats">
-    <span>⭐ <b id="gh-sterren">–</b> stars</span>
+    <span>⭐ <b id="gh-stars">–</b> stars</span>
     <span>🍴 <b id="gh-forks">–</b> forks</span>
     <span><span class="nl">Open source</span><span class="en">Open source</span> · <b>MIT</b></span>
   </div>
-  <div class="terminal codeblok">
-    <div class="titel"><span class="dot"></span>terminal</div>
-    <pre><span id="term-tekst" class="term-cursor">$ </span>
-<span id="term-uit" class="term-uit"></span></pre>
+  <div class="terminal code-block">
+    <div class="title"><span class="dot"></span>terminal</div>
+    <pre><span id="term-text" class="term-cursor">$ </span>
+<span id="term-output" class="term-output"></span></pre>
   </div>
   <p class="plant-hint"><span class="nl">🌱 Tip: klik ergens in het bos om een boom te planten</span><span class="en">🌱 Tip: click anywhere in the forest to plant a tree</span></p>
 </header>

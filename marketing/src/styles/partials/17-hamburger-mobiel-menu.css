@@ -10,7 +10,7 @@
   justify-self: start
 }
 
-#mobielmenu {
+#mobile-menu {
   position: fixed;
   inset: 0;
   background: rgba(1, 32, 25, .97);
@@ -25,12 +25,12 @@
   transition: opacity var(--byz-duration-slow) var(--byz-ease-default)
 }
 
-#mobielmenu.open {
+#mobile-menu.open {
   opacity: 1;
   pointer-events: auto
 }
 
-#mobielmenu a {
+#mobile-menu a {
   color: var(--wit);
   text-decoration: none;
   font-size: 1.35rem;
@@ -39,7 +39,7 @@
   letter-spacing: .04em
 }
 
-#mobielmenu .sluit {
+#mobile-menu .close {
   position: absolute;
   top: 1.25rem;
   right: 1.5rem;
