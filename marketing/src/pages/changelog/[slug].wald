@@ -18,9 +18,9 @@ const entry = await getEntry('changelog', $$props.slug)
     <div class="sectiekop">
       <span class="tag"><span class="nl">Groeidagboek</span><span class="en">Growth log</span></span>
       <h1>{entry.data.title}</h1>
-      <span class="datum">{entry.data.dateLabel}</span>
+      <span class="date">{entry.data.dateLabel}</span>
     </div>
-    <div class="log-kaart">
+    <div class="log-card">
       {new SafeHtml(entry.body)}
     </div>
     <p><a href="/changelog">← <span class="nl">Terug naar alle updates</span><span class="en">Back to all updates</span></a></p>

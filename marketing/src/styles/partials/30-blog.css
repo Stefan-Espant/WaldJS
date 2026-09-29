@@ -1,16 +1,16 @@
 /* ---------- blog ---------- */
-.blog-kaart h2 {
+.blog-card h2 {
   margin: 0 0 .5rem;
   font-size: 1.5rem
 }
 
-.blog-kaart h2 a {
+.blog-card h2 a {
   color: inherit;
   text-decoration: none
 }
 
-.blog-kaart h2 a:hover,
-.blog-kaart h2 a:focus-visible {
+.blog-card h2 a:hover,
+.blog-card h2 a:focus-visible {
   text-decoration: underline
 }
 
@@ -77,12 +77,12 @@
   overflow-x: auto
 }
 
-.log-kaart .blog-tags li {
+.log-card .blog-tags li {
   padding-left: 0;
   margin-bottom: 0
 }
 
-.log-kaart .blog-tags li::before {
+.log-card .blog-tags li::before {
   content: none
 }
 

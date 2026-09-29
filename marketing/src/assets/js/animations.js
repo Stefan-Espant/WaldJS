@@ -52,7 +52,7 @@
   gsap.registerPlugin(ScrollTrigger);
   gsap.from('.compare tr', { y: 24, autoAlpha: 0, duration: .5, stagger: .06, ease: 'power3.out', clearProps:'transform,opacity,visibility',
     scrollTrigger: { trigger: '.compare', start: 'top 85%' } });
-  gsap.from('.log-kaart', { y: 40, autoAlpha: 0, duration: .6, stagger: .1, ease: 'power3.out', clearProps:'transform,opacity,visibility',
+  gsap.from('.log-card', { y: 40, autoAlpha: 0, duration: .6, stagger: .1, ease: 'power3.out', clearProps:'transform,opacity,visibility',
     scrollTrigger: { trigger: '.changelog', start: 'top 85%' } });
   gsap.from('.pg-grid > *', { y: 44, autoAlpha: 0, duration: .7, stagger: .15, ease: 'power3.out', clearProps:'transform,opacity,visibility',
     scrollTrigger: { trigger: '.pg-grid', start: 'top 85%' } });

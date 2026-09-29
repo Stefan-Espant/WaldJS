@@ -121,7 +121,7 @@ export function postMetaHtml(post: PostMeta, locale: Locale): string {
 
 export function postCardHtml(post: PostMeta, locale: Locale, coverHtml: string): string {
   const cover = coverHtml ? `<div class="blog-cover">${coverHtml}</div>` : ''
-  return `<article class="log-kaart blog-kaart">${cover}<h2><a href="${blogPath(locale, post.slug)}">${escapeHtml(post.title)}</a></h2>${postMetaHtml(post, locale)}<p>${escapeHtml(post.description)}</p></article>`
+  return `<article class="log-card blog-card">${cover}<h2><a href="${blogPath(locale, post.slug)}">${escapeHtml(post.title)}</a></h2>${postMetaHtml(post, locale)}<p>${escapeHtml(post.description)}</p></article>`
 }
 
 export function blogPostingJsonLd(post: PostMeta, locale: Locale): Record<string, unknown> {

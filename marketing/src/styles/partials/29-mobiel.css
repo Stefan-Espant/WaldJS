@@ -141,7 +141,7 @@
 
   .card,
   .cli-card,
-  .log-kaart,
+  .log-card,
   .faq details {
     padding: 1.25rem
   }
@@ -200,7 +200,7 @@
     padding: 1.25rem
   }
 
-  .log-kop .datum {
+  .log-header .date {
     margin-left: 0;
     width: 100%
   }

@@ -21,8 +21,8 @@ const recent = entries
   </div>
   <div class="changelog">
     {new SafeHtml(recent.map(entry => `
-      <div class="log-kaart">
-        <div class="log-kop"><h3>${entry.data.title}</h3><span class="datum">${entry.data.dateLabel}</span></div>
+      <div class="log-card">
+        <div class="log-header"><h3>${entry.data.title}</h3><span class="date">${entry.data.dateLabel}</span></div>
         ${entry.body}
       </div>
     `).join(''))}

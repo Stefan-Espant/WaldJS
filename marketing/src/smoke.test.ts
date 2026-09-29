@@ -109,7 +109,7 @@ describe('marketing site build', () => {
 
   it('toont nog maar de 3 recentste changelog-entries op de homepage', () => {
     const html = readFileSync(join(ROOT, 'dist/index.html'), 'utf-8')
-    const kaarten = html.match(/class="log-kaart"/g) ?? []
+    const kaarten = html.match(/class="log-card"/g) ?? []
     expect(kaarten.length).toBe(3)
     expect(html).toContain('href="/changelog"')
   })
@@ -171,7 +171,7 @@ describe('marketing site build', () => {
 
   it('boost ook de losse, niet-getokeniseerde gedempte teksten onder prefers-contrast:more', () => {
     const css = readFileSync(join(ROOT, 'dist/assets/css/site.css'), 'utf-8')
-    for (const selector of ['.log-kop .datum', '.footer-bottom', '.c-c', '.compare .no', '.bench .disclaimer']) {
+    for (const selector of ['.log-header .date', '.footer-bottom', '.c-c', '.compare .no', '.bench .disclaimer']) {
       expect(css, `${selector} mist een prefers-contrast:more override`).toContain(`${selector}{color:var(--wit-zacht)}`)
     }
   })
