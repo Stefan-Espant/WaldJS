@@ -171,7 +171,7 @@ describe('marketing site build', () => {
 
   it('boost ook de losse, niet-getokeniseerde gedempte teksten onder prefers-contrast:more', () => {
     const css = readFileSync(join(ROOT, 'dist/assets/css/site.css'), 'utf-8')
-    for (const selector of ['.log-kop .datum', '.footer-bottom', '.c-c', '.vergelijk .nee', '.bench .disclaimer']) {
+    for (const selector of ['.log-kop .datum', '.footer-bottom', '.c-c', '.compare .no', '.bench .disclaimer']) {
       expect(css, `${selector} mist een prefers-contrast:more override`).toContain(`${selector}{color:var(--wit-zacht)}`)
     }
   })
