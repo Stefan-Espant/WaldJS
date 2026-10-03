@@ -174,6 +174,10 @@ export const STRINGS = {
     },
   },
   footer: {
+    terms: {
+      nl: 'Voorwaarden',
+      en: 'Terms',
+    },
     tagline: {
       nl: 'Een content-first webframework voor razendsnelle, statische websites. Plant je site en laat hem groeien.',
       en: 'A content-first web framework for blazing-fast, static websites. Plant your site and watch it grow.',
@@ -547,6 +551,100 @@ export const STRINGS = {
     cta: {
       nl: 'Probeer het — 2 minuten',
       en: 'Try it — 2 minutes',
+    },
+  },
+  terms: {
+    tag: {
+      nl: 'Juridisch',
+      en: 'Legal',
+    },
+    title: {
+      nl: 'Algemene voorwaarden &amp; disclaimer',
+      en: 'Terms &amp; disclaimer',
+    },
+    updated: {
+      nl: 'Laatst bijgewerkt: 3 oktober 2026',
+      en: 'Last updated: 3 October 2026',
+    },
+    intro: {
+      nl: 'WaldJS is een gratis open-sourceproject van Stefan van der Kort, onderhouden als privépersoon en zonder winstoogmerk. Deze voorwaarden gelden voor het gebruik van deze website (waldjs.eu) en van de WaldJS-software. Door de website te bezoeken of de software te gebruiken, ga je met deze voorwaarden akkoord.',
+      en: 'WaldJS is a free open-source project by Stefan van der Kort, maintained as a private individual and not for profit. These terms apply to the use of this website (waldjs.eu) and of the WaldJS software. By visiting the website or using the software, you agree to these terms.',
+    },
+    softwareTitle: {
+      nl: 'De software: zoals hij is',
+      en: 'The software: as is',
+    },
+    softwareBody: {
+      nl: 'WaldJS wordt verspreid onder de <a href="https://github.com/Stefan-Espant/WaldJS/blob/main/LICENSE" target="_blank" rel="noopener">MIT-licentie</a>. De software wordt geleverd zoals hij is (<i>as is</i>), zonder enige garantie, uitdrukkelijk of stilzwijgend, op werking, geschiktheid voor een bepaald doel of het ontbreken van fouten. Je gebruikt WaldJS op eigen risico en bent zelf verantwoordelijk voor het testen, beveiligen en onderhouden van wat je ermee bouwt.',
+      en: 'WaldJS is distributed under the <a href="https://github.com/Stefan-Espant/WaldJS/blob/main/LICENSE" target="_blank" rel="noopener">MIT license</a>. The software is provided as is, without warranty of any kind, express or implied, as to its operation, fitness for a particular purpose or freedom from errors. You use WaldJS at your own risk and are responsible for testing, securing and maintaining whatever you build with it.',
+    },
+    othersTitle: {
+      nl: 'Niet verantwoordelijk voor anderen',
+      en: 'Not responsible for others',
+    },
+    othersIntro: {
+      nl: 'Ik ben niet verantwoordelijk of aansprakelijk voor de daden, nalatigheden, inhoud of uitspraken van anderen. Dat geldt in het bijzonder voor:',
+      en: 'I am not responsible or liable for the actions, omissions, content or statements of others. This applies in particular to:',
+    },
+    othersSites: {
+      nl: 'websites, apps en andere projecten die derden met WaldJS bouwen, inclusief hun inhoud, beveiliging en naleving van wet- en regelgeving;',
+      en: 'websites, apps and other projects that third parties build with WaldJS, including their content, security and legal compliance;',
+    },
+    othersPlugins: {
+      nl: 'plugins, packages, templates en integraties van derden, ook als die met WaldJS samenwerken of ernaar verwijzen;',
+      en: 'third-party plugins, packages, templates and integrations, even when they work with or refer to WaldJS;',
+    },
+    othersContributions: {
+      nl: 'bijdragen van anderen aan het project, zoals pull requests, issues, discussies en reacties;',
+      en: 'contributions to the project by others, such as pull requests, issues, discussions and comments;',
+    },
+    othersLinks: {
+      nl: 'externe websites waarnaar deze site linkt, zoals GitHub en npm.',
+      en: 'external websites this site links to, such as GitHub and npm.',
+    },
+    othersOutro: {
+      nl: 'Wie WaldJS gebruikt of eraan bijdraagt, blijft zelf verantwoordelijk voor het eigen handelen en voor wat er gepubliceerd wordt.',
+      en: 'Anyone who uses or contributes to WaldJS remains responsible for their own actions and for what they publish.',
+    },
+    liabilityTitle: {
+      nl: 'Beperking van aansprakelijkheid',
+      en: 'Limitation of liability',
+    },
+    liabilityBody: {
+      nl: 'Voor zover de wet dat toestaat, ben ik niet aansprakelijk voor directe of indirecte schade door het gebruik van deze website of de software, of doordat je die niet kunt gebruiken. Denk aan gegevensverlies, gederfde inkomsten, bedrijfsstilstand of schade aan derden. Deze beperking geldt niet bij opzet of bewuste roekeloosheid.',
+      en: 'To the extent permitted by law, I am not liable for any direct or indirect damage arising from the use of, or inability to use, this website or the software, such as data loss, lost revenue, business interruption or damage to third parties. This limitation does not apply in cases of intent or deliberate recklessness.',
+    },
+    infoTitle: {
+      nl: 'Informatie op deze website',
+      en: 'Information on this website',
+    },
+    infoBody: {
+      nl: 'Ik stel de informatie op deze website, waaronder benchmarks, vergelijkingen en de roadmap, zo zorgvuldig mogelijk samen, maar kan niet garanderen dat die altijd juist, volledig of actueel is. Benchmarks zijn interne metingen en zeggen niets zeker over de resultaten in jouw situatie. Aan de inhoud van deze website kunnen geen rechten worden ontleend.',
+      en: 'I put the information on this website, including benchmarks, comparisons and the roadmap, together as carefully as possible, but cannot guarantee that it is always accurate, complete or up to date. Benchmarks are internal measurements and do not guarantee results in your situation. No rights can be derived from the content of this website.',
+    },
+    nameTitle: {
+      nl: 'Naam en logo',
+      en: 'Name and logo',
+    },
+    nameBody: {
+      nl: 'De MIT-licentie geldt voor de broncode. De naam WaldJS, het logo en de vormgeving van deze website vallen daar niet onder. Gebruik ze niet op een manier die suggereert dat jouw project officieel bij WaldJS hoort of erdoor wordt aanbevolen.',
+      en: 'The MIT license covers the source code. The WaldJS name, the logo and the design of this website are not covered by it. Do not use them in a way that suggests your project is officially part of or endorsed by WaldJS.',
+    },
+    changesTitle: {
+      nl: 'Wijzigingen',
+      en: 'Changes',
+    },
+    changesBody: {
+      nl: 'Ik kan deze voorwaarden op elk moment aanpassen. De datum bovenaan laat zien wanneer dat voor het laatst is gebeurd. Blijf je de website of de software na een wijziging gebruiken, dan ga je akkoord met de nieuwe versie.',
+      en: 'I may change these terms at any time. The date at the top shows when that last happened. If you keep using the website or the software after a change, you agree to the new version.',
+    },
+    lawTitle: {
+      nl: 'Toepasselijk recht en contact',
+      en: 'Governing law and contact',
+    },
+    lawBody: {
+      nl: 'Op deze voorwaarden is Nederlands recht van toepassing. Bij verschillen tussen de Nederlandse en de Engelse tekst geldt de Nederlandse. Blijkt een bepaling ongeldig, dan blijven de overige bepalingen gewoon van kracht. Vragen? Open een <a href="https://github.com/Stefan-Espant/WaldJS/issues" target="_blank" rel="noopener">issue op GitHub</a>.',
+      en: 'These terms are governed by Dutch law. If the Dutch and English texts differ, the Dutch text prevails. If any provision turns out to be invalid, the remaining provisions stay in full force. Questions? Open an <a href="https://github.com/Stefan-Espant/WaldJS/issues" target="_blank" rel="noopener">issue on GitHub</a>.',
     },
   },
 } satisfies Record<string, Record<string, Bilingual>>
