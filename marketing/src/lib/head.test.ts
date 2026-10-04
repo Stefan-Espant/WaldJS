@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import {
   alternateLinksHtml,
+  analyticsScriptHtml,
   jsonLdTag,
   langSwitchHtml,
   rssLinkHtml,
@@ -66,5 +67,17 @@ describe('LANG_BOOTSTRAP_SCRIPT', () => {
   it('is the unhoisted inline script that applies the stored language', () => {
     expect(LANG_BOOTSTRAP_SCRIPT).toContain('data-wald-no-hoist')
     expect(LANG_BOOTSTRAP_SCRIPT).toContain(`localStorage.getItem('wald-taal')`)
+  })
+})
+
+describe('analyticsScriptHtml', () => {
+  it('renders nothing until a website ID is configured', () => {
+    expect(analyticsScriptHtml('')).toBe('')
+  })
+
+  it('renders a deferred, cookieless Umami tracker with an escaped website ID', () => {
+    expect(analyticsScriptHtml('abc-123"x')).toBe(
+      '<script defer src="https://cloud.umami.is/script.js" data-website-id="abc-123&quot;x"></script>',
+    )
   })
 })

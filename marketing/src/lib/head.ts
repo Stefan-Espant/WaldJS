@@ -4,6 +4,10 @@ export type Locale = 'nl' | 'en'
 export type LocalePaths = Partial<Record<Locale, string>>
 
 export const SITE_URL = 'https://waldjs.eu'
+// Cookieless analytics (Umami Cloud, EU region). The tracker is only rendered
+// once a website ID is filled in, so the site never loads a half-configured script.
+export const UMAMI_SCRIPT_URL = 'https://cloud.umami.is/script.js'
+export const UMAMI_WEBSITE_ID = ''
 export const DEFAULT_OG_IMAGE = `${SITE_URL}/assets/og-image.png`
 
 // Applies the visitor's stored language before first paint. Only rendered on
@@ -64,4 +68,9 @@ export function langSwitchHtml(lang: Locale | undefined, links: LocalePaths | un
     return `<a id="btn-${locale}"${current} href="${href}" hreflang="${locale}" onclick="try{localStorage.setItem('wald-taal','${locale}')}catch(e){}">${locale.toUpperCase()}</a>`
   }
   return `${open}${link('nl')}${link('en')}</div>`
+}
+
+export function analyticsScriptHtml(websiteId: string = UMAMI_WEBSITE_ID): string {
+  if (!websiteId) return ''
+  return `<script defer src="${UMAMI_SCRIPT_URL}" data-website-id="${escapeHtml(websiteId)}"></script>`
 }

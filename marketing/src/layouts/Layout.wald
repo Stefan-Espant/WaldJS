@@ -2,7 +2,7 @@
 import Nav from '../components/Nav.wald'
 import Footer from '../components/Footer.wald'
 import CanopyPing from '../components/CanopyPing.wald'
-import { SITE_URL, DEFAULT_OG_IMAGE, LANG_BOOTSTRAP_SCRIPT, SOFTWARE_APPLICATION_JSON_LD, alternateLinksHtml, jsonLdTag, rssLinkHtml } from '../lib/head'
+import { SITE_URL, DEFAULT_OG_IMAGE, analyticsScriptHtml, LANG_BOOTSTRAP_SCRIPT, SOFTWARE_APPLICATION_JSON_LD, alternateLinksHtml, jsonLdTag, rssLinkHtml } from '../lib/head'
 import { ui } from '../lib/strings'
 // lang: set only on pages whose URL fixes the language (the blog). Then the
 // HTML is correct without JS and the localStorage bootstrap is left out.
@@ -13,6 +13,7 @@ const htmlLang = lang ?? 'nl'
 const fixedLang = lang ?? ''
 const bootstrapScript = new SafeHtml(lang ? '' : LANG_BOOTSTRAP_SCRIPT)
 const headLinks = new SafeHtml([alternateLinksHtml(alternates), rssLinkHtml(rss)].filter(Boolean).join('\n'))
+const analyticsScript = new SafeHtml(analyticsScriptHtml())
 const structuredData = new SafeHtml(jsonLdTag(jsonLd ?? SOFTWARE_APPLICATION_JSON_LD))
 ---
 <!DOCTYPE html>
@@ -38,14 +39,7 @@ const structuredData = new SafeHtml(jsonLdTag(jsonLd ?? SOFTWARE_APPLICATION_JSO
 <meta name="theme-color" content="#023B2D">
 <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
 {structuredData}
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-9EZEXC8XYQ"></script>
-<script>
-window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', 'G-9EZEXC8XYQ');
-</script>
+{analyticsScript}
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://use.typekit.net" crossorigin>
 <link rel="preconnect" href="https://p.typekit.net" crossorigin>

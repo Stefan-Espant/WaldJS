@@ -40,7 +40,7 @@ describe('marketing site build', () => {
     const html = readFileSync(join(ROOT, 'dist/index.html'), 'utf-8')
     const inlineScripts = html.match(/<script(?![^>]*src=)[^>]*>[\s\S]*?<\/script>/g) ?? []
     const isSanctioned = (script: string) =>
-      script.includes('data-wald-no-hoist') || script.includes('dataLayer') || /^<script[^>]*\btype="application\/ld\+json"/.test(script)
+      script.includes('data-wald-no-hoist') || /^<script[^>]*\btype="application\/ld\+json"/.test(script)
     const unsanctioned = inlineScripts.filter((script) => !isSanctioned(script))
     expect(unsanctioned).toEqual([])
   })
@@ -170,6 +170,30 @@ describe('marketing site build', () => {
     expect(sitemap).toContain('<loc>https://waldjs.eu/voorwaarden</loc>')
   })
 
+  it('produceert een /privacy-pagina, gelinkt vanuit de footer behalve op zichzelf', () => {
+    const path = join(ROOT, 'dist/privacy/index.html')
+    expect(existsSync(path)).toBe(true)
+    const html = readFileSync(path, 'utf-8')
+    expect(html).toContain('<link rel="canonical" href="https://waldjs.eu/privacy">')
+    expect(html).toContain('Autoriteit Persoonsgegevens')
+    expect(html).not.toContain('href="/privacy"')
+    expect(html).toContain('<a class="footer-legal" href="/voorwaarden">')
+
+    const home = readFileSync(join(ROOT, 'dist/index.html'), 'utf-8')
+    expect(home).toContain('<a class="footer-legal" href="/privacy">')
+
+    const sitemap = readFileSync(join(ROOT, 'dist/sitemap.xml'), 'utf-8')
+    expect(sitemap).toContain('<loc>https://waldjs.eu/privacy</loc>')
+  })
+
+  it('laadt geen Google Analytics meer', () => {
+    for (const page of ['dist/index.html', 'dist/privacy/index.html', 'dist/blog/index.html']) {
+      const html = readFileSync(join(ROOT, page), 'utf-8')
+      expect(html, page).not.toContain('googletagmanager')
+      expect(html, page).not.toContain('gtag(')
+    }
+  })
+
   it('bevat een prefers-reduced-motion regel die transitions/animaties uitzet', () => {
     const css = readFileSync(join(ROOT, 'dist/assets/css/site.css'), 'utf-8')
     expect(css).toContain('@media(prefers-reduced-motion:reduce)')
@@ -196,6 +220,7 @@ describe('marketing site build', () => {
       'dist/index.html',
       'dist/waarom/index.html',
       'dist/voorwaarden/index.html',
+      'dist/privacy/index.html',
       'dist/vs/astro/index.html',
       'dist/vs/eleventy/index.html',
       'dist/changelog/index.html',

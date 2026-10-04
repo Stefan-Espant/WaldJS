@@ -1,0 +1,51 @@
+---
+import Layout from '../layouts/Layout.wald'
+import { ui } from '../lib/strings'
+---
+<Layout title="Privacyverklaring — WaldJS" description="Welke gegevens waldjs.eu verwerkt: cookieloze bezoekersstatistieken via Umami, externe lettertypen en scripts, en je taalkeuze in je eigen browser." canonicalPath="/privacy">
+  <section id="privacy-intro" class="page-intro legal-intro">
+    <div class="section-heading">
+      <span class="tag">{ui.privacy.tag}</span>
+      <h1>{ui.privacy.title}</h1>
+      <p><small>{ui.privacy.updated}</small></p>
+      <p>{ui.privacy.intro}</p>
+    </div>
+  </section>
+  <section id="privacy-analytics" class="legal">
+    <div class="section-heading">
+      <h2>{ui.privacy.analyticsTitle}</h2>
+      <p>{ui.privacy.analyticsBody}</p>
+    </div>
+  </section>
+  <section id="privacy-third-parties" class="legal">
+    <div class="section-heading">
+      <h2>{ui.privacy.thirdTitle}</h2>
+      <p>{ui.privacy.thirdIntro}</p>
+      <ul class="terms-list">
+        <li>{ui.privacy.thirdFonts}</li>
+        <li>{ui.privacy.thirdCdn}</li>
+        <li>{ui.privacy.thirdGithub}</li>
+        <li>{ui.privacy.thirdLinks}</li>
+      </ul>
+      <p>{ui.privacy.thirdOutro}</p>
+    </div>
+  </section>
+  <section id="privacy-storage" class="legal">
+    <div class="section-heading">
+      <h2>{ui.privacy.storageTitle}</h2>
+      <p>{ui.privacy.storageBody}</p>
+    </div>
+  </section>
+  <section id="privacy-rights" class="legal">
+    <div class="section-heading">
+      <h2>{ui.privacy.rightsTitle}</h2>
+      <p>{ui.privacy.rightsBody}</p>
+    </div>
+  </section>
+  <section id="privacy-changes" class="legal">
+    <div class="section-heading">
+      <h2>{ui.privacy.changesTitle}</h2>
+      <p>{ui.privacy.changesBody}</p>
+    </div>
+  </section>
+</Layout>

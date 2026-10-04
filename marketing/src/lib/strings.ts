@@ -174,6 +174,10 @@ export const STRINGS = {
     },
   },
   footer: {
+    privacy: {
+      nl: 'Privacy',
+      en: 'Privacy',
+    },
     terms: {
       nl: 'Voorwaarden',
       en: 'Terms',
@@ -645,6 +649,84 @@ export const STRINGS = {
     lawBody: {
       nl: 'Op deze voorwaarden is Nederlands recht van toepassing. Bij verschillen tussen de Nederlandse en de Engelse tekst geldt de Nederlandse. Blijkt een bepaling ongeldig, dan blijven de overige bepalingen gewoon van kracht. Vragen? Open een <a href="https://github.com/Stefan-Espant/WaldJS/issues" target="_blank" rel="noopener">issue op GitHub</a>.',
       en: 'These terms are governed by Dutch law. If the Dutch and English texts differ, the Dutch text prevails. If any provision turns out to be invalid, the remaining provisions stay in full force. Questions? Open an <a href="https://github.com/Stefan-Espant/WaldJS/issues" target="_blank" rel="noopener">issue on GitHub</a>.',
+    },
+  },
+  privacy: {
+    tag: {
+      nl: 'Juridisch',
+      en: 'Legal',
+    },
+    title: {
+      nl: 'Privacyverklaring',
+      en: 'Privacy statement',
+    },
+    updated: {
+      nl: 'Laatst bijgewerkt: 4 oktober 2026',
+      en: 'Last updated: 4 October 2026',
+    },
+    intro: {
+      nl: 'Deze website (waldjs.eu) wordt beheerd door Stefan van der Kort als privépersoon. Hier lees je welke gegevens er worden verwerkt als je de site bezoekt. Kort gezegd: geen cookies, geen tracking over websites heen en geen persoonsgegevens die ik zelf bewaar.',
+      en: 'This website (waldjs.eu) is run by Stefan van der Kort as a private individual. This page explains which data is processed when you visit the site. In short: no cookies, no cross-site tracking and no personal data stored by me.',
+    },
+    analyticsTitle: {
+      nl: 'Bezoekersstatistieken',
+      en: 'Visitor statistics',
+    },
+    analyticsBody: {
+      nl: 'Om te zien hoe de site gebruikt wordt, gebruik ik <a href="https://umami.is" target="_blank" rel="noopener">Umami</a>, een privacyvriendelijke analysedienst. Umami plaatst geen cookies en slaat geen IP-adressen op. Er wordt alleen geanonimiseerd bijgehouden welke pagina’s bezocht worden, via welke website je binnenkwam, welk type browser, besturingssysteem en apparaat je gebruikt, en uit welk land je komt. Die gegevens zijn niet naar jou als persoon te herleiden. Ze staan op servers in de EU (Duitsland) van Umami Software, Inc., een Amerikaans bedrijf.',
+      en: 'To see how the site is used, I use <a href="https://umami.is" target="_blank" rel="noopener">Umami</a>, a privacy-friendly analytics service. Umami sets no cookies and does not store IP addresses. It only records, anonymously, which pages are visited, which website referred you, what type of browser, operating system and device you use, and which country you are in. This data cannot be traced back to you as a person. It is stored on servers in the EU (Germany) operated by Umami Software, Inc., a US company.',
+    },
+    thirdTitle: {
+      nl: 'Externe diensten',
+      en: 'Third-party services',
+    },
+    thirdIntro: {
+      nl: 'Voor lettertypen, animaties en GitHub-gegevens laadt de site bestanden van andere partijen. Zoals bij elk verzoek op internet krijgt die partij daarbij je IP-adres te zien:',
+      en: 'For fonts, animations and GitHub data, the site loads files from other parties. As with any request on the internet, that party sees your IP address:',
+    },
+    thirdFonts: {
+      nl: 'Google Fonts en Adobe Fonts (Typekit), voor de lettertypen;',
+      en: 'Google Fonts and Adobe Fonts (Typekit), for the fonts;',
+    },
+    thirdCdn: {
+      nl: 'cdnjs (Cloudflare), voor de animatiebibliotheken three.js en GSAP;',
+      en: 'cdnjs (Cloudflare), for the three.js and GSAP animation libraries;',
+    },
+    thirdGithub: {
+      nl: 'GitHub en shields.io, voor het aantal sterren en de actuele versie;',
+      en: 'GitHub and shields.io, for the star count and the current version;',
+    },
+    thirdLinks: {
+      nl: 'GitHub en npm, als je op een link naar die sites klikt.',
+      en: 'GitHub and npm, when you click a link to those sites.',
+    },
+    thirdOutro: {
+      nl: 'Wat die partijen met deze gegevens doen, valt buiten mijn invloed. Daarvoor gelden hun eigen privacyverklaringen.',
+      en: 'What those parties do with this data is outside my control; their own privacy policies apply.',
+    },
+    storageTitle: {
+      nl: 'Opslag in je browser',
+      en: 'Storage in your browser',
+    },
+    storageBody: {
+      nl: 'De site onthoudt je gekozen taal in de lokale opslag (localStorage) van je browser. Dat gegeven blijft op je eigen apparaat, wordt niet naar mij verstuurd en kun je altijd wissen via je browserinstellingen.',
+      en: 'The site remembers your chosen language in your browser’s local storage (localStorage). That value stays on your own device, is never sent to me, and you can clear it at any time in your browser settings.',
+    },
+    rightsTitle: {
+      nl: 'Je rechten',
+      en: 'Your rights',
+    },
+    rightsBody: {
+      nl: 'Omdat ik zelf geen persoonsgegevens bewaar, is er meestal niets in te zien of te verwijderen. Heb je toch een vraag over je gegevens, open dan een <a href="https://github.com/Stefan-Espant/WaldJS/issues" target="_blank" rel="noopener">issue op GitHub</a> (zet daar geen persoonsgegevens in). Ben je het niet eens met hoe er met je gegevens wordt omgegaan, dan kun je een klacht indienen bij de <a href="https://autoriteitpersoonsgegevens.nl" target="_blank" rel="noopener">Autoriteit Persoonsgegevens</a>.',
+      en: 'Since I store no personal data myself, there is usually nothing to access or delete. If you still have a question about your data, open an <a href="https://github.com/Stefan-Espant/WaldJS/issues" target="_blank" rel="noopener">issue on GitHub</a> (without including personal data). If you disagree with how your data is handled, you can file a complaint with the Dutch Data Protection Authority, the <a href="https://autoriteitpersoonsgegevens.nl" target="_blank" rel="noopener">Autoriteit Persoonsgegevens</a>.',
+    },
+    changesTitle: {
+      nl: 'Wijzigingen',
+      en: 'Changes',
+    },
+    changesBody: {
+      nl: 'Als er iets verandert, bijvoorbeeld omdat er een dienst bij komt, pas ik deze verklaring aan. De datum bovenaan laat zien wanneer dat voor het laatst is gebeurd.',
+      en: 'If anything changes, for example because a service is added, I will update this statement. The date at the top shows when that last happened.',
     },
   },
 } satisfies Record<string, Record<string, Bilingual>>

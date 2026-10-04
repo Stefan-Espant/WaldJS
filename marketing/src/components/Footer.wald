@@ -13,7 +13,13 @@ const footerPageLinks = [
   .filter(link => !(canonicalPath === '/waarom' && link.section === 'resources')) // /waarom never names a competing framework, even in the footer
 const exploreLinksHtml = footerPageLinks.filter(link => link.section === 'explore').map(link => link.html).join('')
 const resourceLinksHtml = footerPageLinks.filter(link => link.section === 'resources').map(link => link.html).join('')
-const termsLinkHtml = canonicalPath === '/voorwaarden' ? '' : `<a class="footer-legal" href="/voorwaarden">${ui.footer.terms.value}</a>`
+const legalLinksHtml = [
+  { href: '/voorwaarden', label: ui.footer.terms },
+  { href: '/privacy', label: ui.footer.privacy },
+]
+  .filter(link => link.href !== canonicalPath)
+  .map(link => `<a class="footer-legal" href="${link.href}">${link.label.value}</a>`)
+  .join(' · ')
 ---
 <div class="footer-forest" aria-hidden="true">
   <svg viewBox="0 0 1200 72" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
@@ -59,6 +65,6 @@ const termsLinkHtml = canonicalPath === '/voorwaarden' ? '' : `<a class="footer-
   </div>
   <div class="footer-bottom">
     <span>© 2026 WaldJS · {ui.footer.plantedWithLove} 🌱</span>
-    {new SafeHtml(termsLinkHtml)}
+    <span>{new SafeHtml(legalLinksHtml)}</span>
   </div>
 </footer>
