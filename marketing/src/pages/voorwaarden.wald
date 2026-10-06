@@ -1,0 +1,63 @@
+---
+import Layout from '../layouts/Layout.wald'
+import { ui } from '../lib/strings'
+---
+<Layout title="Algemene voorwaarden & disclaimer — WaldJS" description="De voorwaarden voor het gebruik van waldjs.eu en de WaldJS-software: geleverd zoals hij is, onder de MIT-licentie, zonder aansprakelijkheid voor anderen." canonicalPath="/voorwaarden">
+  <section id="terms-intro" class="page-intro legal-intro">
+    <div class="section-heading">
+      <span class="tag">{ui.terms.tag}</span>
+      <h1>{ui.terms.title}</h1>
+      <p><small>{ui.terms.updated}</small></p>
+      <p>{ui.terms.intro}</p>
+    </div>
+  </section>
+  <section id="terms-software" class="legal">
+    <div class="section-heading">
+      <h2>{ui.terms.softwareTitle}</h2>
+      <p>{ui.terms.softwareBody}</p>
+    </div>
+  </section>
+  <section id="terms-others" class="legal">
+    <div class="section-heading">
+      <h2>{ui.terms.othersTitle}</h2>
+      <p>{ui.terms.othersIntro}</p>
+      <ul class="terms-list">
+        <li>{ui.terms.othersSites}</li>
+        <li>{ui.terms.othersPlugins}</li>
+        <li>{ui.terms.othersContributions}</li>
+        <li>{ui.terms.othersLinks}</li>
+      </ul>
+      <p>{ui.terms.othersOutro}</p>
+    </div>
+  </section>
+  <section id="terms-liability" class="legal">
+    <div class="section-heading">
+      <h2>{ui.terms.liabilityTitle}</h2>
+      <p>{ui.terms.liabilityBody}</p>
+    </div>
+  </section>
+  <section id="terms-info" class="legal">
+    <div class="section-heading">
+      <h2>{ui.terms.infoTitle}</h2>
+      <p>{ui.terms.infoBody}</p>
+    </div>
+  </section>
+  <section id="terms-name" class="legal">
+    <div class="section-heading">
+      <h2>{ui.terms.nameTitle}</h2>
+      <p>{ui.terms.nameBody}</p>
+    </div>
+  </section>
+  <section id="terms-changes" class="legal">
+    <div class="section-heading">
+      <h2>{ui.terms.changesTitle}</h2>
+      <p>{ui.terms.changesBody}</p>
+    </div>
+  </section>
+  <section id="terms-law" class="legal">
+    <div class="section-heading">
+      <h2>{ui.terms.lawTitle}</h2>
+      <p>{ui.terms.lawBody}</p>
+    </div>
+  </section>
+</Layout>

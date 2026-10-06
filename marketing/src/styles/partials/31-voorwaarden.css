@@ -1,0 +1,33 @@
+/* ---------- voorwaarden (juridische pagina) ---------- */
+/* Lange juridische tekst leest slecht gecentreerd en met de ruime
+   sectie-padding van de homepage: links uitlijnen en dichter op elkaar. */
+section.legal {
+  padding-top: var(--byz-space-8);
+  padding-bottom: var(--byz-space-8)
+}
+
+.legal-intro {
+  padding-bottom: var(--byz-space-8)
+}
+
+.legal .section-heading,
+.legal-intro .section-heading {
+  margin-bottom: 0
+}
+
+.legal .section-heading p,
+.terms-list {
+  text-align: left;
+  text-wrap: pretty
+}
+
+.terms-list {
+  max-width: 37.5rem;
+  margin: 0.75rem auto 0;
+  padding-left: 1.25rem;
+  color: var(--wit-zacht)
+}
+
+.terms-list li {
+  margin-bottom: 0.4rem
+}

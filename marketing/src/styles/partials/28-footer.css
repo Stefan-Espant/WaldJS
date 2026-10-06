@@ -166,3 +166,15 @@ footer {
     padding-top: 3.75rem
   }
 }
+
+.footer-legal {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  transition: color var(--byz-duration-normal) var(--byz-ease-default)
+}
+
+.footer-legal:hover,
+.footer-legal:focus-visible {
+  color: var(--wit)
+}

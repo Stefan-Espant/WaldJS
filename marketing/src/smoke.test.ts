@@ -155,6 +155,21 @@ describe('marketing site build', () => {
     expect(sitemap).toContain('<loc>https://waldjs.eu/waarom</loc>')
   })
 
+  it('produceert een /voorwaarden-pagina, gelinkt vanuit de footer behalve op zichzelf', () => {
+    const path = join(ROOT, 'dist/voorwaarden/index.html')
+    expect(existsSync(path)).toBe(true)
+    const html = readFileSync(path, 'utf-8')
+    expect(html).toContain('<link rel="canonical" href="https://waldjs.eu/voorwaarden">')
+    expect(html).toContain('opzet of bewuste roekeloosheid')
+    expect(html).not.toContain('href="/voorwaarden"')
+
+    const home = readFileSync(join(ROOT, 'dist/index.html'), 'utf-8')
+    expect(home).toContain('<a class="footer-legal" href="/voorwaarden">')
+
+    const sitemap = readFileSync(join(ROOT, 'dist/sitemap.xml'), 'utf-8')
+    expect(sitemap).toContain('<loc>https://waldjs.eu/voorwaarden</loc>')
+  })
+
   it('bevat een prefers-reduced-motion regel die transitions/animaties uitzet', () => {
     const css = readFileSync(join(ROOT, 'dist/assets/css/site.css'), 'utf-8')
     expect(css).toContain('@media(prefers-reduced-motion:reduce)')
@@ -180,6 +195,7 @@ describe('marketing site build', () => {
     const pages = [
       'dist/index.html',
       'dist/waarom/index.html',
+      'dist/voorwaarden/index.html',
       'dist/vs/astro/index.html',
       'dist/vs/eleventy/index.html',
       'dist/changelog/index.html',
