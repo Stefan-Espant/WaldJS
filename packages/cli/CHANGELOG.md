@@ -1,5 +1,16 @@
 # @waldjs/cli
 
+## 0.11.0
+
+### Minor Changes
+
+- 1cf2d6c: Add `Wald.generator`: every compiled `.wald` module now has a built-in `Wald` object whose `generator` is `"WaldJS v<cli version>"`, and the `wald plant` starter layout emits `<meta name="generator" content={Wald.generator} />`. `wald --version` now reports the real CLI version instead of a hardcoded `0.1.0`.
+
+### Patch Changes
+
+- Updated dependencies [1cf2d6c]
+  - @waldjs/compiler@0.4.0
+
 ## 0.10.0
 
 ### Minor Changes
