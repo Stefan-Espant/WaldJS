@@ -243,7 +243,7 @@ describe('transform — type Props support', () => {
     }
     const output = transform(ast)
     expect(output).toBe(
-      `import { createTree, renderTemplate, SafeHtml } from '@waldjs/runtime'\n\ntype Props = { title: string }\n\nexport default createTree<Props>(async ($$result, $$props: Props) => {\n  const $props = $$props\n\n  return renderTemplate\`\`\n})`
+      `import { createTree, renderTemplate, SafeHtml } from '@waldjs/runtime'\nconst Wald = Object.freeze({ generator: "WaldJS" })\n\ntype Props = { title: string }\n\nexport default createTree<Props>(async ($$result, $$props: Props) => {\n  const $props = $$props\n\n  return renderTemplate\`\`\n})`
     )
   })
 
@@ -307,6 +307,19 @@ describe('transformWithMap', () => {
     expect(lineMap[lines.findIndex(l => l.startsWith('export default createTree'))]).toBe(null)
     expect(lineMap[lines.findIndex(l => l.includes('const $props = $$props'))]).toBe(null)
     expect(lineMap[lines.findIndex(l => l.includes('return renderTemplate'))]).toBe(null)
+  })
+
+  it('injects a frozen Wald constant with the default generator as a generated line', () => {
+    const { code, lineMap } = transformWithMap(doc('const x = 1'))
+    const lines = code.split('\n')
+    const idx = lines.indexOf('const Wald = Object.freeze({ generator: "WaldJS" })')
+    expect(idx).toBe(1)
+    expect(lineMap[idx]).toBe(null)
+  })
+
+  it('uses a custom generator, JSON-escaped', () => {
+    const { code } = transformWithMap(doc('const x = 1'), '', { generator: 'WaldJS v9.9.9 "beta"' })
+    expect(code).toContain('const Wald = Object.freeze({ generator: "WaldJS v9.9.9 \\"beta\\"" })')
   })
 
   it('maps multi-line type Props line by line', () => {

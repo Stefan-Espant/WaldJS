@@ -3,6 +3,7 @@ import { readFileSync, readdirSync, existsSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { compileWithMap } from '@waldjs/compiler'
+import { WALD_GENERATOR } from './version.js'
 
 export interface CheckDiagnostic {
   file: string
@@ -43,7 +44,7 @@ export function checkProject(root: string): CheckDiagnostic[] {
   const virtuals = new Map<string, VirtualFile>()
   for (const file of waldFiles) {
     const source = readFileSync(file, 'utf-8')
-    const { code, lineMap } = compileWithMap(source, file)
+    const { code, lineMap } = compileWithMap(source, file, { generator: WALD_GENERATOR })
     virtuals.set(norm(`${file}.ts`), { code, lineMap, original: file, originalSource: source })
   }
 

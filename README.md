@@ -183,12 +183,17 @@ The layout reads its props (including the children) from `$$props`:
 const { title, pond } = $$props
 ---
 <html>
-  <head><title>{title}</title></head>
+  <head>
+    <title>{title}</title>
+    <meta name="generator" content={Wald.generator}>
+  </head>
   <body>
     {pond}
   </body>
 </html>
 ```
+
+Every `.wald` file also has a built-in `Wald` object. `Wald.generator` is the WaldJS version that built the page (e.g. `WaldJS v0.11.0`); the `wald plant` starter puts it in a `<meta name="generator">` tag, so sites built with WaldJS can be recognised. Remove the tag if you'd rather not advertise it.
 
 ---
 

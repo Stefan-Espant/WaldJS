@@ -3,6 +3,12 @@ import { compile, compileWithMap } from './compile.js'
 import { WaldError } from './errors.js'
 
 describe('compile', () => {
+  it('passes the generator option through to the Wald constant', () => {
+    const source = '---\n---\n<meta name="generator" content={Wald.generator}>'
+    expect(compile(source, '/src/a.wald', { generator: 'WaldJS v1.2.3' })).toContain('generator: "WaldJS v1.2.3"')
+    expect(compileWithMap(source, '/src/a.wald').code).toContain('generator: "WaldJS"')
+  })
+
   it('returns a JS module string from a .wald source', () => {
     const source = `---
 const title = "Hello Wald"
