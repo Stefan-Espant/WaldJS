@@ -24,6 +24,7 @@ describe('loadWaldConfig', () => {
     expect(config.base).toBe('/')
     expect(config.vite).toEqual({})
     expect(config.adapter.name).toBe('static')
+    expect(config.generator).toBe(true)
   })
 
   it('merges partial config with defaults', async () => {

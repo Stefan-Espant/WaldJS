@@ -108,8 +108,8 @@ import { buildPages, buildCommand, formatBuildSummary } from './build.js'
 
 let tmpDir: string
 
-function makeConfig(distDir: string): Required<WaldConfig> {
-  return { outDir: distDir, base: '/', vite: {}, adapter: staticAdapter() }
+function makeConfig(distDir: string, overrides: Partial<WaldConfig> = {}): Required<WaldConfig> {
+  return { outDir: distDir, base: '/', vite: {}, adapter: staticAdapter(), generator: true, ...overrides }
 }
 
 beforeEach(() => {
@@ -301,6 +301,42 @@ describe('buildPages', () => {
     expect(html).toContain('<title>Home</title>')
     expect(html).toContain('<h1>Hello</h1>')
     expect(html).not.toContain('<!DOCTYPE html><!DOCTYPE html>')
+  })
+
+  describe('generator meta tag', () => {
+    const GENERATOR_TAG = /<meta name="generator" content="WaldJS v\d+\.\d+\.\d+">/g
+
+    function writePage(pagesDir: string, head = '<title>x</title>') {
+      mkdirSync(pagesDir, { recursive: true })
+      writeFileSync(join(pagesDir, 'index.wald'), `---\n---\n<!DOCTYPE html>\n<html><head>${head}</head><body><h1>Hi</h1></body></html>`)
+    }
+
+    it('adds the WaldJS generator tag to every page by default', async () => {
+      const pagesDir = join(tmpDir, 'src', 'pages')
+      const distDir = join(tmpDir, 'dist')
+      writePage(pagesDir)
+      await buildPages(pagesDir, makeConfig(distDir))
+      const html = readFileSync(join(distDir, 'index.html'), 'utf8')
+      expect(html.match(GENERATOR_TAG)).toHaveLength(1)
+    })
+
+    it('leaves the tag out with generator: false', async () => {
+      const pagesDir = join(tmpDir, 'src', 'pages')
+      const distDir = join(tmpDir, 'dist')
+      writePage(pagesDir)
+      await buildPages(pagesDir, makeConfig(distDir, { generator: false }))
+      const html = readFileSync(join(distDir, 'index.html'), 'utf8')
+      expect(html).not.toContain('name="generator"')
+    })
+
+    it('does not add a second tag when the layout already has one', async () => {
+      const pagesDir = join(tmpDir, 'src', 'pages')
+      const distDir = join(tmpDir, 'dist')
+      writePage(pagesDir, '<meta name="generator" content={Wald.generator}><title>x</title>')
+      await buildPages(pagesDir, makeConfig(distDir))
+      const html = readFileSync(join(distDir, 'index.html'), 'utf8')
+      expect(html.match(/name="generator"/g)).toHaveLength(1)
+    })
   })
 
   it('generates HTML for each path returned by getStaticPaths()', async () => {

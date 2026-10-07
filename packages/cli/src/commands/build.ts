@@ -13,6 +13,8 @@ import { withGrowingTree } from '../growing-tree.js'
 import { runCheck } from './check.js'
 import { injectComponentStyles } from '../component-styles.js'
 import { collectComponentStyles } from '../style-scan.js'
+import { injectGeneratorMeta } from '../generator-meta.js'
+import { WALD_GENERATOR } from '../version.js'
 
 export type BuildPhase =
   | 'Scanning routes'
@@ -184,6 +186,8 @@ export async function buildPages(
     }
   }
 
+  const withGenerator = (html: string) => (config.generator ? injectGeneratorMeta(html, WALD_GENERATOR) : html)
+
   const resolveModulePath = (routeFile: string, key: string) =>
     resolve(join(ssrDir, entryFileNames.get(resolve(routeFile)) ?? key + '.js'))
 
@@ -201,7 +205,7 @@ export async function buildPages(
       // it for us (this HTML is the final, written-to-disk output). Don't
       // "simplify" this to match grow.ts's unprefixed call — that would break
       // base-prefixed deploys the same way the reverse mistake once did in dev.
-      const html = injectComponentStyles(injectPrefetchRuntime(applyCanopyAssets(hoistScripts(maybeWrap(rendered)), canopyAssets)), config.base)
+      const html = withGenerator(injectComponentStyles(injectPrefetchRuntime(applyCanopyAssets(hoistScripts(maybeWrap(rendered)), canopyAssets)), config.base))
       const outPath = resolveOutPath(distDir, route.pattern)
       mkdirSync(dirname(outPath), { recursive: true })
       writeFileSync(outPath, html)
@@ -230,7 +234,7 @@ export async function buildPages(
       for (const { params } of paths) {
         dynamicPages++
         const rendered = stripCanopyScripts(await mod.default.render(params), canopyScriptContents)
-        const html = injectComponentStyles(injectPrefetchRuntime(applyCanopyAssets(hoistScripts(maybeWrap(rendered)), canopyAssets)), config.base)
+        const html = withGenerator(injectComponentStyles(injectPrefetchRuntime(applyCanopyAssets(hoistScripts(maybeWrap(rendered)), canopyAssets)), config.base))
         const outPath = resolveOutPath(distDir, route.pattern, params)
         mkdirSync(dirname(outPath), { recursive: true })
         writeFileSync(outPath, html)

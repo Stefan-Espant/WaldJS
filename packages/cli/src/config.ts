@@ -8,6 +8,8 @@ export interface WaldConfig {
   base?: string
   vite?: UserConfig
   adapter?: WaldAdapter
+  /** Add <meta name="generator" content="WaldJS v…"> to pages that don't declare one. Default true. */
+  generator?: boolean
 }
 
 export function defineConfig(config: WaldConfig): WaldConfig {
@@ -19,6 +21,7 @@ const DEFAULTS: Required<WaldConfig> = {
   base: '/',
   vite: {},
   adapter: staticAdapter(),
+  generator: true,
 }
 
 export async function loadWaldConfig(root = process.cwd()): Promise<Required<WaldConfig>> {
