@@ -61,6 +61,14 @@ describe('scaffold', () => {
     expect(content).toContain('<!DOCTYPE html>')
   })
 
+  it('Layout.wald advertises the generator via Wald.generator', async () => {
+    const base = mkdtempSync(join(tmpdir(), 'wald-plant-'))
+    const dir = join(base, 'my-forest')
+    await scaffold(dir)
+    const content = readFileSync(join(dir, 'src', 'layouts', 'Layout.wald'), 'utf8')
+    expect(content).toContain('<meta name="generator" content={Wald.generator} />')
+  })
+
   it('creates src/components/Card.wald with $$props', async () => {
     const base = mkdtempSync(join(tmpdir(), 'wald-plant-'))
     const dir = join(base, 'my-forest')
