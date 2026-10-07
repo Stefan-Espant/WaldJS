@@ -193,7 +193,7 @@ const { title, pond } = $$props
 </html>
 ```
 
-Every `.wald` file also has a built-in `Wald` object. `Wald.generator` is the WaldJS version that built the page (e.g. `WaldJS v0.11.0`); the `wald plant` starter puts it in a `<meta name="generator">` tag, so sites built with WaldJS can be recognised. Remove the tag if you'd rather not advertise it.
+Every `.wald` file also has a built-in `Wald` object. `Wald.generator` is the WaldJS version that built the page (e.g. `WaldJS v0.11.0`); the `wald plant` starter puts it in a `<meta name="generator">` tag. `wald build` also adds that tag to pages that lack one; set `generator: false` in `wald.config.ts` to turn that off (see [Config file](#config-file)).
 
 ---
 
@@ -287,6 +287,7 @@ import { defineConfig } from '@waldjs/cli'
 export default defineConfig({
   outDir: 'dist',  // default
   base: '/',       // default — set to '/my-subpath/' for sub-directory deploys
+  generator: true, // default — see below
   vite: {          // passed through to Vite (plugins, resolve, etc.)
     plugins: [],
   },
@@ -294,6 +295,8 @@ export default defineConfig({
 ```
 
 All options are optional. Without a config file WaldJS uses the defaults above.
+
+**`generator`** — `wald build` adds `<meta name="generator" content="WaldJS v…">` to every page that doesn't already have a generator tag, so sites built with WaldJS can be recognised. A tag in your own layout always wins. Set `generator: false` to leave it out.
 
 ### Deployment adapters
 
