@@ -170,6 +170,14 @@ describe('marketing site build', () => {
     expect(sitemap).toContain('<loc>https://waldjs.eu/voorwaarden</loc>')
   })
 
+  it('noemt WaldJS als generator, met de CLI-versie', () => {
+    const cliVersion = JSON.parse(readFileSync(join(ROOT, '../packages/cli/package.json'), 'utf-8')).version
+    for (const page of ['dist/index.html', 'dist/waarom/index.html', 'dist/blog/index.html']) {
+      const html = readFileSync(join(ROOT, page), 'utf-8')
+      expect(html, page).toContain(`<meta name="generator" content="WaldJS v${cliVersion}">`)
+    }
+  })
+
   it('bevat een prefers-reduced-motion regel die transitions/animaties uitzet', () => {
     const css = readFileSync(join(ROOT, 'dist/assets/css/site.css'), 'utf-8')
     expect(css).toContain('@media(prefers-reduced-motion:reduce)')

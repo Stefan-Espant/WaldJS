@@ -4,6 +4,7 @@ import { dirname, join, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import type { HmrContext, Plugin } from 'vite'
 import { transformWithEsbuild } from 'vite'
+import { WALD_GENERATOR } from './version.js'
 
 const VIRTUAL_CONTENT_ID = '\0wald:content'
 const VIRTUAL_IMAGE_ID = '\0wald:image'
@@ -64,7 +65,7 @@ export function waldPlugin(options: WaldPluginOptions = {}): Plugin[] {
       async transform(code, id) {
         if (!id.endsWith('.wald')) return
         try {
-          const compiled = compile(code, id)
+          const compiled = compile(code, id, { generator: WALD_GENERATOR })
           const { code: stripped, map } = await transformWithEsbuild(compiled, `${id}.ts`, { loader: 'ts' })
           return { code: stripped, map }
         } catch (e) {

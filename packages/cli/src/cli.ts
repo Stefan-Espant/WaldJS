@@ -6,11 +6,12 @@ import { previewCommand } from './commands/preview.js'
 import { checkCommand } from './commands/check.js'
 import { newCommand } from './commands/new.js'
 import { formatCommand } from './commands/format.js'
+import { WALD_VERSION } from './version.js'
 
 const main = defineCommand({
   meta: {
     name: 'wald',
-    version: '0.1.0',
+    version: WALD_VERSION,
     description: 'WaldJS — a content-first web framework',
   },
   subCommands: {

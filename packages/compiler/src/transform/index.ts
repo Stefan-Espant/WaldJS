@@ -4,8 +4,11 @@ import { scopeCss, scopeHash } from '../scope-css.js'
 
 type MappedLine = { text: string; srcLine: number }
 
-export function transform(ast: WaldDocument, fileId = ''): string {
-  return transformWithMap(ast, fileId).code
+/** generator: the value of `Wald.generator` in compiled modules (the CLI passes "WaldJS v<version>"). */
+export type TransformOptions = { generator?: string }
+
+export function transform(ast: WaldDocument, fileId = '', options: TransformOptions = {}): string {
+  return transformWithMap(ast, fileId, options).code
 }
 
 /** lineMap[i] is the 1-based .wald source line for output line i + 1, or null for generated lines. */
@@ -13,7 +16,7 @@ export type LineMap = (number | null)[]
 
 export type TransformResult = { code: string; lineMap: LineMap; styles: string | null }
 
-export function transformWithMap(ast: WaldDocument, fileId = ''): TransformResult {
+export function transformWithMap(ast: WaldDocument, fileId = '', options: TransformOptions = {}): TransformResult {
   const hasStyles = (ast.styles ?? null) !== null
   const hash = hasStyles ? scopeHash(fileId) : null
   const scopeAttr = hash !== null ? ` data-wald-${hash}` : ''
@@ -35,6 +38,7 @@ export function transformWithMap(ast: WaldDocument, fileId = ''): TransformResul
   }
 
   push(`import { createTree, renderTemplate, SafeHtml } from '@waldjs/runtime'`, null)
+  push(`const Wald = Object.freeze({ generator: ${JSON.stringify(options.generator ?? 'WaldJS')} })`, null)
   push(``, null)
 
   if (hoisted.length > 0) {
