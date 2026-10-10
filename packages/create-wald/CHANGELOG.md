@@ -1,5 +1,13 @@
 # create-wald
 
+## 0.1.16
+
+### Patch Changes
+
+- efcee5d: Improve npm package metadata: clearer descriptions, keywords, and `homepage` / `bugs` links, so the packages are easier to find on npm.
+- Updated dependencies [efcee5d]
+  - @waldjs/cli@0.12.1
+
 ## 0.1.15
 
 ### Patch Changes
