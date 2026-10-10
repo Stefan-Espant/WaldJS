@@ -1,0 +1,52 @@
+# WaldJS
+
+> WaldJS is an open-source, content-first web framework for building fast, static-first websites with minimal JavaScript. You write `.wald` single-file components (JavaScript/TypeScript frontmatter + an HTML template), and WaldJS compiles them to a static site using Vite. It ships 0 KB of JavaScript by default; interactive parts ("canopy islands") hydrate only where you ask for it. MIT licensed, published on npm as `@waldjs/cli`.
+
+Quick start:
+
+```bash
+npm create wald@latest my-forest
+cd my-forest
+npm run dev      # wald grow: dev server with live reload on http://localhost:7233
+npm run build    # wald build: static output in dist/
+```
+
+A `.wald` file has two parts separated by `---`; the frontmatter is plain JS/TS, the template interpolates `{expression}` (HTML-escaped by default):
+
+```wald
+---
+const title = "Hello World"
+---
+<h1>{title}</h1>
+<p>Welcome to your forest.</p>
+```
+
+Key features: file-based routing (`src/pages/`), dynamic routes with `getStaticPaths()`, Markdown content collections (`wald:content`, with per-locale entries), components and layouts (children in the `pond` prop), scoped component CSS via `<style>` blocks, built-in image optimisation (`wald:image`), link prefetching, partial hydration (`canopy:load` / `canopy:idle` / `canopy:visible`), `wald.config.ts` with Vite passthrough, and deployment adapters for static hosting, Netlify, Vercel, Cloudflare Pages, GitHub Pages and Deno Deploy. The CLI also type-checks (`wald check`) and formats (`wald format`) `.wald` files.
+
+WaldJS uses a forest metaphor throughout: `plant` creates a project, `grow` runs the dev server, roots = compiler, trees = pages, branches = components, canopy = client-side islands.
+
+## Docs
+
+- [README: full documentation](https://github.com/Stefan-Espant/WaldJS#readme): file format, pages, content collections, dynamic routes, components and layouts, images, canopy islands, config, adapters, CLI commands, project structure
+- [Why WaldJS](https://waldjs.eu/waarom): build speed, no UI-framework lock-in for interactivity, one small file format
+- [Changelog](https://waldjs.eu/changelog): what each release added
+
+## Comparisons
+
+- [WaldJS vs Astro](https://waldjs.eu/vs/astro): when to choose which
+- [WaldJS vs Eleventy](https://waldjs.eu/vs/eleventy): when to choose which
+
+## Packages
+
+- [@waldjs/cli](https://www.npmjs.com/package/@waldjs/cli): the `wald` CLI (plant, grow, build, preview, check, format, new) and Vite integration
+- [create-wald](https://www.npmjs.com/package/create-wald): `npm create wald@latest` project scaffolder
+- [@waldjs/compiler](https://www.npmjs.com/package/@waldjs/compiler): parser, compiler and formatter for `.wald` files
+- [@waldjs/content](https://www.npmjs.com/package/@waldjs/content): Markdown content collections
+- [@waldjs/canopy](https://www.npmjs.com/package/@waldjs/canopy): partial hydration (islands)
+- [@waldjs/runtime](https://www.npmjs.com/package/@waldjs/runtime): rendering runtime for compiled components
+- [vscode-wald](https://github.com/Stefan-Espant/WaldJS/tree/main/packages/vscode-wald): VS Code syntax highlighting for `.wald` files
+
+## Optional
+
+- [Blog (English)](https://waldjs.eu/en/blog)
+- [Source code on GitHub](https://github.com/Stefan-Espant/WaldJS)

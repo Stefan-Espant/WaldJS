@@ -1,12 +1,31 @@
 {
   "name": "@waldjs/compiler",
   "version": "0.4.0",
-  "description": "Parser and transform compiler for .wald files",
+  "description": "Compiler and formatter for WaldJS .wald single-file components (JS/TS frontmatter + HTML template)",
+  "keywords": [
+    "waldjs",
+    "static-site-generator",
+    "ssg",
+    "framework",
+    "content-first",
+    "vite",
+    "typescript",
+    "jamstack",
+    "compiler",
+    "parser",
+    "formatter",
+    "single-file-components",
+    "templates"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/Stefan-Espant/WaldJS.git",
     "directory": "packages/compiler"
+  },
+  "homepage": "https://waldjs.eu",
+  "bugs": {
+    "url": "https://github.com/Stefan-Espant/WaldJS/issues"
   },
   "author": "Stefan van der Kort",
   "type": "module",

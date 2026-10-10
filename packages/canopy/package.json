@@ -1,12 +1,30 @@
 {
   "name": "@waldjs/canopy",
   "version": "0.2.0",
-  "description": "Client-side hydration (islands) for WaldJS",
+  "description": "Partial hydration (islands) for WaldJS: interactive components on static pages, zero JavaScript by default",
+  "keywords": [
+    "waldjs",
+    "static-site-generator",
+    "ssg",
+    "framework",
+    "content-first",
+    "vite",
+    "typescript",
+    "jamstack",
+    "islands",
+    "partial-hydration",
+    "hydration",
+    "web-components"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/Stefan-Espant/WaldJS.git",
     "directory": "packages/canopy"
+  },
+  "homepage": "https://waldjs.eu",
+  "bugs": {
+    "url": "https://github.com/Stefan-Espant/WaldJS/issues"
   },
   "author": "Stefan van der Kort",
   "type": "module",

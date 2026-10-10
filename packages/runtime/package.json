@@ -1,12 +1,29 @@
 {
   "name": "@waldjs/runtime",
   "version": "0.1.0",
-  "description": "Client runtime for WaldJS",
+  "description": "Rendering runtime for compiled WaldJS .wald components",
+  "keywords": [
+    "waldjs",
+    "static-site-generator",
+    "ssg",
+    "framework",
+    "content-first",
+    "vite",
+    "typescript",
+    "jamstack",
+    "runtime",
+    "ssr",
+    "templates"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/Stefan-Espant/WaldJS.git",
     "directory": "packages/runtime"
+  },
+  "homepage": "https://waldjs.eu",
+  "bugs": {
+    "url": "https://github.com/Stefan-Espant/WaldJS/issues"
   },
   "author": "Stefan van der Kort",
   "type": "module",

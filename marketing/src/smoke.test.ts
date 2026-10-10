@@ -178,6 +178,15 @@ describe('marketing site build', () => {
     }
   })
 
+  it('publiceert een llms.txt voor AI-modellen, met absolute links', () => {
+    const llms = readFileSync(join(ROOT, 'dist/llms.txt'), 'utf-8')
+    expect(llms.startsWith('# WaldJS\n')).toBe(true)
+    expect(llms).toContain('npm create wald@latest')
+    const links = [...llms.matchAll(/\]\(([^)]+)\)/g)].map((m) => m[1])
+    expect(links.length).toBeGreaterThan(5)
+    for (const link of links) expect(link, link).toMatch(/^https:\/\//)
+  })
+
   it('bevat een prefers-reduced-motion regel die transitions/animaties uitzet', () => {
     const css = readFileSync(join(ROOT, 'dist/assets/css/site.css'), 'utf-8')
     expect(css).toContain('@media(prefers-reduced-motion:reduce)')
