@@ -1,6 +1,6 @@
 {
   "name": "@waldjs/compiler",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Compiler and formatter for WaldJS .wald single-file components (JS/TS frontmatter + HTML template)",
   "keywords": [
     "waldjs",

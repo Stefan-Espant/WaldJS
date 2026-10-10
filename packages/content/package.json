@@ -1,6 +1,6 @@
 {
   "name": "@waldjs/content",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Markdown content collections for WaldJS: getCollection, getEntry, locales and getStaticPaths()",
   "keywords": [
     "waldjs",
