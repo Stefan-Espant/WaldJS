@@ -1,12 +1,30 @@
 {
   "name": "create-wald",
   "version": "0.1.15",
-  "description": "Scaffold a new WaldJS project",
+  "description": "Scaffold a new WaldJS project: npm create wald@latest",
+  "keywords": [
+    "waldjs",
+    "static-site-generator",
+    "ssg",
+    "framework",
+    "content-first",
+    "vite",
+    "typescript",
+    "jamstack",
+    "create",
+    "scaffold",
+    "starter",
+    "template"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/Stefan-Espant/WaldJS.git",
     "directory": "packages/create-wald"
+  },
+  "homepage": "https://waldjs.eu",
+  "bugs": {
+    "url": "https://github.com/Stefan-Espant/WaldJS/issues"
   },
   "author": "Stefan van der Kort",
   "type": "module",

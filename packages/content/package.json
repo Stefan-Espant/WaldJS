@@ -1,12 +1,30 @@
 {
   "name": "@waldjs/content",
   "version": "0.2.0",
-  "description": "Content collections and getStaticPaths() for WaldJS",
+  "description": "Markdown content collections for WaldJS: getCollection, getEntry, locales and getStaticPaths()",
+  "keywords": [
+    "waldjs",
+    "static-site-generator",
+    "ssg",
+    "framework",
+    "content-first",
+    "vite",
+    "typescript",
+    "jamstack",
+    "markdown",
+    "content-collections",
+    "frontmatter",
+    "i18n"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/Stefan-Espant/WaldJS.git",
     "directory": "packages/content"
+  },
+  "homepage": "https://waldjs.eu",
+  "bugs": {
+    "url": "https://github.com/Stefan-Espant/WaldJS/issues"
   },
   "author": "Stefan van der Kort",
   "private": false,
