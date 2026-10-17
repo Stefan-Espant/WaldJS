@@ -1,5 +1,15 @@
 # @waldjs/compiler
 
+## 0.5.0
+
+### Minor Changes
+
+- b0c0f4b: `wald check` now types dynamic route params as strings: in `src/pages/blog/[slug].wald`, `$$props.slug` is a `string` instead of `unknown`, so the documented `getEntry(collection, $$props.slug)` pattern type-checks without casts. The compiler gains a `routeParams` transform option for this; files with their own `type Props` are unchanged.
+
+### Patch Changes
+
+- 4f85c7d: Fix multi-line imports in `.wald` frontmatter: an import spanning several lines (e.g. `import {\n  a,\n} from './x'`, or with `from` on its own line) is now hoisted as a whole statement instead of compiling to invalid JS.
+
 ## 0.4.1
 
 ### Patch Changes
