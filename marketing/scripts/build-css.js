@@ -16,6 +16,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { spawn } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
+import { minifyCss } from './minify-css.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const args = process.argv.slice(2)
@@ -36,18 +37,9 @@ function resolveImports(filePath, seen = new Set()) {
   })
 }
 
-function minify(css) {
-  return css
-    .replace(/\/\*[\s\S]*?\*\//g, '')       // strip comments
-    .replace(/\s+/g, ' ')                    // collapse whitespace
-    .replace(/\s*([{}:;,])\s*/g, '$1')       // trim around structural chars
-    .replace(/;}/g, '}')                     // drop redundant trailing semicolons
-    .trim()
-}
-
 function build() {
   const bundled = resolveImports(entry)
-  const minified = minify(bundled)
+  const minified = minifyCss(bundled)
   const output = target === 'src' ? bundled : minified
 
   fs.mkdirSync(outDir, { recursive: true })

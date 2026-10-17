@@ -36,7 +36,7 @@ function walkDir(dir: string): string[] {
   return files
 }
 
-function fileToRoute(pagesDir: string, file: string): Route {
+export function fileToRoute(pagesDir: string, file: string): Route {
   const rel = relative(pagesDir, file).replace(/\\/g, '/')
   const withoutExt = rel.slice(0, -'.wald'.length)
   const segments = withoutExt.split('/')
