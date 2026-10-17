@@ -1,5 +1,18 @@
 # @waldjs/cli
 
+## 0.13.0
+
+### Minor Changes
+
+- 2c09353: `wald grow` no longer crashes when port 7233 is already taken (for example by another project's dev server): it moves on to the next free port and says so. Pass `--port <n>` to pick a port explicitly. Render errors in the terminal now show the actual message, file and code frame instead of `[object Object]`.
+
+### Patch Changes
+
+- b0c0f4b: `wald check` now types dynamic route params as strings: in `src/pages/blog/[slug].wald`, `$$props.slug` is a `string` instead of `unknown`, so the documented `getEntry(collection, $$props.slug)` pattern type-checks without casts. The compiler gains a `routeParams` transform option for this; files with their own `type Props` are unchanged.
+- Updated dependencies [4f85c7d]
+- Updated dependencies [b0c0f4b]
+  - @waldjs/compiler@0.5.0
+
 ## 0.12.1
 
 ### Patch Changes
