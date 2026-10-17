@@ -473,3 +473,25 @@ describe('component rendering', () => {
     expect(result).toContain('<h1>Content</h1>')
   })
 })
+
+describe('transform — routeParams (#83)', () => {
+  const doc = (code: string): WaldDocument => ({
+    type: 'document',
+    frontmatter: { type: 'frontmatter', code, line: 2 },
+    template: [],
+  })
+
+  it('types route params as strings on $$props', () => {
+    const code = transform(doc('const s = $$props.slug'), '', { routeParams: ['lang', 'slug'] })
+    expect(code).toContain('export default createTree<{ lang: string; slug: string } & Record<string, unknown>>(async ($$result, $$props: { lang: string; slug: string } & Record<string, unknown>) => {')
+  })
+
+  it('ignores routeParams when the file declares type Props', () => {
+    const code = transform(doc('type Props = { slug: number }'), '', { routeParams: ['slug'] })
+    expect(code).toContain('createTree<Props>(async ($$result, $$props: Props)')
+  })
+
+  it('keeps the untyped signature without route params', () => {
+    expect(transform(doc('const x = 1'), '', { routeParams: [] })).toContain('createTree(async ($$result, $$props) => {')
+  })
+})
