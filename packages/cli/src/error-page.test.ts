@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { renderErrorPage } from './error-page.js'
+import { describeError, renderErrorPage } from './error-page.js'
 
 describe('renderErrorPage', () => {
   it('includes the error message', () => {
@@ -42,5 +42,24 @@ describe('renderErrorPage', () => {
     const html = renderErrorPage(new Error('boom'))
     expect(html).toContain('<!DOCTYPE html>')
     expect(html).toContain('</head>')
+  })
+})
+
+// Vite hands plugin errors (this.error({ message, loc })) to wald grow as plain
+// objects without a stack, which used to be logged as "[object Object]".
+describe('describeError', () => {
+  it('uses the stack of a real Error', () => {
+    const e = new Error('boom')
+    expect(describeError(e)).toBe(e.stack)
+  })
+
+  it('uses message, location and frame of a plain error object', () => {
+    expect(describeError({ message: '[waldjs] Expected "as"', loc: { file: '/p/index.wald', line: 3, column: 5 }, frame: '> 3 | import {' }))
+      .toBe('[waldjs] Expected "as"\n  at /p/index.wald:3:5\n> 3 | import {')
+  })
+
+  it('never prints [object Object]', () => {
+    expect(describeError({ foo: 1 })).not.toContain('[object Object]')
+    expect(describeError('plain string')).toBe('plain string')
   })
 })
