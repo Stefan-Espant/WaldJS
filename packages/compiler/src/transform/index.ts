@@ -69,6 +69,14 @@ export function transformWithMap(ast: WaldDocument, fileId = '', options: Transf
   return { code: out.join('\n'), lineMap: map, styles }
 }
 
+// Complete once the module specifier has appeared: `from './x'`, a side-effect
+// `import './x'`, or a TS `import x = require('./x')`.
+function isCompleteImport(statement: string): boolean {
+  return /\bfrom\s*(['"])[^'"\n]*\1/.test(statement)
+    || /^\s*import\s*(['"])/.test(statement)
+    || /=\s*require\s*\(/.test(statement)
+}
+
 function splitFrontmatter(code: string): { hoisted: MappedLine[]; body: MappedLine[]; hasProps: boolean } {
   const lines = code.split('\n')
   const hoisted: MappedLine[] = []
@@ -79,9 +87,17 @@ function splitFrontmatter(code: string): { hoisted: MappedLine[]; body: MappedLi
   while (i < lines.length) {
     const trimmed = lines[i].trimStart()
     if (trimmed.startsWith('import ')) {
-      // import statements are always single-line in frontmatter
-      hoisted.push({ text: lines[i], srcLine: i + 1 })
-      i++
+      // An import may span lines (`import {\n  a,\n} from './x'`, or `from` on
+      // its own line): hoist the whole statement, up to its module specifier.
+      let statement = ''
+      let depth = 0
+      do {
+        const line = lines[i]
+        hoisted.push({ text: line, srcLine: i + 1 })
+        statement += line + '\n'
+        depth += (line.match(/\{/g) ?? []).length - (line.match(/\}/g) ?? []).length
+        i++
+      } while ((depth > 0 || !isCompleteImport(statement)) && i < lines.length)
     } else if (/^(?:export\s+)?type Props\s*=/.test(trimmed)) {
       // collect until balanced braces, or just the first line if no braces present
       let depth = 0
