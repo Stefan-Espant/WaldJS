@@ -328,7 +328,8 @@ Write your own with `defineAdapter({ name, adapt({ outDir }) { … } })`.
 
 ```bash
 wald plant <name>   # Create a new project
-wald grow           # Start the dev server (http://localhost:7233)
+wald grow           # Start the dev server (http://localhost:7233, or the next free port)
+wald grow --port 3000       # Use a specific port
 wald build          # Build to dist/ (Vite SSR + static pre-render)
 wald preview        # Preview the build (http://localhost:4321)
 wald check          # Type-check .wald and .ts files

@@ -1,5 +1,6 @@
-import { describe, it, expect, vi } from 'vitest'
-import { handleRequest, stripBase } from './grow.js'
+import { describe, it, expect, vi, afterEach } from 'vitest'
+import { createServer, type Server } from 'node:http'
+import { handleRequest, listenWithFallback, stripBase } from './grow.js'
 
 describe('stripBase', () => {
   it('passes the url through unchanged for the root base', () => {
@@ -200,5 +201,43 @@ describe('handleRequest', () => {
     expect(result.status).toBe(200)
     expect(result.body).toContain('<p>About</p>')
     expect(capturedUrls[0]).toBe('/my-forest/about')
+  })
+})
+
+describe('listenWithFallback', () => {
+  const servers: Server[] = []
+  const open = (port: number) => new Promise<Server>((resolve) => {
+    const s = createServer()
+    servers.push(s)
+    s.listen(port, () => resolve(s))
+  })
+  const freePort = async () => {
+    const s = await open(0)
+    const port = (s.address() as { port: number }).port
+    await new Promise(r => s.close(r))
+    return port
+  }
+  afterEach(() => { for (const s of servers.splice(0)) s.close() })
+
+  it('listens on the requested port when it is free', async () => {
+    const port = await freePort()
+    const server = createServer(); servers.push(server)
+    expect(await listenWithFallback(server, port)).toBe(port)
+  })
+
+  it('moves to the next free port when the requested one is busy', async () => {
+    const port = await freePort()
+    await open(port)
+    const server = createServer(); servers.push(server)
+    const actual = await listenWithFallback(server, port)
+    expect(actual).toBeGreaterThan(port)
+    expect(server.listening).toBe(true)
+  })
+
+  it('rejects with a readable error when fallback is disabled', async () => {
+    const port = await freePort()
+    await open(port)
+    const server = createServer(); servers.push(server)
+    await expect(listenWithFallback(server, port, { strict: true })).rejects.toThrow(`Port ${port} is already in use`)
   })
 })

@@ -9,6 +9,18 @@ type LocatedError = Error & {
   frame?: string
 }
 
+// Terminal text for a render/compile failure. Vite passes plugin errors
+// (this.error({ message, loc })) on as plain objects without a stack, which
+// `String(error)` used to print as "[object Object]".
+export function describeError(error: unknown): string {
+  if (error instanceof Error && error.stack) return error.stack
+  if (typeof error !== 'object' || error === null) return String(error)
+  const { message, loc, frame } = error as Partial<LocatedError>
+  if (!message) return JSON.stringify(error)
+  const where = loc?.file ? `\n  at ${loc.file}${loc.line !== undefined ? `:${loc.line}` : ''}${loc.column !== undefined ? `:${loc.column}` : ''}` : ''
+  return `${message}${where}${frame ? `\n${frame}` : ''}`
+}
+
 function escapeHtml(value: string): string {
   return value
     .replace(/&/g, '&amp;')

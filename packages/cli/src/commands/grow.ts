@@ -1,12 +1,12 @@
 import { createServer, mergeConfig } from 'vite'
-import { createServer as createHttpServer } from 'node:http'
+import { createServer as createHttpServer, type Server } from 'node:http'
 import { defineCommand } from 'citty'
 import sirv from 'sirv'
 import { waldPlugin } from '../vite-plugin.js'
 import { loadWaldConfig } from '../config.js'
 import { matchRoute, scanRoutes, type Route } from '../router/index.js'
 import { maybeWrap, hoistScripts } from '../shell.js'
-import { renderErrorPage } from '../error-page.js'
+import { describeError, renderErrorPage } from '../error-page.js'
 import { injectPrefetchRuntime } from '../prefetch-runtime.js'
 import { injectComponentStyles, componentStylesHref } from '../component-styles.js'
 import { collectComponentStyles } from '../style-scan.js'
@@ -71,11 +71,50 @@ export async function handleRequest(
   return { status: 200, body }
 }
 
+// Like Vite: when the default port is taken (e.g. another project's
+// `wald grow` is still running), move on to the next free one instead of
+// crashing with an unhandled EADDRINUSE. An explicit --port is strict.
+export function listenWithFallback(
+  server: Server,
+  port: number,
+  { strict = false, attempts = 10 }: { strict?: boolean; attempts?: number } = {},
+): Promise<number> {
+  return new Promise((resolve, reject) => {
+    const tryPort = (candidate: number) => {
+      const onError = (err: NodeJS.ErrnoException) => {
+        server.off('listening', onListening)
+        if (err.code !== 'EADDRINUSE') return reject(err)
+        if (strict || candidate - port + 1 >= attempts) {
+          return reject(new Error(`Port ${candidate} is already in use. Stop the other server or pass a different --port.`))
+        }
+        tryPort(candidate + 1)
+      }
+      const onListening = () => {
+        server.off('error', onError)
+        resolve(candidate)
+      }
+      server.once('error', onError)
+      server.once('listening', onListening)
+      server.listen(candidate)
+    }
+    tryPort(port)
+  })
+}
+
+const DEFAULT_PORT = 7233
+
 export const growCommand = defineCommand({
   meta: { description: 'Start the WaldJS dev server' },
-  async run() {
+  args: {
+    port: { type: 'string', description: `Port to listen on (default ${DEFAULT_PORT}; falls back to the next free port)` },
+  },
+  async run({ args }) {
     const cwd = process.cwd()
-    const port = 7233
+    const requestedPort = args.port ? Number(args.port) : DEFAULT_PORT
+    if (!Number.isInteger(requestedPort) || requestedPort < 1 || requestedPort > 65535) {
+      console.error(`[waldjs] Invalid --port: ${args.port}`)
+      process.exit(1)
+    }
     const pagesDir = join(cwd, 'src', 'pages')
     const publicDir = join(cwd, 'public')
     const srcDir = join(cwd, 'src')
@@ -139,7 +178,7 @@ export const growCommand = defineCommand({
           const error = e as Error & { loc?: { file?: string; line?: number; column?: number } }
           vite.ssrFixStacktrace(error)
           console.error(`[waldjs] Render failed for ${url}`)
-          console.error(error.stack ?? String(error))
+          console.error(describeError(error))
           if (error.loc && !error.loc.file) error.loc.file = match.route.file
           if (!res.headersSent && !res.writableEnded) {
             let body = renderErrorPage(error)
@@ -180,9 +219,16 @@ export const growCommand = defineCommand({
       },
     )))
 
-    server.listen(port, () => {
-      printGrowReady(port, cwd, config.base, routes.length, staticCount, dynamicCount, Date.now() - start)
-    })
+    let port: number
+    try {
+      port = await listenWithFallback(server, requestedPort, { strict: args.port !== undefined })
+    } catch (e) {
+      console.error(`[waldjs] ${(e as Error).message}`)
+      await vite.close()
+      process.exit(1)
+    }
+    if (port !== requestedPort) console.log(`\n  Port ${requestedPort} is in use, using ${port} instead.`)
+    printGrowReady(port, cwd, config.base, routes.length, staticCount, dynamicCount, Date.now() - start)
 
     process.on('SIGINT', async () => {
       await vite.close()
