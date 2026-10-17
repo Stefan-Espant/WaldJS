@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest'
+import ts from 'typescript'
 import { transform, transformWithMap } from './index.js'
 import type { WaldDocument } from '../ast/types.js'
 
@@ -493,5 +494,48 @@ describe('transform — routeParams (#83)', () => {
 
   it('keeps the untyped signature without route params', () => {
     expect(transform(doc('const x = 1'), '', { routeParams: [] })).toContain('createTree(async ($$result, $$props) => {')
+  })
+})
+
+// Regression for #85: imports spanning several lines used to hoist only the
+// first line, leaving the rest inside the createTree closure (invalid JS).
+describe('transform — multi-line imports (#85)', () => {
+  const doc = (code: string): WaldDocument => ({
+    type: 'document',
+    frontmatter: { type: 'frontmatter', code, line: 2 },
+    template: [],
+  })
+  const beforeTree = (code: string) => code.slice(0, code.indexOf('export default createTree'))
+  const syntaxErrors = (code: string) =>
+    ts.transpileModule(code, { reportDiagnostics: true, compilerOptions: { module: ts.ModuleKind.ESNext } })
+      .diagnostics?.map(d => ts.flattenDiagnosticMessageText(d.messageText, '\n')) ?? []
+
+  it.each([
+    ['named', "import {\n  SITE_URL,\n  jsonLdTag,\n} from '../lib/head'"],
+    ['default + named', "import Layout, {\n  helper,\n} from './Layout'"],
+    ['type-only', "import type {\n  Post,\n  Tag,\n} from './types'"],
+    ['from on its own line', "import { a, b }\n  from './x'"],
+    ['double quotes, no trailing comma', 'import {\n  a,\n  b\n} from "./x";'],
+    ['side-effect', "import './styles.css'"],
+    ['TS import-require', "import fs = require('node:fs')"],
+  ])('hoists a %s import as a whole statement', (_name, imp) => {
+    const code = transform(doc(`${imp}\nconst x = 1`))
+    expect(beforeTree(code)).toContain(imp)
+    expect(code).toMatch(/createTree\(async \(\$\$result, \$\$props\) => \{\n {2}const x = 1/)
+    expect(syntaxErrors(code)).toEqual([])
+  })
+
+  it('keeps body code after a multi-line import in the body', () => {
+    const code = transform(doc("import {\n  a,\n} from './a'\nimport b from './b'\nconst x = a + b"))
+    expect(beforeTree(code)).toContain("import b from './b'")
+    expect(beforeTree(code)).not.toContain('const x')
+  })
+
+  it('maps every line of a multi-line import to its own source line', () => {
+    const { code, lineMap } = transformWithMap(doc("import {\n  a,\n} from './a'\nconst x = a"))
+    const lines = code.split('\n')
+    const start = lines.indexOf('import {')
+    expect([lineMap[start], lineMap[start + 1], lineMap[start + 2]]).toEqual([2, 3, 4])
+    expect(lineMap[lines.indexOf('  const x = a')]).toBe(5)
   })
 })
