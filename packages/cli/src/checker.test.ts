@@ -165,3 +165,40 @@ type Props = { title: Strings }
     expect(diags.some(d => d.file.includes('tsconfig.json'))).toBe(true)
   })
 })
+
+// #83: route params from the file name are strings on $$props.
+describe('checkProject — dynamic route params', () => {
+  const page = (body: string) => `---\n${body}\n---\n<p>x</p>`
+
+  it('types [slug] as string on $$props', () => {
+    const root = makeProject({
+      'src/pages/blog/[slug].wald': page('const takesString = (s: string) => s\nconst slug: string = $$props.slug\ntakesString($$props.slug)'),
+    })
+    roots.push(root)
+    expect(checkProject(root)).toEqual([])
+  })
+
+  it('types every param of a nested dynamic route', () => {
+    const root = makeProject({
+      'src/pages/[lang]/docs/[page].wald': page('const both: string = $$props.lang + $$props.page'),
+    })
+    roots.push(root)
+    expect(checkProject(root)).toEqual([])
+  })
+
+  it('still reports unknown props on non-dynamic pages', () => {
+    const root = makeProject({
+      'src/pages/about.wald': page('const slug: string = $$props.slug'),
+    })
+    roots.push(root)
+    expect(checkProject(root)).toHaveLength(1)
+  })
+
+  it('leaves an explicit type Props alone', () => {
+    const root = makeProject({
+      'src/pages/blog/[slug].wald': page('type Props = { slug: number }\nconst n: number = $props.slug'),
+    })
+    roots.push(root)
+    expect(checkProject(root)).toEqual([])
+  })
+})

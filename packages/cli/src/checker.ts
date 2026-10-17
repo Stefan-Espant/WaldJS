@@ -1,9 +1,10 @@
 import ts from 'typescript'
 import { readFileSync, readdirSync, existsSync } from 'node:fs'
-import { join, dirname } from 'node:path'
+import { join, dirname, relative, isAbsolute } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { compileWithMap } from '@waldjs/compiler'
 import { WALD_GENERATOR } from './version.js'
+import { fileToRoute } from './router/index.js'
 
 export interface CheckDiagnostic {
   file: string
@@ -41,10 +42,14 @@ export function checkProject(root: string): CheckDiagnostic[] {
   const waldFiles = existsSync(srcDir) ? findFiles(srcDir, '.wald') : []
   const tsFiles = existsSync(srcDir) ? findFiles(srcDir, '.ts') : []
 
+  const pagesDir = join(srcDir, 'pages')
   const virtuals = new Map<string, VirtualFile>()
   for (const file of waldFiles) {
     const source = readFileSync(file, 'utf-8')
-    const { code, lineMap } = compileWithMap(source, file, { generator: WALD_GENERATOR })
+    // Pages under src/pages get their [param] segments typed on $$props (#83);
+    // same parsing as the router, so check and build agree on what the params are.
+    const routeParams = isInside(pagesDir, file) ? fileToRoute(pagesDir, file).params : []
+    const { code, lineMap } = compileWithMap(source, file, { generator: WALD_GENERATOR, routeParams })
     virtuals.set(norm(`${file}.ts`), { code, lineMap, original: file, originalSource: source })
   }
 
@@ -210,4 +215,9 @@ function findFiles(dir: string, ext: string): string[] {
     else if (entry.name.endsWith(ext)) results.push(full)
   }
   return results
+}
+
+function isInside(dir: string, file: string): boolean {
+  const rel = relative(dir, file)
+  return rel !== '' && !rel.startsWith('..') && !isAbsolute(rel)
 }

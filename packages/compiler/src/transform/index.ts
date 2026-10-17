@@ -4,8 +4,12 @@ import { scopeCss, scopeHash } from '../scope-css.js'
 
 type MappedLine = { text: string; srcLine: number }
 
-/** generator: the value of `Wald.generator` in compiled modules (the CLI passes "WaldJS v<version>"). */
-export type TransformOptions = { generator?: string }
+/**
+ * generator: the value of `Wald.generator` in compiled modules (the CLI passes "WaldJS v<version>").
+ * routeParams: `[param]` segments of a dynamic route's file name; typed as strings on `$$props`
+ * when the file declares no `type Props` (the CLI passes them for `wald check`).
+ */
+export type TransformOptions = { generator?: string; routeParams?: string[] }
 
 export function transform(ast: WaldDocument, fileId = '', options: TransformOptions = {}): string {
   return transformWithMap(ast, fileId, options).code
@@ -46,10 +50,14 @@ export function transformWithMap(ast: WaldDocument, fileId = '', options: Transf
     push(``, null)
   }
 
+  const params = options.routeParams ?? []
+  const paramsType = `{ ${params.map(p => `${p}: string`).join('; ')} } & Record<string, unknown>`
   push(
     hasProps
       ? `export default createTree<Props>(async ($$result, $$props: Props) => {`
-      : `export default createTree(async ($$result, $$props) => {`,
+      : params.length > 0
+        ? `export default createTree<${paramsType}>(async ($$result, $$props: ${paramsType}) => {`
+        : `export default createTree(async ($$result, $$props) => {`,
     null,
   )
 
