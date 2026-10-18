@@ -187,6 +187,17 @@ describe('marketing site build', () => {
     for (const link of links) expect(link, link).toMatch(/^https:\/\//)
   })
 
+  it('stuurt /pagina/ en /pagina/index.html door naar de canonieke /pagina (Vercel)', () => {
+    // Zonder deze twee instellingen is elke pagina onder drie URL's bereikbaar
+    // en kiest Google soms een andere canonieke URL dan de onze.
+    const vercel = JSON.parse(readFileSync(join(ROOT, 'vercel.json'), 'utf-8'))
+    expect(vercel.cleanUrls).toBe(true)
+    expect(vercel.trailingSlash).toBe(false)
+
+    const canonicals = readFileSync(join(ROOT, 'dist/waarom/index.html'), 'utf-8').match(/<link rel="canonical" href="([^"]+)">/)
+    expect(canonicals?.[1]).toBe('https://waldjs.eu/waarom')
+  })
+
   it('bevat een prefers-reduced-motion regel die transitions/animaties uitzet', () => {
     const css = readFileSync(join(ROOT, 'dist/assets/css/site.css'), 'utf-8')
     expect(css).toContain('@media(prefers-reduced-motion:reduce)')
