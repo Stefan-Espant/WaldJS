@@ -1,7 +1,6 @@
 import { createHash } from 'node:crypto'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { basename, extname, join } from 'node:path'
-import sharp from 'sharp'
 
 export type OptimizedImage = {
   src: string
@@ -53,6 +52,10 @@ async function optimizeImageUncached(
   publicPath: string,
   widths: number[],
 ): Promise<OptimizedImage> {
+  // sharp is a native module (~60 ms to load). This file is part of the
+  // @waldjs/cli entry that every wald.config.ts imports for defineConfig, so a
+  // top-level import made every build pay for it, images or not.
+  const { default: sharp } = await import('sharp')
   mkdirSync(outDir, { recursive: true })
   const ext = extname(absoluteSrcPath).toLowerCase()
 
