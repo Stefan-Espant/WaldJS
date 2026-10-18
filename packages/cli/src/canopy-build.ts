@@ -43,6 +43,8 @@ export async function buildCanopyClient(
         ssr: false,
         outDir: distDir,
         emptyOutDir: false,
+        // gzip sizes are only printed, never used; skip computing them.
+        reportCompressedSize: false,
         rollupOptions: {
           input,
           preserveEntrySignatures: 'exports-only',
