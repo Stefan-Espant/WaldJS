@@ -198,6 +198,20 @@ describe('marketing site build', () => {
     expect(canonicals?.[1]).toBe('https://waldjs.eu/waarom')
   })
 
+  it('geeft zoekmachines Engelse titels en beschrijvingen op de tweetalige pagina\'s', () => {
+    for (const page of ['dist/index.html', 'dist/waarom/index.html', 'dist/vs/astro/index.html', 'dist/vs/eleventy/index.html', 'dist/changelog/index.html', 'dist/voorwaarden/index.html']) {
+      const html = readFileSync(join(ROOT, page), 'utf-8')
+      expect(html, page).toContain('<html lang="en"')
+      const title = html.match(/<title>([^<]*)<\/title>/)?.[1] ?? ''
+      const description = html.match(/<meta name="description" content="([^"]*)"/)?.[1] ?? ''
+      expect(title, page).not.toMatch(/\b(je|jouw|het|een|voor|welke|Waarom|voorwaarden)\b/)
+      expect(description, page).not.toMatch(/\b(je|jouw|het|een|voor|welke|wanneer)\b/)
+    }
+    expect(readFileSync(join(ROOT, 'dist/index.html'), 'utf-8')).toMatch(/<title>[^<]*static site/i)
+    // De NL-blog houdt zijn vaste Nederlandse taal
+    expect(readFileSync(join(ROOT, 'dist/blog/index.html'), 'utf-8')).toContain('<html lang="nl" data-lang="nl" data-lang-fixed="nl">')
+  })
+
   it('bevat een prefers-reduced-motion regel die transitions/animaties uitzet', () => {
     const css = readFileSync(join(ROOT, 'dist/assets/css/site.css'), 'utf-8')
     expect(css).toContain('@media(prefers-reduced-motion:reduce)')
@@ -306,9 +320,9 @@ describe('marketing site build', () => {
 
   it('houdt de taal-bootstrap op pagina\'s zonder vaste taal en linkt naar de blog', () => {
     const html = readFileSync(join(ROOT, 'dist/index.html'), 'utf-8')
-    expect(html).toContain('<html lang="nl" data-lang="nl" data-lang-fixed="">')
+    expect(html).toContain('<html lang="en" data-lang="en" data-lang-fixed="">')
     expect(html).toContain(`localStorage.getItem('wald-taal')`)
-    expect(html).toContain(`<button id="btn-nl" class="active" onclick="setLanguage('nl')">NL</button>`)
+    expect(html).toContain(`<button id="btn-en" class="active" onclick="setLanguage('en')">EN</button>`)
     expect((html.match(/<a href="\/blog"/g) ?? []).length, 'blog links in desktop + mobile nav').toBe(2)
   })
 

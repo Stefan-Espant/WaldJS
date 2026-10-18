@@ -49,8 +49,8 @@ describe('rssLinkHtml', () => {
 describe('langSwitchHtml', () => {
   it('renders the client-side toggle buttons when the language is not fixed', () => {
     const html = langSwitchHtml(undefined, undefined)
-    expect(html).toContain(`<button id="btn-nl" class="active" onclick="setLanguage('nl')">NL</button>`)
-    expect(html).toContain(`<button id="btn-en" onclick="setLanguage('en')">EN</button>`)
+    expect(html).toContain(`<button id="btn-nl" onclick="setLanguage('nl')">NL</button>`)
+    expect(html).toContain(`<button id="btn-en" class="active" onclick="setLanguage('en')">EN</button>`)
   })
 
   it('renders links to the other language when the language is fixed', () => {
@@ -66,5 +66,36 @@ describe('LANG_BOOTSTRAP_SCRIPT', () => {
   it('is the unhoisted inline script that applies the stored language', () => {
     expect(LANG_BOOTSTRAP_SCRIPT).toContain('data-wald-no-hoist')
     expect(LANG_BOOTSTRAP_SCRIPT).toContain(`localStorage.getItem('wald-taal')`)
+  })
+
+  // Runs the inline script against a fake browser: the HTML defaults to English
+  // (what search engines see); the script picks the visitor's language.
+  function run({ saved, browser, storageThrows = false }: { saved?: string; browser: string; storageThrows?: boolean }) {
+    const documentElement = { dataset: { lang: 'en' } as Record<string, string>, lang: 'en' }
+    const localStorage = {
+      getItem: () => { if (storageThrows) throw new Error('blocked'); return saved ?? null },
+    }
+    const body = LANG_BOOTSTRAP_SCRIPT.replace(/^<script[^>]*>/, '').replace(/<\/script>$/, '')
+    new Function('document', 'localStorage', 'navigator', body)({ documentElement }, localStorage, { language: browser })
+    return documentElement.lang
+  }
+
+  it('uses a stored choice first', () => {
+    expect(run({ saved: 'nl', browser: 'en-US' })).toBe('nl')
+    expect(run({ saved: 'en', browser: 'nl-NL' })).toBe('en')
+  })
+
+  it('switches a Dutch browser without a stored choice to Dutch', () => {
+    expect(run({ browser: 'nl-NL' })).toBe('nl')
+    expect(run({ browser: 'nl-BE' })).toBe('nl')
+  })
+
+  it('keeps English for every other browser language', () => {
+    expect(run({ browser: 'en-US' })).toBe('en')
+    expect(run({ browser: 'de-DE' })).toBe('en')
+  })
+
+  it('falls back to the browser language when storage is blocked', () => {
+    expect(run({ browser: 'nl', storageThrows: true })).toBe('nl')
   })
 })

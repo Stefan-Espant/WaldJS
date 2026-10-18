@@ -7,7 +7,7 @@ const sorted = entries.slice().sort((a, b) => new Date(b.data.date).getTime() - 
 ---
 <Layout
   title="Changelog — WaldJS"
-  description="Elke release een jaarring: het volledige groeidagboek van WaldJS."
+  description="Every release a growth ring: the full changelog of WaldJS."
   canonicalPath="/changelog"
 >
   <section id="changelog-overview" class="page-intro">

@@ -47,8 +47,12 @@ try {
   const fixedLang = document.documentElement.dataset.langFixed;
   if (fixedLang === 'nl' || fixedLang === 'en') localStorage.setItem('wald-taal', fixedLang);
   else {
-    const savedLang = localStorage.getItem('wald-taal');
-    if (savedLang === 'nl' || savedLang === 'en') setLanguage(savedLang);
+    // De bootstrap in <head> koos de taal al (bewaarde keuze, anders de
+    // browsertaal). Zet alleen de knoppen goed; een automatisch gekozen taal
+    // wordt pas een voorkeur als de bezoeker zelf op NL/EN klikt.
+    const current = document.documentElement.dataset.lang;
+    document.getElementById('btn-nl').classList.toggle('active', current==='nl');
+    document.getElementById('btn-en').classList.toggle('active', current==='en');
   }
 } catch(e){}
 

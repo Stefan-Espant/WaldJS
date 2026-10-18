@@ -4,8 +4,8 @@ import Vergelijking from '../../components/Vergelijking.wald'
 import { ui } from '../../lib/strings'
 ---
 <Layout
-  title="WaldJS vs Eleventy — welke past bij jouw project?"
-  description="Een eerlijke vergelijking tussen WaldJS en Eleventy: single-file componenten, Vite-integratie, partial hydration en wanneer je welke kiest."
+  title="WaldJS vs Eleventy: which static site generator fits your project?"
+  description="An honest comparison of WaldJS and Eleventy: single-file components, Vite integration, partial hydration, and when to choose which."
   canonicalPath="/vs/eleventy"
 >
   <section id="vs-eleventy-intro" class="page-intro">

@@ -9,7 +9,7 @@ import { ui } from '../lib/strings'
 const { title, description, canonicalPath, pond, lang, alternates, langLinks, ogImage, ogType, jsonLd, rss } = $$props
 const canonicalUrl = SITE_URL + canonicalPath
 const ogImageUrl = ogImage ?? DEFAULT_OG_IMAGE
-const htmlLang = lang ?? 'nl'
+const htmlLang = lang ?? 'en'
 const fixedLang = lang ?? ''
 const bootstrapScript = new SafeHtml(lang ? '' : LANG_BOOTSTRAP_SCRIPT)
 const headLinks = new SafeHtml([alternateLinksHtml(alternates), rssLinkHtml(rss)].filter(Boolean).join('\n'))

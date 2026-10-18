@@ -4,8 +4,8 @@ import Vergelijking from '../../components/Vergelijking.wald'
 import { ui } from '../../lib/strings'
 ---
 <Layout
-  title="WaldJS vs Astro — welke past bij jouw project?"
-  description="Een eerlijke vergelijking tussen WaldJS en Astro: single-file componenten, content collections, partial hydration en wanneer je welke kiest."
+  title="WaldJS vs Astro: which static site framework fits your project?"
+  description="An honest comparison of WaldJS and Astro: single-file components, content collections, partial hydration, and when to choose which."
   canonicalPath="/vs/astro"
 >
   <section id="vs-astro-intro" class="page-intro">
