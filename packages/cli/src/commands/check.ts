@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { relative } from 'node:path'
 import { defineCommand } from 'citty'
-import { checkProject, type CheckDiagnostic } from '../checker.js'
+import type { CheckDiagnostic } from '../checker.js'
 
 export function renderDiagnostic(diag: CheckDiagnostic, source: string): string {
   const lines = source.split('\n')
@@ -19,6 +19,7 @@ export function renderDiagnostic(diag: CheckDiagnostic, source: string): string 
 }
 
 export async function runCheck(root: string): Promise<boolean> {
+  const { checkProject } = await import('../checker.js')
   const diagnostics = checkProject(root)
 
   for (const diag of diagnostics) {

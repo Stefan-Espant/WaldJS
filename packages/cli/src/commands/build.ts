@@ -10,7 +10,6 @@ import { scanRoutes } from '../router/index.js'
 import { maybeWrap, hoistScripts } from '../shell.js'
 import { injectPrefetchRuntime } from '../prefetch-runtime.js'
 import { withGrowingTree } from '../growing-tree.js'
-import { runCheck } from './check.js'
 import { injectComponentStyles } from '../component-styles.js'
 import { collectComponentStyles } from '../style-scan.js'
 import { injectGeneratorMeta } from '../generator-meta.js'
@@ -317,6 +316,8 @@ export const buildCommand = defineCommand({
     const cwd = process.cwd()
 
     if (args.check) {
+      // Imported only here: the checker loads TypeScript, which most builds don't need.
+      const { runCheck } = await import('./check.js')
       const ok = await runCheck(cwd)
       if (!ok) {
         console.error('✖ Type errors found — build aborted')
