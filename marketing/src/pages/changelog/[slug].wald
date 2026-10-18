@@ -12,7 +12,7 @@ const entry = await getEntry('changelog', $$props.slug)
 ---
 <Layout
   title={`${entry.data.title} (${entry.data.dateLabel}) — WaldJS Changelog`}
-  description={`WaldJS changelog-entry: ${entry.data.title}, ${entry.data.dateLabel}.`}
+  description={`WaldJS changelog entry: ${entry.data.title}, ${entry.data.dateLabel}.`}
   canonicalPath={`/changelog/${$$props.slug}`}
 >
   <section id="changelog-entry" class="page-intro">

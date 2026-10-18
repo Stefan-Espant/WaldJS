@@ -16,8 +16,8 @@ import Faq from '../components/Faq.wald'
 import Changelog from '../components/Changelog.wald'
 ---
 <Layout
-  title="WaldJS — Plant je site. Laat hem groeien."
-  description="WaldJS is een content-first webframework voor razendsnelle, statische websites. Schrijf .wald-bestanden en WaldJS compileert ze tot een statische site."
+  title="WaldJS — a fast, content-first static site generator"
+  description="WaldJS is an open-source, content-first web framework for blazing-fast static websites. Write .wald files (frontmatter plus an HTML template) and ship zero JavaScript by default."
   canonicalPath="/"
 >
   <Hero />

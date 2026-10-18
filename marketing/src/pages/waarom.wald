@@ -3,8 +3,8 @@ import Layout from '../layouts/Layout.wald'
 import { ui } from '../lib/strings'
 ---
 <Layout
-  title="Waarom WaldJS?"
-  description="WaldJS in het kort: bouwsnelheid, geen framework-lock-in voor interactiviteit, en één klein formaat zonder extra tooling."
+  title="Why WaldJS? Fast builds, no framework lock-in, one file format"
+  description="WaldJS in short: build speed, no UI-framework lock-in for interactivity, and one small file format with no extra tooling."
   canonicalPath="/waarom"
 >
   <section id="why-intro" class="page-intro">
