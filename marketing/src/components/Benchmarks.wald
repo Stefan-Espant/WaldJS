@@ -16,15 +16,15 @@ import { ui } from '../lib/strings'
       <div class="stat-group">
         <h3>⚡ {ui.benchmarks.buildLarge}</h3>
         <span class="metric">{ui.benchmarks.lowerIsBetter}</span>
-        <div class="stat wald"><div class="label"><b>WaldJS</b><span class="value">{ui.benchmarks.wald1000}</span></div><div class="bar"><i style="width:10.7%"></i></div></div>
-        <div class="stat"><div class="label"><b>Eleventy 3.1</b><span class="value">{ui.benchmarks.eleventy1000}</span></div><div class="bar"><i style="width:13.1%"></i></div></div>
+        <div class="stat wald"><div class="label"><b>WaldJS</b><span class="value">{ui.benchmarks.wald1000}</span></div><div class="bar"><i style="width:9.5%"></i></div></div>
+        <div class="stat"><div class="label"><b>Eleventy 3.1</b><span class="value">{ui.benchmarks.eleventy1000}</span></div><div class="bar"><i style="width:13.4%"></i></div></div>
         <div class="stat"><div class="label"><b>Astro 4.16</b><span class="value">{ui.benchmarks.astro1000}</span></div><div class="bar"><i style="width:100%"></i></div></div>
       </div>
       <div class="stat-group">
         <h3>🌱 {ui.benchmarks.buildSmall}</h3>
         <span class="metric">{ui.benchmarks.lowerIsBetter}</span>
-        <div class="stat wald"><div class="label"><b>WaldJS</b><span class="value">{ui.benchmarks.wald50}</span></div><div class="bar"><i style="width:35.7%"></i></div></div>
-        <div class="stat"><div class="label"><b>Eleventy 3.1</b><span class="value">{ui.benchmarks.eleventy50}</span></div><div class="bar"><i style="width:30.8%"></i></div></div>
+        <div class="stat wald"><div class="label"><b>WaldJS</b><span class="value">{ui.benchmarks.wald50}</span></div><div class="bar"><i style="width:23.3%"></i></div></div>
+        <div class="stat"><div class="label"><b>Eleventy 3.1</b><span class="value">{ui.benchmarks.eleventy50}</span></div><div class="bar"><i style="width:32.2%"></i></div></div>
         <div class="stat"><div class="label"><b>Astro 4.16</b><span class="value">{ui.benchmarks.astro50}</span></div><div class="bar"><i style="width:100%"></i></div></div>
       </div>
     </div>

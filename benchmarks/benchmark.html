@@ -279,15 +279,15 @@
 <!-- ── Key numbers ───────────────────────────────────────── -->
 <div class="badges">
   <div class="badge">
-    <div class="badge-value">1.03s</div>
+    <div class="badge-value">0.90s</div>
     <div class="badge-label">WaldJS · 1,000 posts</div>
   </div>
   <div class="badge">
-    <div class="badge-value">9.4×</div>
+    <div class="badge-value">10.5×</div>
     <div class="badge-label">faster build than Astro 4</div>
   </div>
   <div class="badge">
-    <div class="badge-value">1.2×</div>
+    <div class="badge-value">1.4×</div>
     <div class="badge-label">faster build than Eleventy 3</div>
   </div>
   <div class="badge">
@@ -307,7 +307,7 @@
   <section>
     <div class="section-header">
       <h2>Build time — 50 and 1,000 posts</h2>
-      <p>Median of 7 runs after 2 warm-ups · clean dist/ each run · 2026-10-20 · Apple M1 Pro, Node 22</p>
+      <p>Median of 7 runs after 2 warm-ups · clean dist/ each run · 2026-10-20 · WaldJS 0.14.0 · Apple M1 Pro, Node 22</p>
     </div>
     <div class="chart-card">
       <div class="chart-wrap">
@@ -451,7 +451,7 @@
       <strong>Lighthouse:</strong> scores on 5 pages of the 50-post site (<code>/</code>, <code>/blog/</code> and 3 post pages), Lighthouse Node API with headless Chrome, averaged per category.
     </div>
     <div class="note">
-      <strong>Correction:</strong> the July 2026 version of this page reported 1.62 s for WaldJS against 138.92 s for Astro (50 posts). That Astro figure was a cold-start outlier: two of its three runs took ~139 s, the third 4.95 s, and a 3-run median without warm-ups let it through. The suite now discards warm-ups and takes 7 runs. WaldJS has also become faster since (content caching, lazy imports, parallel bundling in <code>@waldjs/cli</code> 0.13.1 and <code>@waldjs/content</code> 0.3).
+      <strong>Correction:</strong> the July 2026 version of this page reported 1.62 s for WaldJS against 138.92 s for Astro (50 posts). That Astro figure was a cold-start outlier: two of its three runs took ~139 s, the third 4.95 s, and a 3-run median without warm-ups let it through. The suite now discards warm-ups and takes 7 runs. WaldJS has also become faster since (content caching, lazy imports, parallel bundling, and in 0.14 an esbuild fast path that skips Vite when a project doesn't need it).
     </div>
   </section>
 
@@ -481,14 +481,14 @@
       datasets: [
         {
           label: '1,000 posts',
-          data: [1.03, 1.27, 9.67],
+          data: [0.90, 1.26, 9.43],
           backgroundColor: [RED, ELEVENTY, ASTRO],
           borderRadius: 6,
           borderSkipped: false,
         },
         {
           label: '50 posts',
-          data: [0.80, 0.69, 2.24],
+          data: [0.53, 0.73, 2.27],
           backgroundColor: [RED + '80', ELEVENTY + '80', ASTRO + '80'],
           borderRadius: 6,
           borderSkipped: false,
