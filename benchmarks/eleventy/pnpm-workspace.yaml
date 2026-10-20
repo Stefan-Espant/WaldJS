@@ -1,0 +1,2 @@
+# Own workspace root: installed standalone by scripts/bench.ts, not part of the monorepo.
+allowBuilds: {}

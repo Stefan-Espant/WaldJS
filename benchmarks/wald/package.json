@@ -7,7 +7,7 @@
     "build": "wald build"
   },
   "devDependencies": {
-    "@waldjs/cli": "file:../../packages/cli",
+    "@waldjs/cli": "workspace:*",
     "@waldjs/runtime": "workspace:*",
     "@waldjs/content": "workspace:*"
   }

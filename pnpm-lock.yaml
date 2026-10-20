@@ -36,6 +36,18 @@ importers:
         specifier: ^5.5.0
         version: 5.9.3
 
+  benchmarks/wald:
+    devDependencies:
+      '@waldjs/cli':
+        specifier: workspace:*
+        version: link:../../packages/cli
+      '@waldjs/content':
+        specifier: workspace:*
+        version: link:../../packages/content
+      '@waldjs/runtime':
+        specifier: workspace:*
+        version: link:../../packages/runtime
+
   examples/basic:
     dependencies:
       '@waldjs/compiler':
@@ -1682,8 +1694,8 @@ packages:
     resolution: {integrity: sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw==}
     engines: {node: '>=0.10.0'}
 
-  legacy-javascript@0.0.1:
-    resolution: {integrity: sha512-lPyntS4/aS7jpuvOlitZDFifBCb4W8L/3QU0PLbUTUj+zYah8rfVjYic88yG7ZKTxhS5h9iz7duT8oUXKszLhg==}
+  legacy-javascript@0.0.3:
+    resolution: {integrity: sha512-1r6MT4dVaJyXt4G07Cm2cQ0AUaLJdefiEp4SmIAylA++gnEQ82YvmzE58RkM5EP0fk5hROLCslUPGnwIYdZQVA==}
 
   lighthouse-logger@2.0.2:
     resolution: {integrity: sha512-vWl2+u5jgOQuZR55Z1WM0XDdrJT6mzMP8zHUct7xTlWhuQs+eV0g+QL0RQdFjT54zVmbhLCP8vIVpy1wGn/gCg==}
@@ -2999,7 +3011,7 @@ snapshots:
 
   '@paulirish/trace_engine@0.0.59':
     dependencies:
-      legacy-javascript: 0.0.1
+      legacy-javascript: 0.0.3
       third-party-web: 0.30.0
 
   '@polka/url@1.0.0-next.29': {}
@@ -3779,7 +3791,7 @@ snapshots:
 
   kind-of@6.0.3: {}
 
-  legacy-javascript@0.0.1: {}
+  legacy-javascript@0.0.3: {}
 
   lighthouse-logger@2.0.2:
     dependencies:
