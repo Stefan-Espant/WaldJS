@@ -1,5 +1,4 @@
-import { existsSync } from 'node:fs'
-import { readdir, readFile } from 'node:fs/promises'
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
 import { join, basename } from 'node:path'
 import matter from 'gray-matter'
 import { marked } from 'marked'
@@ -31,18 +30,37 @@ function assertSlug(slug: string): void {
   }
 }
 
+// Content doesn't change while a site renders, but the same files are read
+// over and over: getStaticPaths() parses the whole collection, then every page
+// calls getEntry() again, and each call used to re-read the directory listing.
+// Both caches are keyed on the file system's own change markers (a directory's
+// mtime changes when entries are added or removed; a file's mtime/size when it
+// is edited), so `wald grow` still sees every edit without a restart.
+type DirListing = { mtimeMs: number; markdown: string[]; locales: string[] }
+const dirCache = new Map<string, DirListing>()
+
+function listDir(dir: string): DirListing {
+  const { mtimeMs } = statSync(dir)
+  const cached = dirCache.get(dir)
+  if (cached && cached.mtimeMs === mtimeMs) return cached
+  const dirents = readdirSync(dir, { withFileTypes: true })
+  const listing = {
+    mtimeMs,
+    markdown: dirents.filter(d => d.isFile() && d.name.endsWith('.md')).map(d => d.name).sort(),
+    locales: dirents.filter(d => d.isDirectory() && LOCALE_PATTERN.test(d.name)).map(d => d.name).sort(),
+  }
+  dirCache.set(dir, listing)
+  return listing
+}
+
 async function listLocales(collection: string, contentDir: string): Promise<string[]> {
   const dir = join(contentDir, collection)
   if (!existsSync(dir)) return []
-  const dirents = await readdir(dir, { withFileTypes: true })
-  return dirents
-    .filter(d => d.isDirectory() && LOCALE_PATTERN.test(d.name))
-    .map(d => d.name)
-    .sort()
+  return listDir(dir).locales
 }
 
 async function listMarkdown(dir: string): Promise<string[]> {
-  return (await readdir(dir)).filter(f => f.endsWith('.md')).sort()
+  return listDir(dir).markdown
 }
 
 export async function readCollection(
@@ -116,13 +134,28 @@ export async function readTranslations(
   return translations
 }
 
+type CachedEntry = { mtimeMs: number; size: number; entry: Entry }
+const entryCache = new Map<string, CachedEntry>()
+
 async function parseEntry(filePath: string, locale?: string): Promise<Entry> {
-  const raw = await readFile(filePath, 'utf8')
-  const { data, content } = matter(raw)
+  const { mtimeMs, size } = statSync(filePath)
+  const cached = entryCache.get(filePath)
+  if (cached && cached.mtimeMs === mtimeMs && cached.size === size) return copyEntry(cached.entry)
+
+  const { data, content } = matter(readFileSync(filePath, 'utf8'))
   const body = await marked(content)
   const slug = basename(filePath, '.md')
   const entryData = data as Record<string, unknown>
-  return locale === undefined
+  const entry: Entry = locale === undefined
     ? { slug, data: entryData, body }
     : { slug, locale, data: entryData, body }
+  entryCache.set(filePath, { mtimeMs, size, entry })
+  return copyEntry(entry)
+}
+
+// Every caller gets its own copy: a page that mutates entry.data must not
+// change what the next page sees. (gray-matter caches parsed frontmatter by
+// input string, so this could already leak before the cache existed.)
+function copyEntry(entry: Entry): Entry {
+  return { ...entry, data: structuredClone(entry.data) }
 }

@@ -10,7 +10,6 @@ import { scanRoutes } from '../router/index.js'
 import { maybeWrap, hoistScripts } from '../shell.js'
 import { injectPrefetchRuntime } from '../prefetch-runtime.js'
 import { withGrowingTree } from '../growing-tree.js'
-import { runCheck } from './check.js'
 import { injectComponentStyles } from '../component-styles.js'
 import { collectComponentStyles } from '../style-scan.js'
 import { injectGeneratorMeta } from '../generator-meta.js'
@@ -144,7 +143,12 @@ export async function buildPages(
   }
   const canopyScriptContents = collectCanopyScriptContents(canopyEntries)
   reporter.onPhase?.('Bundling canopy client')
-  const canopyAssets = await buildCanopyClient(canopyEntries, distDir, config.base, config.vite)
+  // The browser bundle and the SSR bundle don't depend on each other, so the
+  // canopy build runs alongside the SSR build; its asset map is only needed
+  // once pages render. The no-op catch keeps an early SSR failure from also
+  // surfacing as an unhandled rejection; the real error is awaited below.
+  const canopyAssetsPromise = buildCanopyClient(canopyEntries, distDir, config.base, config.vite)
+  canopyAssetsPromise.catch(() => {})
 
   reporter.onPhase?.('Bundling component styles')
   const componentStyles = collectComponentStyles(srcDir)
@@ -174,6 +178,8 @@ export async function buildPages(
       },
     } as any,
   )))
+
+  const canopyAssets = await canopyAssetsPromise
 
   const entryFileNames = new Map<string, string>()
   const ssrOutputs = Array.isArray(ssrResult) ? ssrResult : [ssrResult]
@@ -317,6 +323,8 @@ export const buildCommand = defineCommand({
     const cwd = process.cwd()
 
     if (args.check) {
+      // Imported only here: the checker loads TypeScript, which most builds don't need.
+      const { runCheck } = await import('./check.js')
       const ok = await runCheck(cwd)
       if (!ok) {
         console.error('✖ Type errors found — build aborted')

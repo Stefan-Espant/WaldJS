@@ -1,11 +1,4 @@
 import { defineCommand, runMain } from 'citty'
-import { plantCommand } from './commands/plant.js'
-import { growCommand } from './commands/grow.js'
-import { buildCommand } from './commands/build.js'
-import { previewCommand } from './commands/preview.js'
-import { checkCommand } from './commands/check.js'
-import { newCommand } from './commands/new.js'
-import { formatCommand } from './commands/format.js'
 import { WALD_VERSION } from './version.js'
 
 const main = defineCommand({
@@ -14,14 +7,17 @@ const main = defineCommand({
     version: WALD_VERSION,
     description: 'WaldJS — a content-first web framework',
   },
+  // Loaded on demand: each command pulls in its own heavy dependencies
+  // (TypeScript alone takes ~300ms to import), so `wald build` shouldn't pay
+  // for `wald check` and vice versa.
   subCommands: {
-    plant: plantCommand,
-    grow: growCommand,
-    build: buildCommand,
-    preview: previewCommand,
-    check: checkCommand,
-    format: formatCommand,
-    new: newCommand,
+    plant: () => import('./commands/plant.js').then(m => m.plantCommand),
+    grow: () => import('./commands/grow.js').then(m => m.growCommand),
+    build: () => import('./commands/build.js').then(m => m.buildCommand),
+    preview: () => import('./commands/preview.js').then(m => m.previewCommand),
+    check: () => import('./commands/check.js').then(m => m.checkCommand),
+    format: () => import('./commands/format.js').then(m => m.formatCommand),
+    new: () => import('./commands/new.js').then(m => m.newCommand),
   },
 })
 
