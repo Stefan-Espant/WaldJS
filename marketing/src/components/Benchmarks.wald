@@ -1,5 +1,9 @@
 ---
 import { ui } from '../lib/strings'
+// Measured with `pnpm bench` in benchmarks/ (median of 7 builds after 2
+// warm-ups; Apple M1 Pro, Node 22). Bars are relative to the slowest result
+// in each group. Update the numbers here and in benchmarks/benchmark.html
+// together after a new run.
 ---
 <section class="full" id="benchmarks" style="padding:90px 6vw">
   <div class="bench">
@@ -10,35 +14,20 @@ import { ui } from '../lib/strings'
     </div>
     <div class="bench-grid">
       <div class="stat-group">
-        <h3>⚡ {ui.benchmarks.buildTime}</h3>
-        <span class="metric">{ui.benchmarks.buildTimeNote}</span>
-        <div class="stat wald"><div class="label"><b>WaldJS</b><span class="value">1,1 s</span></div><div class="bar"><i style="width:22%"></i></div></div>
-        <div class="stat"><div class="label"><b>Eleventy</b><span class="value">1,9 s</span></div><div class="bar"><i style="width:38%"></i></div></div>
-        <div class="stat"><div class="label"><b>Astro</b><span class="value">4,9 s</span></div><div class="bar"><i style="width:98%"></i></div></div>
+        <h3>⚡ {ui.benchmarks.buildLarge}</h3>
+        <span class="metric">{ui.benchmarks.lowerIsBetter}</span>
+        <div class="stat wald"><div class="label"><b>WaldJS</b><span class="value">{ui.benchmarks.wald1000}</span></div><div class="bar"><i style="width:10.7%"></i></div></div>
+        <div class="stat"><div class="label"><b>Eleventy 3.1</b><span class="value">{ui.benchmarks.eleventy1000}</span></div><div class="bar"><i style="width:13.1%"></i></div></div>
+        <div class="stat"><div class="label"><b>Astro 4.16</b><span class="value">{ui.benchmarks.astro1000}</span></div><div class="bar"><i style="width:100%"></i></div></div>
       </div>
       <div class="stat-group">
-        <h3>🌱 {ui.benchmarks.devStart}</h3>
-        <span class="metric">{ui.benchmarks.devStartNote}</span>
-        <div class="stat wald"><div class="label"><b>WaldJS</b><span class="value">140 ms</span></div><div class="bar"><i style="width:28%"></i></div></div>
-        <div class="stat"><div class="label"><b>Eleventy</b><span class="value">210 ms</span></div><div class="bar"><i style="width:42%"></i></div></div>
-        <div class="stat"><div class="label"><b>Astro</b><span class="value">480 ms</span></div><div class="bar"><i style="width:96%"></i></div></div>
-      </div>
-      <div class="stat-group">
-        <h3>📦 {ui.benchmarks.js}</h3>
-        <span class="metric">{ui.benchmarks.jsNote}</span>
-        <div class="stat wald">
-          <div class="label"><b>WaldJS</b><span class="value">0,10 KB</span></div>
-          <div class="bar"><i style="width:10%"></i></div>
-        </div>
-        <div class="stat">
-          <div class="label"><b>Eleventy</b><span class="value">1,05 KB</span></div>
-          <div class="bar"><i style="width:100%"></i></div>
-        </div>
-        <div class="stat">
-          <div class="label"><b>Astro</b><span class="value">0,11 KB</span></div>
-          <div class="bar"><i style="width:10.3%"></i></div>
-        </div>
+        <h3>🌱 {ui.benchmarks.buildSmall}</h3>
+        <span class="metric">{ui.benchmarks.lowerIsBetter}</span>
+        <div class="stat wald"><div class="label"><b>WaldJS</b><span class="value">{ui.benchmarks.wald50}</span></div><div class="bar"><i style="width:35.7%"></i></div></div>
+        <div class="stat"><div class="label"><b>Eleventy 3.1</b><span class="value">{ui.benchmarks.eleventy50}</span></div><div class="bar"><i style="width:30.8%"></i></div></div>
+        <div class="stat"><div class="label"><b>Astro 4.16</b><span class="value">{ui.benchmarks.astro50}</span></div><div class="bar"><i style="width:100%"></i></div></div>
       </div>
     </div>
+    <p class="disclaimer">{ui.benchmarks.disclaimer}</p>
   </div>
 </section>

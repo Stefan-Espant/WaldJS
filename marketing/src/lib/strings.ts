@@ -15,32 +15,30 @@ export const STRINGS = {
       en: 'Fast as a sprinting deer',
     },
     intro: {
-      nl: "Interne metingen op een blog met 1.000 Markdown-pagina's, vergeleken met Astro en Eleventy.",
-      en: 'Internal measurements on a blog with 1,000 Markdown pages, compared to Astro and Eleventy.',
+      nl: 'Gemeten op een blog met 50 en met 1.000 Markdown-posts: mediaan van 7 builds na 2 opwarmrondes, op een Apple M1 Pro met Node 22.',
+      en: 'Measured on a blog with 50 and with 1,000 Markdown posts: median of 7 builds after 2 warm-up runs, on an Apple M1 Pro with Node 22.',
     },
-    buildTime: {
-      nl: 'Buildtijd',
-      en: 'Build time',
+    buildLarge: {
+      nl: 'Buildtijd · 1.000 posts',
+      en: 'Build time · 1,000 posts',
     },
-    buildTimeNote: {
-      nl: "1.000 pagina's · lager is beter",
-      en: '1,000 pages · lower is better',
+    buildSmall: {
+      nl: 'Buildtijd · 50 posts',
+      en: 'Build time · 50 posts',
     },
-    devStart: {
-      nl: 'Dev-server start',
-      en: 'Dev server startup',
+    lowerIsBetter: {
+      nl: 'lager is beter',
+      en: 'lower is better',
     },
-    devStartNote: {
-      nl: 'koude start · lager is beter',
-      en: 'cold start · lower is better',
-    },
-    js: {
-      nl: 'JavaScript voor 10 counters',
-      en: 'JavaScript for 10 counters',
-    },
-    jsNote: {
-      nl: 'built output · lager is beter',
-      en: 'built output · lower is better',
+    wald1000: { nl: '1,03 s', en: '1.03 s' },
+    eleventy1000: { nl: '1,27 s', en: '1.27 s' },
+    astro1000: { nl: '9,67 s', en: '9.67 s' },
+    wald50: { nl: '0,80 s', en: '0.80 s' },
+    eleventy50: { nl: '0,69 s', en: '0.69 s' },
+    astro50: { nl: '2,24 s', en: '2.24 s' },
+    disclaimer: {
+      nl: 'Bij 1.000 posts is WaldJS het snelst; bij 50 posts is Eleventy nog net sneller. Meet het zelf na met <code>pnpm bench</code>: de <a href="https://github.com/Stefan-Espant/WaldJS/tree/main/benchmarks" target="_blank" rel="noopener">opzet en scripts staan in de repo</a>.',
+      en: 'At 1,000 posts WaldJS is the fastest; at 50 posts Eleventy is still slightly ahead. Measure it yourself with <code>pnpm bench</code>: the <a href="https://github.com/Stefan-Espant/WaldJS/tree/main/benchmarks" target="_blank" rel="noopener">setup and scripts are in the repo</a>.',
     },
   },
   common: {
@@ -277,8 +275,8 @@ export const STRINGS = {
       en: 'Components — reusable <code style="font-family:var(--mono)">.wald</code> files.',
     },
     canopy: {
-      nl: 'Client-side hydration <i>(komt in Fase 3)</i>.',
-      en: 'Client-side hydration <i>(coming in Phase 3)</i>.',
+      nl: 'Interactieve eilandjes op een statische pagina: <code style="font-family:var(--mono)">canopy:load</code>, <code style="font-family:var(--mono)">canopy:idle</code> of <code style="font-family:var(--mono)">canopy:visible</code>.',
+      en: 'Interactive islands on a static page: <code style="font-family:var(--mono)">canopy:load</code>, <code style="font-family:var(--mono)">canopy:idle</code> or <code style="font-family:var(--mono)">canopy:visible</code>.',
     },
   },
   packages: {
@@ -457,8 +455,8 @@ export const STRINGS = {
       en: 'Both use single-file components, content collections, and 0 KB JavaScript by default. The difference is in scope and ecosystem.',
     },
     wald1: {
-      nl: 'bouwsnelheid zwaar laat wegen — 1,62s versus 138,92s voor dezelfde 50-posts-blogsite in onze eigen benchmarks',
-      en: 'weigh build speed heavily — 1.62s vs. 138.92s for the same 50-post blog site in our own benchmarks',
+      nl: 'bouwsnelheid zwaar laat wegen — een blog met 1.000 posts bouwt in 1,03 s tegenover 9,67 s met Astro 4 in onze eigen, reproduceerbare benchmark',
+      en: 'weigh build speed heavily — a 1,000-post blog builds in 1.03 s versus 9.67 s with Astro 4 in our own, reproducible benchmark',
     },
     wald2: {
       nl: "geen framework-adapter wilt kiezen voor interactiviteit — canopy's zijn gewone JS/TS, geen React/Vue/Svelte-laag erbovenop",
@@ -521,8 +519,8 @@ export const STRINGS = {
       en: 'Builds in seconds, not minutes',
     },
     buildBody: {
-      nl: 'Voor dezelfde 50-berichten-blogsite bouwt WaldJS in 1,62 seconden. Dat zijn onze eigen, gemeten <a href="/#benchmarks">benchmarks</a> — geen marketingclaim.',
-      en: "For the same 50-post blog site, WaldJS builds in 1.62 seconds. That's our own, measured <a href=\"/#benchmarks\">benchmark data</a> — not a marketing claim.",
+      nl: 'Een blog met 1.000 Markdown-posts bouwt WaldJS in ongeveer één seconde. Dat zijn onze eigen, gemeten en reproduceerbare <a href="/#benchmarks">benchmarks</a>, geen marketingclaim.',
+      en: 'WaldJS builds a blog with 1,000 Markdown posts in about one second. That comes from our own measured, reproducible <a href="/#benchmarks">benchmarks</a>, not a marketing claim.',
     },
     frameworkTitle: {
       nl: 'Geen framework-keuze om te maken',

@@ -3,6 +3,7 @@ packages:
   - 'examples/*'
   - 'marketing'
   - 'benchmarks'
+  - 'benchmarks/wald'
 allowBuilds:
   esbuild: true
   sharp: true

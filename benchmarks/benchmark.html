@@ -279,24 +279,24 @@
 <!-- ── Key numbers ───────────────────────────────────────── -->
 <div class="badges">
   <div class="badge">
-    <div class="badge-value">1.62s</div>
-    <div class="badge-label">WaldJS build time</div>
+    <div class="badge-value">1.03s</div>
+    <div class="badge-label">WaldJS · 1,000 posts</div>
   </div>
   <div class="badge">
-    <div class="badge-value">85×</div>
-    <div class="badge-label">faster build than Astro</div>
+    <div class="badge-value">9.4×</div>
+    <div class="badge-label">faster build than Astro 4</div>
   </div>
   <div class="badge">
-    <div class="badge-value">97</div>
-    <div class="badge-label">Best Practices</div>
+    <div class="badge-value">1.2×</div>
+    <div class="badge-label">faster build than Eleventy 3</div>
   </div>
   <div class="badge">
-    <div class="badge-value">98</div>
-    <div class="badge-label">Accessibility</div>
+    <div class="badge-value">100</div>
+    <div class="badge-label">Lighthouse Performance</div>
   </div>
   <div class="badge">
-    <div class="badge-value">50</div>
-    <div class="badge-label">pages · same content</div>
+    <div class="badge-value">7</div>
+    <div class="badge-label">measured runs per result</div>
   </div>
 </div>
 
@@ -306,8 +306,8 @@
   <!-- Build time -->
   <section>
     <div class="section-header">
-      <h2>Build time — 50 pages</h2>
-      <p>Median of 3 runs · clean dist/ each run · 2026-07-01</p>
+      <h2>Build time — 50 and 1,000 posts</h2>
+      <p>Median of 7 runs after 2 warm-ups · clean dist/ each run · 2026-10-20 · Apple M1 Pro, Node 22</p>
     </div>
     <div class="chart-card">
       <div class="chart-wrap">
@@ -315,8 +315,9 @@
       </div>
       <div class="legend">
         <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div> WaldJS</div>
-        <div class="legend-item"><div class="legend-dot" style="background:var(--astro)"></div> Astro 4</div>
-        <div class="legend-item"><div class="legend-dot" style="background:var(--eleventy)"></div> Eleventy 3</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--astro)"></div> Astro 4.16</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--eleventy)"></div> Eleventy 3.1</div>
+        <div class="legend-item">Solid: 1,000 posts · faded: 50 posts</div>
       </div>
     </div>
   </section>
@@ -352,8 +353,8 @@
         <div class="score-row">
           <div class="score-dot" style="background:var(--red)"></div>
           <span class="score-fw">WaldJS</span>
-          <span class="score-val" style="color:var(--red)">75</span>
-          <div class="score-bar-track"><div class="score-bar-fill" style="width:75%;background:var(--red)"></div></div>
+          <span class="score-val" style="color:var(--red)">100</span>
+          <div class="score-bar-track"><div class="score-bar-fill" style="width:100%;background:var(--red)"></div></div>
         </div>
         <div class="score-row">
           <div class="score-dot" style="background:var(--astro)"></div>
@@ -374,8 +375,8 @@
         <div class="score-row">
           <div class="score-dot" style="background:var(--red)"></div>
           <span class="score-fw">WaldJS</span>
-          <span class="score-val" style="color:var(--red)">98</span>
-          <div class="score-bar-track"><div class="score-bar-fill" style="width:98%;background:var(--red)"></div></div>
+          <span class="score-val" style="color:var(--red)">97</span>
+          <div class="score-bar-track"><div class="score-bar-fill" style="width:97%;background:var(--red)"></div></div>
         </div>
         <div class="score-row">
           <div class="score-dot" style="background:var(--astro)"></div>
@@ -396,20 +397,20 @@
         <div class="score-row">
           <div class="score-dot" style="background:var(--red)"></div>
           <span class="score-fw">WaldJS</span>
-          <span class="score-val" style="color:var(--red)">97</span>
-          <div class="score-bar-track"><div class="score-bar-fill" style="width:97%;background:var(--red)"></div></div>
+          <span class="score-val" style="color:var(--red)">89</span>
+          <div class="score-bar-track"><div class="score-bar-fill" style="width:89%;background:var(--red)"></div></div>
         </div>
         <div class="score-row">
           <div class="score-dot" style="background:var(--astro)"></div>
           <span class="score-fw">Astro</span>
-          <span class="score-val" style="color:var(--astro)">92</span>
-          <div class="score-bar-track"><div class="score-bar-fill" style="width:92%;background:var(--astro)"></div></div>
+          <span class="score-val" style="color:var(--astro)">89</span>
+          <div class="score-bar-track"><div class="score-bar-fill" style="width:89%;background:var(--astro)"></div></div>
         </div>
         <div class="score-row">
           <div class="score-dot" style="background:var(--eleventy)"></div>
           <span class="score-fw">Eleventy</span>
-          <span class="score-val" style="color:var(--eleventy)">92</span>
-          <div class="score-bar-track"><div class="score-bar-fill" style="width:92%;background:var(--eleventy)"></div></div>
+          <span class="score-val" style="color:var(--eleventy)">89</span>
+          <div class="score-bar-track"><div class="score-bar-fill" style="width:89%;background:var(--eleventy)"></div></div>
         </div>
       </div>
 
@@ -444,13 +445,13 @@
       <h2>Methodology</h2>
     </div>
     <div class="methodology">
-      <strong>Test site:</strong> 50 Markdown blog posts with YAML frontmatter, a homepage, a blog listing page, and one interactive counter component per framework (WaldJS <code>canopy:load</code>, Astro bundled script, Eleventy vanilla JS). Same content for all three frameworks.<br><br>
-      <strong>Build timing:</strong> Each framework's build command is run 3 times with a clean <code>dist/</code> between each run. The median time is reported. Node.js <code>performance.now()</code> is used for timing.<br><br>
-      <strong>Lighthouse:</strong> Scores are measured on 5 pages (<code>/</code>, <code>/blog/</code>, and 3 post pages) using Lighthouse's Node API with headless Chrome. The average across those pages is reported per category.
+      <strong>Test site:</strong> a blog with 50 or 1,000 Markdown posts (YAML frontmatter), a homepage, a blog listing page, and one interactive counter component per framework (WaldJS <code>canopy:load</code>, Astro bundled script, Eleventy vanilla JS). Same content for all three frameworks; generate it with <code>BENCH_POSTS=1000 pnpm --filter @waldjs/benchmarks generate</code>.<br><br>
+      <strong>Build timing:</strong> each framework's <code>pnpm build</code> runs 2 times as warm-up (not counted), then 7 times with a clean <code>dist/</code> before every run. The median is reported; min and max are in <code>results/latest*.json</code>. Timed with Node's <code>performance.now()</code> around the whole command, so process startup is included for every framework.<br><br>
+      <strong>Install:</strong> the WaldJS site uses this repo's packages through workspace links. Vite always bundles linked packages into the SSR build, while a normal <code>npm install</code> leaves them external; the site's <code>wald.config.ts</code> sets <code>ssr.external</code> so the benchmark measures what users actually run. Astro and Eleventy are installed from npm.<br><br>
+      <strong>Lighthouse:</strong> scores on 5 pages of the 50-post site (<code>/</code>, <code>/blog/</code> and 3 post pages), Lighthouse Node API with headless Chrome, averaged per category.
     </div>
     <div class="note">
-      <strong>Astro build time:</strong> The 138.92s median reflects Astro's Rollup/Vite WASM cold-start (runs 1–2 each took ~139s; run 3 dropped to 4.95s after warmup). WaldJS uses Vite's SSR build directly — no WASM warmup penalty.<br><br>
-      <strong>WaldJS Lighthouse Performance (75):</strong> The benchmark Counter component uses <code>canopy:load</code>, which hydrates eagerly and slightly delays LCP. Switching to <code>canopy:idle</code> or <code>canopy:visible</code> is expected to bring the score above 95. This is a benchmark setup choice, not a framework ceiling.
+      <strong>Correction:</strong> the July 2026 version of this page reported 1.62 s for WaldJS against 138.92 s for Astro (50 posts). That Astro figure was a cold-start outlier: two of its three runs took ~139 s, the third 4.95 s, and a 3-run median without warm-ups let it through. The suite now discards warm-ups and takes 7 runs. WaldJS has also become faster since (content caching, lazy imports, parallel bundling in <code>@waldjs/cli</code> 0.13.1 and <code>@waldjs/content</code> 0.3).
     </div>
   </section>
 
@@ -476,14 +477,23 @@
   new Chart(document.getElementById('buildChart'), {
     type: 'bar',
     data: {
-      labels: ['Eleventy 3', 'WaldJS', 'Astro 4'],
-      datasets: [{
-        label: 'Build time (seconds, median of 3 runs)',
-        data: [0.70, 1.62, 138.92],
-        backgroundColor: [ELEVENTY, RED, ASTRO],
-        borderRadius: 6,
-        borderSkipped: false,
-      }],
+      labels: ['WaldJS', 'Eleventy 3.1', 'Astro 4.16'],
+      datasets: [
+        {
+          label: '1,000 posts',
+          data: [1.03, 1.27, 9.67],
+          backgroundColor: [RED, ELEVENTY, ASTRO],
+          borderRadius: 6,
+          borderSkipped: false,
+        },
+        {
+          label: '50 posts',
+          data: [0.80, 0.69, 2.24],
+          backgroundColor: [RED + '80', ELEVENTY + '80', ASTRO + '80'],
+          borderRadius: 6,
+          borderSkipped: false,
+        },
+      ],
     },
     options: {
       indexAxis: 'y',
@@ -493,14 +503,14 @@
         legend: { display: false },
         tooltip: {
           callbacks: {
-            label: ctx => ` ${ctx.parsed.x.toFixed(2)}s`,
+            label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.x.toFixed(2)}s`,
           },
         },
       },
       scales: {
         x: {
           beginAtZero: true,
-          max: 150,
+          max: 10,
           grid: { color: gridColor },
           ticks: {
             callback: val => `${val}s`,
@@ -529,19 +539,19 @@
       datasets: [
         {
           label: 'WaldJS',
-          data: [75, 98, 97, 90],
+          data: [100, 97, 89, 90],
           backgroundColor: RED,
           borderRadius: 4,
         },
         {
-          label: 'Astro 4',
-          data: [100, 98, 92, 90],
+          label: 'Astro 4.16',
+          data: [100, 98, 89, 90],
           backgroundColor: ASTRO,
           borderRadius: 4,
         },
         {
-          label: 'Eleventy 3',
-          data: [100, 98, 92, 90],
+          label: 'Eleventy 3.1',
+          data: [100, 98, 89, 90],
           backgroundColor: ELEVENTY,
           borderRadius: 4,
         },

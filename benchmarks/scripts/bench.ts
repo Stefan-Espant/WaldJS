@@ -4,10 +4,13 @@ import {
   existsSync,
   mkdirSync,
   readdirSync,
+  readFileSync,
+  statSync,
   rmSync,
   writeFileSync,
 } from 'node:fs'
 import { createServer } from 'node:http'
+import os from 'node:os'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import * as chromeLauncher from 'chrome-launcher'
@@ -35,8 +38,12 @@ const PAGES: Record<Framework, string[]> = {
   eleventy: ['/', '/blog/', '/blog/post-001/', '/blog/post-025/', '/blog/post-050/'],
 }
 
-const PORT = 4321
-const BUILD_RUNS = 3
+// Warm-up builds are run but not counted: the first build after an install can
+// be dominated by one-off costs (Astro 4's cold WASM start once took ~139s per
+// run on a 50-post site while warm builds took ~5s), which a 3-run median let
+// through. 7 measured runs keep a single outlier from setting the median.
+const WARMUP_RUNS = 2
+const BUILD_RUNS = 7
 
 interface LighthouseScores {
   performance: number
@@ -47,6 +54,9 @@ interface LighthouseScores {
 
 interface FrameworkResult {
   buildMs: number | 'BUILD_FAILED'
+  build?: { runsMs: number[]; minMs: number; maxMs: number; warmupRuns: number }
+  version?: string
+  jsBytes?: number
   lighthouse: LighthouseScores | 'LIGHTHOUSE_FAILED'
 }
 
@@ -63,47 +73,93 @@ function syncContent(fw: Framework): void {
   const src = join(root, 'content/blog')
   const dest = join(root, fw, CONTENT_DEST[fw])
   mkdirSync(dest, { recursive: true })
+  // Remove only generated posts: leftovers from a run with a different
+  // BENCH_POSTS would skew it, but the folder also holds config (Eleventy's
+  // blog.11tydata.json assigns the post layout) that must survive.
+  for (const file of readdirSync(dest)) {
+    if (/^post-\d+\.md$/.test(file)) rmSync(join(dest, file))
+  }
   for (const file of readdirSync(src)) {
     copyFileSync(join(src, file), join(dest, file))
   }
 }
 
 function ensureInstalled(fw: Framework): void {
+  // The WaldJS site is a workspace member (it benchmarks this repo's own
+  // packages), so the root `pnpm install` already installed it.
+  if (fw === 'wald') return
   const nodeModules = join(root, fw, 'node_modules')
   if (!existsSync(nodeModules)) {
     console.log(`  [${fw}] Installing dependencies...`)
-    execSync('pnpm install --ignore-workspace', { cwd: join(root, fw), stdio: 'pipe' })
+    // Each comparison site has its own pnpm-workspace.yaml (its own root, with
+    // its build-script approvals), so a plain install stays out of the monorepo.
+    execSync('pnpm install', { cwd: join(root, fw), stdio: 'pipe' })
   }
 }
 
-function timeBuild(fw: Framework): number | 'BUILD_FAILED' {
+function timeBuild(fw: Framework): NonNullable<FrameworkResult['build']> | 'BUILD_FAILED' {
   const times: number[] = []
-  for (let i = 0; i < BUILD_RUNS; i++) {
+  for (let i = 0; i < WARMUP_RUNS + BUILD_RUNS; i++) {
+    const warmup = i < WARMUP_RUNS
     try {
       rmSync(join(root, fw, 'dist'), { recursive: true, force: true })
       const start = performance.now()
       execSync('pnpm build', { cwd: join(root, fw), stdio: 'pipe' })
-      times.push(performance.now() - start)
-      console.log(`  [${fw}] Run ${i + 1}/${BUILD_RUNS}: ${Math.round(times[i])}ms`)
+      const ms = performance.now() - start
+      if (!warmup) times.push(ms)
+      console.log(`  [${fw}] ${warmup ? `Warm-up ${i + 1}/${WARMUP_RUNS}` : `Run ${i - WARMUP_RUNS + 1}/${BUILD_RUNS}`}: ${Math.round(ms)}ms`)
     } catch (err) {
       console.error(`  [${fw}] Build run ${i + 1} failed:`, (err as Error).message.slice(0, 200))
       return 'BUILD_FAILED'
     }
   }
-  return Math.round(median(times))
+  return {
+    runsMs: times.map(Math.round),
+    minMs: Math.round(Math.min(...times)),
+    maxMs: Math.round(Math.max(...times)),
+    warmupRuns: WARMUP_RUNS,
+  }
+}
+
+// All JavaScript the build ships: .js files in dist plus inline <script> bodies.
+function shippedJsBytes(dir: string): number {
+  let total = 0
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const full = join(dir, entry.name)
+    if (entry.isDirectory()) total += shippedJsBytes(full)
+    else if (entry.name.endsWith('.js') || entry.name.endsWith('.mjs')) total += statSync(full).size
+    else if (entry.name.endsWith('.html')) {
+      for (const m of readFileSync(full, 'utf8').matchAll(/<script(?![^>]*\bsrc=)(?![^>]*type="application\/ld\+json")[^>]*>([\s\S]*?)<\/script>/g)) {
+        total += Buffer.byteLength(m[1])
+      }
+    }
+  }
+  return total
+}
+
+const PACKAGE: Record<Framework, string> = { wald: '@waldjs/cli', astro: 'astro', eleventy: '@11ty/eleventy' }
+
+function installedVersion(fw: Framework): string | undefined {
+  try {
+    return JSON.parse(readFileSync(join(root, fw, 'node_modules', PACKAGE[fw], 'package.json'), 'utf8')).version
+  } catch {
+    return undefined
+  }
 }
 
 function startServer(distDir: string): Promise<ReturnType<typeof createServer>> {
   return new Promise((resolve) => {
     const handler = sirv(distDir, { extensions: ['html'] })
     const server = createServer(handler)
-    server.listen(PORT, () => resolve(server))
+    // Port 0 = any free port, so a dev server already on 4321 can't break the run.
+    server.listen(0, () => resolve(server))
   })
 }
 
 async function runLighthouse(fw: Framework): Promise<LighthouseScores | 'LIGHTHOUSE_FAILED'> {
   const distDir = join(root, fw, 'dist')
   const server = await startServer(distDir)
+  const port = (server.address() as { port: number }).port
   const chrome = await chromeLauncher.launch({
     chromeFlags: ['--headless', '--no-sandbox', '--disable-gpu'],
   })
@@ -117,7 +173,7 @@ async function runLighthouse(fw: Framework): Promise<LighthouseScores | 'LIGHTHO
 
   for (const page of PAGES[fw]) {
     try {
-      const result = await lighthouse(`http://localhost:${PORT}${page}`, {
+      const result = await lighthouse(`http://localhost:${port}${page}`, {
         port: chrome.port,
         output: 'json',
         logLevel: 'error',
@@ -162,11 +218,14 @@ async function main(): Promise<void> {
     syncContent(fw)
     ensureInstalled(fw)
 
-    const buildMs = timeBuild(fw)
-    console.log(`  Build median: ${buildMs === 'BUILD_FAILED' ? 'FAILED' : `${buildMs}ms`}`)
+    const build = timeBuild(fw)
+    const buildMs = build === 'BUILD_FAILED' ? 'BUILD_FAILED' : Math.round(median(build.runsMs))
+    console.log(`  Build median: ${buildMs === 'BUILD_FAILED' ? 'FAILED' : `${buildMs}ms (min ${build !== 'BUILD_FAILED' ? build.minMs : '-'}, max ${build !== 'BUILD_FAILED' ? build.maxMs : '-'})`}`)
 
     let lighthouseResult: LighthouseScores | 'LIGHTHOUSE_FAILED' = 'LIGHTHOUSE_FAILED'
-    if (buildMs !== 'BUILD_FAILED') {
+    const jsBytes = buildMs !== 'BUILD_FAILED' ? shippedJsBytes(join(root, fw, 'dist')) : undefined
+    if (jsBytes !== undefined) console.log(`  Shipped JS: ${(jsBytes / 1024).toFixed(2)} KB`)
+    if (buildMs !== 'BUILD_FAILED' && !process.env.BENCH_SKIP_LIGHTHOUSE) {
       console.log(`  Lighthouse on ${PAGES[fw].length} pages...`)
       lighthouseResult = await runLighthouse(fw)
       if (lighthouseResult !== 'LIGHTHOUSE_FAILED') {
@@ -176,13 +235,28 @@ async function main(): Promise<void> {
       }
     }
 
-    results[fw] = { buildMs, lighthouse: lighthouseResult }
+    results[fw] = {
+      buildMs,
+      ...(build !== 'BUILD_FAILED' ? { build } : {}),
+      version: installedVersion(fw),
+      jsBytes,
+      lighthouse: lighthouseResult,
+    }
   }
 
   mkdirSync(join(root, 'results'), { recursive: true })
-  const output = { timestamp: new Date().toISOString(), results }
-  writeFileSync(join(root, 'results/latest.json'), JSON.stringify(output, null, 2))
-  console.log('\nResults saved to results/latest.json')
+  const environment = {
+    node: process.version,
+    os: `${os.type()} ${os.release()} (${os.arch()})`,
+    cpu: os.cpus()[0]?.model,
+    cores: os.cpus().length,
+    memoryGb: Math.round(os.totalmem() / 1024 ** 3),
+  }
+  const posts = readdirSync(join(root, 'content/blog')).length
+  const output = { timestamp: new Date().toISOString(), posts, environment, results }
+  const file = posts === 50 ? 'results/latest.json' : `results/latest-${posts}.json`
+  writeFileSync(join(root, file), JSON.stringify(output, null, 2))
+  console.log(`\nResults saved to ${file}`)
 }
 
 main().catch((err) => {
