@@ -97,6 +97,11 @@ function ensureInstalled(fw: Framework): void {
   }
 }
 
+// The WaldJS site is a workspace member, so its script is not called `build`:
+// otherwise the repo's own `turbo build` (CI, release) would try to build it
+// without generated content. Both run the framework's plain build command.
+const BUILD_SCRIPT: Record<Framework, string> = { wald: 'bench:build', astro: 'build', eleventy: 'build' }
+
 function timeBuild(fw: Framework): NonNullable<FrameworkResult['build']> | 'BUILD_FAILED' {
   const times: number[] = []
   for (let i = 0; i < WARMUP_RUNS + BUILD_RUNS; i++) {
@@ -104,7 +109,7 @@ function timeBuild(fw: Framework): NonNullable<FrameworkResult['build']> | 'BUIL
     try {
       rmSync(join(root, fw, 'dist'), { recursive: true, force: true })
       const start = performance.now()
-      execSync('pnpm build', { cwd: join(root, fw), stdio: 'pipe' })
+      execSync(`pnpm run ${BUILD_SCRIPT[fw]}`, { cwd: join(root, fw), stdio: 'pipe' })
       const ms = performance.now() - start
       if (!warmup) times.push(ms)
       console.log(`  [${fw}] ${warmup ? `Warm-up ${i + 1}/${WARMUP_RUNS}` : `Run ${i - WARMUP_RUNS + 1}/${BUILD_RUNS}`}: ${Math.round(ms)}ms`)
