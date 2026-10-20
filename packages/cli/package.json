@@ -54,6 +54,7 @@
     "@waldjs/content": "workspace:*",
     "@waldjs/runtime": "workspace:*",
     "citty": "^0.1.6",
+    "esbuild": "^0.21.3",
     "ora": "^8.0.0",
     "sharp": "^0.33.0",
     "sirv": "^3.0.0",

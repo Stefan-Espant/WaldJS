@@ -467,12 +467,45 @@ describe('buildPages', () => {
       ["---", "import Counter from '../components/Counter.wald'", '---', '<Counter canopy:load initial={3} />'].join('\n')
     )
 
-    await buildPages(pagesDir, makeConfig(distDir))
+    // Vite pipeline (mocked above, hence the "testhash" file names).
+    process.env.WALD_SSR_BUNDLER = 'vite'
+    try {
+      await buildPages(pagesDir, makeConfig(distDir))
+    } finally {
+      delete process.env.WALD_SSR_BUNDLER
+    }
 
     const html = readFileSync(join(distDir, 'index.html'), 'utf8')
     expect(html).not.toContain('wald:canopy:Counter')
     expect(html).toContain('data-src="/assets/counter-testhash.js"')
     expect(html).toContain('<script type="module" src="/assets/wald-canopy-testhash.js"></script>')
+  })
+
+  it('bundles canopies with esbuild: real hashed assets the page points to', async () => {
+    const pagesDir = join(tmpDir, 'src', 'pages')
+    const componentsDir = join(tmpDir, 'src', 'components')
+    const distDir = join(tmpDir, 'dist')
+    mkdirSync(pagesDir, { recursive: true })
+    mkdirSync(componentsDir, { recursive: true })
+    writeFileSync(
+      join(componentsDir, 'Counter.wald'),
+      ['---', 'const { initial } = $$props', '---', '<button>{initial}</button>',
+        '<script>export default function(root) { root.dataset.ready = "yes" }</script>'].join('\n'),
+    )
+    writeFileSync(
+      join(pagesDir, 'index.wald'),
+      ['---', "import Counter from '../components/Counter.wald'", '---', '<Counter canopy:load initial={3} />'].join('\n'),
+    )
+
+    await buildPages(pagesDir, makeConfig(distDir))
+
+    const html = readFileSync(join(distDir, 'index.html'), 'utf8')
+    const island = html.match(/data-src="\/(assets\/counter-[A-Z0-9]+\.js)"/)?.[1]
+    const runtime = html.match(/<script type="module" src="\/(assets\/wald-canopy-[A-Z0-9]+\.js)"><\/script>/)?.[1]
+    expect(island).toBeDefined()
+    expect(runtime).toBeDefined()
+    expect(readFileSync(join(distDir, island!), 'utf8')).toContain('ready')
+    expect(readFileSync(join(distDir, runtime!), 'utf8')).toContain('wald-canopy')
   })
 
   it('does not hoist the inline script of a component used with canopy', async () => {
@@ -661,5 +694,51 @@ describe('formatBuildSummary', () => {
       '  Adapter:  vercel',
       '  Warnings: 1',
     ])
+  })
+})
+
+describe('SSR bundler choice', () => {
+  const ssrViteCalls = async () => {
+    const { build } = await import('vite')
+    return vi.mocked(build).mock.calls.filter(([cfg]) => (cfg as any)?.build?.ssr === true).length
+  }
+
+  function writeSite(pagesDir: string, extra = '') {
+    mkdirSync(join(pagesDir, 'blog'), { recursive: true })
+    writeFileSync(join(pagesDir, 'index.wald'), `---\nconst t = "Home"${extra}\n---\n<h1>{t}</h1>`)
+    writeFileSync(
+      join(pagesDir, 'blog', '[slug].wald'),
+      `---\nexport async function getStaticPaths() { return [{ params: { slug: 'a' } }, { params: { slug: 'b' } }] }\n---\n<p>{$$props.slug}</p>`,
+    )
+  }
+
+  it('bundles the SSR pages with esbuild when no Vite features are used', async () => {
+    const { build } = await import('vite')
+    vi.mocked(build).mockClear()
+    const pagesDir = join(tmpDir, 'src', 'pages')
+    const distDir = join(tmpDir, 'dist')
+    writeSite(pagesDir)
+    await buildPages(pagesDir, makeConfig(distDir))
+    expect(await ssrViteCalls()).toBe(0)
+    expect(readFileSync(join(distDir, 'index.html'), 'utf8')).toContain('<h1>Home</h1>')
+    expect(readFileSync(join(distDir, 'blog', 'b', 'index.html'), 'utf8')).toContain('<p>b</p>')
+  })
+
+  it('uses Vite when the project relies on import.meta.env', async () => {
+    const { build } = await import('vite')
+    vi.mocked(build).mockClear()
+    const pagesDir = join(tmpDir, 'src', 'pages')
+    writeSite(pagesDir, '\nconst mode = typeof import.meta.env')
+    await buildPages(pagesDir, makeConfig(join(tmpDir, 'dist')))
+    expect(await ssrViteCalls()).toBe(1)
+  })
+
+  it('uses Vite when wald.config.ts has Vite options beyond ssr.external', async () => {
+    const { build } = await import('vite')
+    vi.mocked(build).mockClear()
+    const pagesDir = join(tmpDir, 'src', 'pages')
+    writeSite(pagesDir)
+    await buildPages(pagesDir, makeConfig(join(tmpDir, 'dist'), { vite: { resolve: { alias: { '~': '/x' } } } }))
+    expect(await ssrViteCalls()).toBe(1)
   })
 })
