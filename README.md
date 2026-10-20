@@ -298,6 +298,8 @@ All options are optional. Without a config file WaldJS uses the defaults above.
 
 **`generator`** — `wald build` adds `<meta name="generator" content="WaldJS v…">` to every page that doesn't already have a generator tag, so sites built with WaldJS can be recognised. A tag in your own layout always wins. Set `generator: false` to leave it out.
 
+**`vite`** — when `wald build` doesn't need Vite (no `vite` options other than `ssr.external`, and no `import.meta.env`, `import.meta.glob` or `?raw`/`?url` imports in `src/`), it bundles pages and canopy islands with esbuild directly, which is much faster to start. As soon as you use Vite options or Vite-only features, the build uses Vite automatically. To force Vite, set `WALD_SSR_BUNDLER=vite`.
+
 ### Deployment adapters
 
 Pick an adapter to tailor the build output to your host. The default is `staticAdapter()` — plain static files that work anywhere:

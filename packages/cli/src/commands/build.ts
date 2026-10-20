@@ -1,10 +1,8 @@
 import { mkdirSync, writeFileSync, existsSync, cpSync, rmSync } from 'node:fs'
 import { join, relative, dirname, resolve } from 'node:path'
 import { defineCommand } from 'citty'
-import { build, mergeConfig } from 'vite'
 import { buildCanopyClient, type CanopyAssetMap } from '../canopy-build.js'
 import { collectCanopyScriptContents, scanCanopyEntries } from '../canopy-scan.js'
-import { waldPlugin } from '../vite-plugin.js'
 import { loadWaldConfig, type WaldConfig } from '../config.js'
 import { scanRoutes } from '../router/index.js'
 import { maybeWrap, hoistScripts } from '../shell.js'
@@ -14,6 +12,7 @@ import { injectComponentStyles } from '../component-styles.js'
 import { collectComponentStyles } from '../style-scan.js'
 import { injectGeneratorMeta } from '../generator-meta.js'
 import { WALD_GENERATOR } from '../version.js'
+import { bundleSsrWithEsbuild, canBundleSsrWithEsbuild } from '../ssr-esbuild.js'
 
 export type BuildPhase =
   | 'Scanning routes'
@@ -147,37 +146,54 @@ export async function buildPages(
   // canopy build runs alongside the SSR build; its asset map is only needed
   // once pages render. The no-op catch keeps an early SSR failure from also
   // surfacing as an unhandled rejection; the real error is awaited below.
-  const canopyAssetsPromise = buildCanopyClient(canopyEntries, distDir, config.base, config.vite)
+  const useEsbuild = canBundleSsrWithEsbuild(config.vite, srcDir)
+  const canopyAssetsPromise = buildCanopyClient(canopyEntries, distDir, config.base, config.vite, { useEsbuild })
   canopyAssetsPromise.catch(() => {})
 
   reporter.onPhase?.('Bundling component styles')
   const componentStyles = collectComponentStyles(srcDir)
 
   reporter.onPhase?.('Bundling SSR pages')
-  const ssrResult = await withGrowingTree('Bundling SSR pages...', build(mergeConfig(
-    config.vite ?? {},
-    {
-      _waldContentDir: contentDir,
-      base: config.base,
-      plugins: [waldPlugin({
-        image: { outDir: join(distDir, 'assets', 'optimized'), publicPath: '/assets/optimized' },
-      })],
-      // sharp (pulled in transitively by wald:image's renderImage) ships
-      // native .node bindings loaded via dynamic require() — Rollup can't
-      // statically bundle that, so it must stay a real runtime import
-      // instead of being inlined into the SSR bundle. @waldjs/cli is
-      // external too since it's already a real dependency of every WaldJS
-      // project (see wald plant's scaffolded package.json) and pulls sharp
-      // in with it.
-      ssr: { external: ['sharp', '@waldjs/cli'] },
-      build: {
-        ssr: true,
-        outDir: ssrDir,
-        rollupOptions: { input },
-        emptyOutDir: true,
-      },
-    } as any,
-  )))
+  const imageOptions = { outDir: join(distDir, 'assets', 'optimized'), publicPath: '/assets/optimized' }
+  // Fast path: esbuild bundles the SSR pages when nothing needs Vite's own
+  // semantics (see ssr-esbuild.ts). If it fails for any reason, the Vite
+  // pipeline below runs instead and reports the error the usual way.
+  let ssrResult: unknown
+  let bundledWithEsbuild = false
+  if (useEsbuild) {
+    try {
+      await bundleSsrWithEsbuild(input, ssrDir, rootDir, imageOptions)
+      bundledWithEsbuild = true
+    } catch {
+      bundledWithEsbuild = false
+    }
+  }
+  if (!bundledWithEsbuild) {
+    const { build, mergeConfig } = await import('vite')
+    const { waldPlugin } = await import('../vite-plugin.js')
+    ssrResult = await withGrowingTree('Bundling SSR pages...', build(mergeConfig(
+      config.vite ?? {},
+      {
+        _waldContentDir: contentDir,
+        base: config.base,
+        plugins: [waldPlugin({ image: imageOptions })],
+        // sharp (pulled in transitively by wald:image's renderImage) ships
+        // native .node bindings loaded via dynamic require() — Rollup can't
+        // statically bundle that, so it must stay a real runtime import
+        // instead of being inlined into the SSR bundle. @waldjs/cli is
+        // external too since it's already a real dependency of every WaldJS
+        // project (see wald plant's scaffolded package.json) and pulls sharp
+        // in with it.
+        ssr: { external: ['sharp', '@waldjs/cli'] },
+        build: {
+          ssr: true,
+          outDir: ssrDir,
+          rollupOptions: { input },
+          emptyOutDir: true,
+        },
+      } as any,
+    )))
+  }
 
   const canopyAssets = await canopyAssetsPromise
 
