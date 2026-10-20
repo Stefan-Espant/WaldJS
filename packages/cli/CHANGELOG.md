@@ -1,5 +1,15 @@
 # @waldjs/cli
 
+## 0.13.1
+
+### Patch Changes
+
+- bd31a9a: Faster CLI startup: commands are loaded on demand and TypeScript (needed only by `wald check` and `wald build --check`) is no longer imported by every command, saving ~300 ms per `wald build`.
+- b1a6205: sharp is now loaded only when an image is actually optimized. It used to load whenever `@waldjs/cli` was imported, which every `wald.config.ts` does for `defineConfig`.
+- 46b324f: `wald build` bundles the canopy (browser) client and the SSR pages at the same time instead of one after the other, and no longer computes gzip sizes it only printed.
+- Updated dependencies [fb9cbe0]
+  - @waldjs/content@0.3.0
+
 ## 0.13.0
 
 ### Minor Changes

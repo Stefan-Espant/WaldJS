@@ -1,6 +1,6 @@
 {
   "name": "@waldjs/cli",
-  "version": "0.13.0",
+  "version": "0.13.1",
   "description": "The WaldJS CLI: create, develop and build fast, content-first static websites from .wald single-file components",
   "keywords": [
     "waldjs",
