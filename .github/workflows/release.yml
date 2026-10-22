@@ -12,6 +12,9 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      # npm Trusted Publishing: GitHub issues a short-lived OIDC token that npm
+      # exchanges for a one-time publish credential, so no npm token can expire.
+      id-token: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -25,6 +28,9 @@ jobs:
           cache: pnpm
           registry-url: 'https://registry.npmjs.org'
 
+      # Trusted Publishing needs npm CLI >= 11.5.1 (Node 22 ships npm 10).
+      - run: npm install -g npm@latest
+
       - run: pnpm install --frozen-lockfile
 
       - name: Create Version PR or publish to npm
@@ -36,4 +42,7 @@ jobs:
           title: 'chore: version packages'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Fallback only: npm uses Trusted Publishing (OIDC) first for every
+          # package that has it configured on npmjs.com. Remove this line once
+          # all packages are set up.
           NODE_AUTH_TOKEN: ${{ secrets.WALDJS_KEY_3 }}
