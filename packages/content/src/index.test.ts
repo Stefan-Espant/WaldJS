@@ -179,3 +179,24 @@ describe('slug validation', () => {
     await expect(readTranslations('blog', '../x', contentDir)).rejects.toThrow('Invalid slug "../x"')
   })
 })
+
+
+describe('frontmatter security', () => {
+  it.each(['js', 'javascript', 'JavaScript', 'JS'])('rejects executable %s frontmatter without running it', async language => {
+    const marker = '__waldFrontmatterExecuted'
+    const globals = globalThis as unknown as Record<string, unknown>
+    delete globals[marker]
+    write('blog/executable.md', `---${language}\n(globalThis.${marker} = true, { title: 'Injected' })\n---\nBody`)
+    try {
+      await expect(readEntry('blog', 'executable', contentDir)).rejects.toThrow(/JavaScript frontmatter is not supported/)
+      expect(globals[marker]).toBeUndefined()
+    } finally {
+      delete globals[marker]
+    }
+  })
+
+  it('continues to support JSON frontmatter', async () => {
+    write('blog/json.md', '---json\n{"title":"JSON entry"}\n---\nBody')
+    expect((await readEntry('blog', 'json', contentDir)).data.title).toBe('JSON entry')
+  })
+})

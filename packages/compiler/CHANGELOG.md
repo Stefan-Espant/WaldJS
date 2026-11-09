@@ -1,5 +1,11 @@
 # @waldjs/compiler
 
+## 0.5.1
+
+### Patch Changes
+
+- Escape serialized canopy props before embedding them in HTML to prevent attribute breakout and script injection.
+
 ## 0.5.0
 
 ### Minor Changes

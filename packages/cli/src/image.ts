@@ -98,8 +98,8 @@ function escapeAttr(value: string): string {
 
 export function renderImageTag(image: OptimizedImage, alt: string, sizes = '100vw'): string {
   const dims = image.width && image.height ? ` width="${image.width}" height="${image.height}"` : ''
-  const srcsetAttr = image.srcset ? ` srcset="${image.srcset}" sizes="${escapeAttr(sizes)}"` : ''
-  return `<img src="${image.src}" alt="${escapeAttr(alt)}"${dims}${srcsetAttr}>`
+  const srcsetAttr = image.srcset ? ` srcset="${escapeAttr(image.srcset)}" sizes="${escapeAttr(sizes)}"` : ''
+  return `<img src="${escapeAttr(image.src)}" alt="${escapeAttr(alt)}"${dims}${srcsetAttr}>`
 }
 
 // Bridges the `wald:image` virtual module (see vite-plugin.ts) to the logic
@@ -109,7 +109,7 @@ export async function renderImage(props: ImageProps, context: ImageContext): Pro
   const { src, alt = '', widths, sizes } = props
 
   if (!context.outDir) {
-    return `<img src="${src}" alt="${escapeAttr(alt)}">`
+    return `<img src="${escapeAttr(src)}" alt="${escapeAttr(alt)}">`
   }
 
   const relative = src.replace(/^\/assets\//, '')

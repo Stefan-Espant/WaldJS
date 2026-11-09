@@ -142,7 +142,13 @@ async function parseEntry(filePath: string, locale?: string): Promise<Entry> {
   const cached = entryCache.get(filePath)
   if (cached && cached.mtimeMs === mtimeMs && cached.size === size) return copyEntry(cached.entry)
 
-  const { data, content } = matter(readFileSync(filePath, 'utf8'))
+  // Markdown is content, so never let gray-matter select its eval-based
+  // JavaScript engine via a `---js` or `---javascript` delimiter.
+  const { data, content } = matter(readFileSync(filePath, 'utf8'), {
+    engines: {
+      javascript: () => { throw new Error('JavaScript frontmatter is not supported; use YAML or JSON') },
+    },
+  })
   const body = await marked(content)
   const slug = basename(filePath, '.md')
   const entryData = data as Record<string, unknown>

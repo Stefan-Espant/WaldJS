@@ -1,5 +1,5 @@
 import { mkdirSync, writeFileSync, existsSync, cpSync, rmSync } from 'node:fs'
-import { join, relative, dirname, resolve } from 'node:path'
+import { join, relative, dirname, resolve, isAbsolute } from 'node:path'
 import { defineCommand } from 'citty'
 import { buildCanopyClient, type CanopyAssetMap } from '../canopy-build.js'
 import { collectCanopyScriptContents, scanCanopyEntries } from '../canopy-scan.js'
@@ -62,14 +62,18 @@ function createBuildLogger() {
   }
 }
 
-function resolveOutPath(distDir: string, pattern: string, params: Record<string, string> = {}): string {
+export function resolveOutPath(distDir: string, pattern: string, params: Record<string, string> = {}): string {
   let path = pattern
   for (const [key, value] of Object.entries(params)) {
-    path = path.replace(`:${key}`, value)
+    path = path.replace(`:${key}`, () => value)
   }
-  return pattern === '/'
-    ? join(distDir, 'index.html')
-    : join(distDir, path.slice(1), 'index.html')
+  // Treat both separator styles as paths, including when building on Unix.
+  const outPath = resolve(distDir, path.slice(1).replace(/\\/g, '/'), 'index.html')
+  const relativePath = relative(resolve(distDir), outPath)
+  if (relativePath === '..' || relativePath.startsWith('../') || relativePath.startsWith('..\\') || isAbsolute(relativePath)) {
+    throw new Error(`Route output escapes the build directory: ${path}`)
+  }
+  return outPath
 }
 
 function formatSize(bytes: number): string {

@@ -1,5 +1,12 @@
 # create-wald
 
+## 0.1.20
+
+### Patch Changes
+
+- Updated dependencies:
+  - @waldjs/cli@0.14.1
+
 ## 0.1.19
 
 ### Patch Changes

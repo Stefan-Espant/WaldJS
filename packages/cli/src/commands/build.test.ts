@@ -104,7 +104,7 @@ vi.mock('./check.js', () => ({
   runCheck: vi.fn(),
 }))
 
-import { buildPages, buildCommand, formatBuildSummary } from './build.js'
+import { buildPages, buildCommand, formatBuildSummary, resolveOutPath } from './build.js'
 
 let tmpDir: string
 
@@ -740,5 +740,23 @@ describe('SSR bundler choice', () => {
     writeSite(pagesDir)
     await buildPages(pagesDir, makeConfig(join(tmpDir, 'dist'), { vite: { resolve: { alias: { '~': '/x' } } } }))
     expect(await ssrViteCalls()).toBe(1)
+  })
+})
+
+
+describe('route output containment', () => {
+  it.each(['../../outside', '..\\..\\outside', '/../../outside'])('rejects a route that escapes the output directory: %s', slug => {
+    expect(() => resolveOutPath('/tmp/wald-dist', '/blog/:slug', { slug })).toThrow(/escapes the build directory/)
+  })
+
+  it('preserves nested paths within the output directory', () => {
+    expect(resolveOutPath('/tmp/wald-dist', '/blog/:slug', { slug: '2026/hello' }))
+      .toBe('/tmp/wald-dist/blog/2026/hello/index.html')
+    expect(resolveOutPath('/tmp/wald-dist', '/')).toBe('/tmp/wald-dist/index.html')
+  })
+
+  it('treats replacement metacharacters in slugs literally', () => {
+    expect(resolveOutPath('/tmp/wald-dist', '/blog/:slug', { slug: '$&' }))
+      .toBe('/tmp/wald-dist/blog/$&/index.html')
   })
 })
