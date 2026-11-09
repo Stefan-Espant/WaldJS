@@ -45,15 +45,28 @@ const title = "Hello World"
 
 The top part (frontmatter) is plain JavaScript/TypeScript. The bottom part is an HTML template where `{expression}` interpolates values. All interpolated values are HTML-escaped by default.
 
-Format one file, several files, or a complete directory with the built-in formatter:
+Format one file, several files, or a complete directory with the built-in formatter. It supports `.wald`, HTML, CSS, JavaScript (including JSX) and TypeScript (including TSX):
 
 ```bash
 wald format src
-wald format src/pages/index.wald src/components/Nav.wald
+wald format src/pages/index.wald src/assets/site.css src/assets/site.js
 wald format --check src
 ```
 
-`--check` does not write files and exits with status 1 when formatting is needed, making it suitable for CI. The formatter is also available programmatically as `format(source, options)` from `@waldjs/compiler`.
+`--check` does not write files and exits with status 1 when formatting is needed, making it suitable for CI. In `.wald` files the formatter indents the HTML template and formats JS/TS frontmatter, JavaScript/TypeScript scripts, JSON data scripts and CSS style blocks. Whitespace-sensitive `<pre>` and `<textarea>` contents and unknown embedded languages are preserved. Generated output and dependency directories are skipped during directory traversal.
+
+Language formatting uses Prettier with two-space indentation, single quotes and no unnecessary JavaScript semicolons. It uses these built-in defaults without loading external Prettier configurations or plugins.
+
+The asynchronous API supports the same file types and accepts `indentWidth` and `useTabs`:
+
+```ts
+import { formatFile } from '@waldjs/compiler'
+
+const readable = await formatFile(source, 'src/pages/index.wald')
+const readableCss = await formatFile(css, 'site.css', { indentWidth: 4 })
+```
+
+The existing synchronous `format(source, options)` API remains available for HTML-template formatting; use `formatFile()` for embedded CSS/JS and standalone source files.
 
 ---
 

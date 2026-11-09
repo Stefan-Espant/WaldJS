@@ -1,5 +1,6 @@
 import { parse } from './parser/index.js'
 import { VOID_ELEMENTS } from './void-elements.js'
+import type { Options as PrettierOptions } from 'prettier'
 
 export type FormatOptions = {
   /** Number of spaces per indentation level. Defaults to 2. */
@@ -12,6 +13,7 @@ type Token = {
   kind: 'open' | 'close' | 'self' | 'raw' | 'text' | 'expression' | 'markup'
   value: string
   name?: string
+  formatted?: boolean
 }
 
 type FormatNode =
@@ -32,8 +34,12 @@ export function format(source: string, options: FormatOptions = {}): string {
 
   const normalized = source.replace(/\r\n?/g, '\n')
   const frontmatter = splitFrontmatter(normalized)
+  return renderDocument(frontmatter, buildTree(tokenize(frontmatter.template)), options)
+}
+
+function renderDocument(frontmatter: ReturnType<typeof splitFrontmatter>, nodes: FormatNode[], options: FormatOptions): string {
   const indentUnit = options.useTabs ? '\t' : ' '.repeat(options.indentWidth ?? 2)
-  const template = renderChildren(buildTree(tokenize(frontmatter.template)), 0, indentUnit)
+  const template = renderChildren(nodes, 0, indentUnit)
 
   const parts: string[] = []
   if (frontmatter.present) {
@@ -258,7 +264,7 @@ function renderChildren(nodes: FormatNode[], level: number, indentUnit: string):
 function renderBlock(node: FormatNode, level: number, indentUnit: string): string {
   const indent = indentUnit.repeat(level)
   if (node.kind === 'leaf') {
-    if (node.token.kind === 'raw') return indent + node.token.value
+    if (node.token.kind === 'raw') return node.token.formatted ? node.token.value : indent + node.token.value
     return indent + normalizeText(node.token.value).trim()
   }
 
@@ -276,7 +282,7 @@ function renderBlock(node: FormatNode, level: number, indentUnit: string): strin
 function renderCompact(node: FormatNode): string {
   if (node.kind === 'leaf') {
     if (node.token.kind === 'text') return normalizeText(node.token.value)
-    return node.token.value
+    return node.token.formatted ? node.token.value.trimStart() : node.token.value
   }
   return node.open.value + node.children.map(renderCompact).join('') + (node.close?.value ?? '')
 }
@@ -316,4 +322,86 @@ function normalizeText(value: string): string {
 
 function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+
+/** File types supported by the asynchronous, language-aware formatter. */
+export const FORMAT_EXTENSIONS = ['.wald', '.html', '.htm', '.css', '.js', '.mjs', '.cjs', '.jsx', '.ts', '.mts', '.cts', '.tsx'] as const
+
+/** Format a Wald component (including embedded code) or a standalone web source file. */
+export async function formatFile(source: string, filename: string, options: FormatOptions = {}): Promise<string> {
+  const extension = filename.match(/\.[^./\\]+$/)?.[0].toLowerCase()
+  if (!FORMAT_EXTENSIONS.some(value => value === extension)) {
+    throw new Error(`Unsupported formatter file: ${filename}`)
+  }
+  const prettier = await import('prettier')
+  const settings: PrettierOptions = {
+    tabWidth: options.indentWidth ?? 2,
+    useTabs: options.useTabs ?? false,
+    singleQuote: true,
+    semi: false,
+    endOfLine: 'lf',
+  }
+  if (extension !== '.wald') {
+    return prettier.format(source, { ...settings, filepath: filename })
+  }
+
+  parse(source)
+  const frontmatter = splitFrontmatter(source.replace(/\r\n?/g, '\n'))
+  if (frontmatter.code) {
+    frontmatter.code = (await prettier.format(frontmatter.code, { ...settings, parser: 'typescript' })).trimEnd()
+  }
+  const nodes = buildTree(tokenize(frontmatter.template))
+  const indentUnit = options.useTabs ? '\t' : ' '.repeat(options.indentWidth ?? 2)
+  const visit = async (nodes: FormatNode[], level: number): Promise<void> => {
+    for (const node of nodes) {
+      if (node.kind === 'element') {
+        await visit(node.children, level + 1)
+        continue
+      }
+      const token = node.token
+      const name = token.name?.toLowerCase()
+      if (token.kind !== 'raw' || (name !== 'script' && name !== 'style')) continue
+      const openingEnd = scanTagEnd(token.value, 0)
+      const closingStart = token.value.lastIndexOf('</')
+      if (closingStart < openingEnd) continue
+      const opening = token.value.slice(0, openingEnd)
+      const content = token.value.slice(openingEnd, closingStart)
+      if (!content.trim()) continue
+      const type = attributeValue(opening, 'type').toLowerCase()
+      const lang = attributeValue(opening, 'lang').toLowerCase()
+      let parser: string
+      let safeOpening: string
+      if (name === 'style') {
+        if ((type && type !== 'text/css') || (lang && lang !== 'css')) continue
+        parser = 'css'
+        safeOpening = '<style>'
+      } else if (['application/json', 'application/ld+json', 'importmap', 'speculationrules'].includes(type)) {
+        parser = 'json'
+        safeOpening = '<script type="application/json">'
+      } else {
+        if (!['', 'module', 'text/javascript', 'application/javascript', 'text/ecmascript', 'application/ecmascript', 'text/typescript'].includes(type)) continue
+        if (lang && !['js', 'javascript', 'ts', 'typescript'].includes(lang)) continue
+        const typescript = lang === 'ts' || lang === 'typescript' || type === 'text/typescript'
+        parser = typescript ? 'typescript' : 'babel'
+        safeOpening = typescript ? '<script lang="ts">' : '<script type="module">'
+      }
+      const code = await prettier.format(content, { ...settings, parser })
+      // Let Prettier indent embedded code in its HTML context. Prefixing each
+      // line ourselves would change multiline strings and template literals.
+      const wrapped = '<div>'.repeat(level) + safeOpening + code + `</${name}>` + '</div>'.repeat(level)
+      const html = await prettier.format(wrapped, { ...settings, parser: 'html', htmlWhitespaceSensitivity: 'ignore' })
+      const start = html.indexOf(`<${name}`)
+      const body = html.slice(html.indexOf('>', start) + 1, html.lastIndexOf(`</${name}>`))
+      token.value = indentUnit.repeat(level) + normalizeTag(opening) + body + token.value.slice(closingStart)
+      token.formatted = true
+    }
+  }
+  await visit(nodes, 0)
+  return renderDocument(frontmatter, nodes, options)
+}
+
+function attributeValue(opening: string, name: string): string {
+  const match = opening.match(new RegExp(`\\s${name}\\s*=\\s*(?:"([^"]*)"|'([^']*)'|([^\\s>]+))`, 'i'))
+  return match?.[1] ?? match?.[2] ?? match?.[3] ?? ''
 }

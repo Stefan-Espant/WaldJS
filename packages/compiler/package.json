@@ -48,7 +48,8 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@waldjs/runtime": "workspace:*"
+    "@waldjs/runtime": "workspace:*",
+    "prettier": "^3.9.10"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

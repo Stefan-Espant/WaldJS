@@ -1,6 +1,6 @@
 export { parse } from './parser/index.js'
 export { transform, transformWithMap, type LineMap, type TransformOptions, type TransformResult } from './transform/index.js'
 export { compile, compileWithMap } from './compile.js'
-export { format, type FormatOptions } from './format.js'
+export { format, formatFile, FORMAT_EXTENSIONS, type FormatOptions } from './format.js'
 export { WaldError } from './errors.js'
 export type * from './ast/types.js'
