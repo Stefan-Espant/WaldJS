@@ -1,23 +1,23 @@
 import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs'
-import { resolve } from 'node:path'
+import { extname, resolve } from 'node:path'
 import { defineCommand } from 'citty'
-import { format } from '@waldjs/compiler'
+import { formatFile, FORMAT_EXTENSIONS } from '@waldjs/compiler'
 
-const IGNORED_DIRECTORIES = new Set(['.git', '.turbo', 'dist', 'node_modules'])
+const IGNORED_DIRECTORIES = new Set(['.git', '.turbo', '.vercel', '.oester', '.wald-ssr', 'coverage', 'dist', 'node_modules'])
 
 export type FormatResult = {
   files: string[]
   changed: string[]
 }
 
-export function findWaldFiles(paths: string[]): string[] {
+function findFiles(paths: string[], extensions: readonly string[]): string[] {
   const files = new Set<string>()
 
   const visit = (path: string): void => {
     if (!existsSync(path)) throw new Error(`Path does not exist: ${path}`)
     const stat = statSync(path)
     if (stat.isFile()) {
-      if (path.endsWith('.wald')) files.add(resolve(path))
+      if (extensions.includes(extname(path).toLowerCase())) files.add(resolve(path))
       return
     }
     if (!stat.isDirectory()) return
@@ -33,13 +33,26 @@ export function findWaldFiles(paths: string[]): string[] {
   return [...files].sort()
 }
 
-export function runFormat(paths: string[], check = false): FormatResult {
-  const files = findWaldFiles(paths.length ? paths : [process.cwd()])
+export function findWaldFiles(paths: string[]): string[] {
+  return findFiles(paths, ['.wald'])
+}
+
+export function findFormatFiles(paths: string[]): string[] {
+  return findFiles(paths, FORMAT_EXTENSIONS)
+}
+
+export async function runFormat(paths: string[], check = false): Promise<FormatResult> {
+  const files = findFormatFiles(paths.length ? paths : [process.cwd()])
   const changed: string[] = []
 
   for (const file of files) {
     const source = readFileSync(file, 'utf8')
-    const formatted = format(source)
+    let formatted: string
+    try {
+      formatted = await formatFile(source, file)
+    } catch (error) {
+      throw new Error(`${file}: ${error instanceof Error ? error.message : String(error)}`)
+    }
     if (formatted === source) continue
     changed.push(file)
     if (!check) writeFileSync(file, formatted)
@@ -49,24 +62,24 @@ export function runFormat(paths: string[], check = false): FormatResult {
 }
 
 export const formatCommand = defineCommand({
-  meta: { name: 'format', description: 'Format .wald files' },
+  meta: { name: 'format', description: 'Format Wald, HTML, CSS, JavaScript and TypeScript files' },
   args: {
     path: { type: 'positional', description: 'File or directory (defaults to the current directory)', required: false },
     check: { type: 'boolean', description: 'Check formatting without writing files', default: false },
   },
-  run({ args }) {
+  async run({ args }) {
     const paths = args._.length ? args._ : [process.cwd()]
     try {
-      const result = runFormat(paths, args.check)
+      const result = await runFormat(paths, args.check)
       if (args.check && result.changed.length) {
         for (const file of result.changed) console.error(file)
-        console.error(`✖ ${result.changed.length} .wald file${result.changed.length === 1 ? '' : 's'} need formatting`)
+        console.error(`✖ ${result.changed.length} file${result.changed.length === 1 ? '' : 's'} need formatting`)
         process.exitCode = 1
         return
       }
 
-      if (args.check) console.log(`✓ ${result.files.length} .wald file${result.files.length === 1 ? '' : 's'} formatted`)
-      else console.log(`✓ Formatted ${result.changed.length} of ${result.files.length} .wald file${result.files.length === 1 ? '' : 's'}`)
+      if (args.check) console.log(`✓ ${result.files.length} file${result.files.length === 1 ? '' : 's'} formatted`)
+      else console.log(`✓ Formatted ${result.changed.length} of ${result.files.length} file${result.files.length === 1 ? '' : 's'}`)
     } catch (error) {
       console.error(`[waldjs] ${(error as Error).message}`)
       process.exitCode = 1
