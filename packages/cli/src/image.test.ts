@@ -147,3 +147,20 @@ describe('renderImage', () => {
     expect(existsSync(outDir)).toBe(true)
   })
 })
+
+describe('image URL escaping', () => {
+  const payload = '/assets/photo" onerror="alert(1)<&.png'
+
+  it('escapes src and srcset in optimized image markup', () => {
+    const html = renderImageTag({ src: payload, srcset: `${payload} 400w`, width: 400, height: 300 }, 'Photo')
+    expect(html).not.toContain('" onerror="')
+    expect(html).toContain('photo&quot; onerror=&quot;alert(1)&lt;&amp;.png')
+    expect(html.match(/&quot;/g)).toHaveLength(4)
+  })
+
+  it('escapes src in development image markup', async () => {
+    const html = await renderImage({ src: payload }, { assetsDir: '/unused', publicPath: '/assets' })
+    expect(html).not.toContain('" onerror="')
+    expect(html).toContain('photo&quot; onerror=&quot;alert(1)&lt;&amp;.png')
+  })
+})

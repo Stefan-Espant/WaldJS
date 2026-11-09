@@ -7,3 +7,5 @@ packages:
 allowBuilds:
   esbuild: true
   sharp: true
+minimumReleaseAgeExclude:
+  - vite@6.4.6

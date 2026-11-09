@@ -1,5 +1,11 @@
 # @waldjs/content
 
+## 0.3.1
+
+### Patch Changes
+
+- Reject executable JavaScript frontmatter in Markdown collections. YAML and JSON frontmatter remain supported.
+
 ## 0.3.0
 
 ### Minor Changes

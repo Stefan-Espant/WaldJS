@@ -1,5 +1,15 @@
 # @waldjs/cli
 
+## 0.14.1
+
+### Patch Changes
+
+- Escape image URLs in generated HTML and reject route outputs outside the build directory.
+- Upgrade vulnerable Vite, esbuild and sharp dependencies. Requires Node.js >=20.9.0; custom Vite resolution conditions should follow the Vite 6 migration guide.
+- Updated dependencies:
+  - @waldjs/compiler@0.5.1
+  - @waldjs/content@0.3.1
+
 ## 0.14.0
 
 ### Minor Changes

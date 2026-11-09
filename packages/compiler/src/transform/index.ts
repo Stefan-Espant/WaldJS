@@ -174,7 +174,7 @@ function renderComponent(node: ComponentNode, scopeAttr: string): string {
 
   if (node.canopy) {
     const src = `wald:canopy:${node.name}`
-    return `\${new SafeHtml('<wald-canopy data-src="${src}" data-strategy="${node.canopy.strategy}" data-props=\\'' + JSON.stringify(${propsObj}) + '\\'>' + await ${node.name}.render(${propsObj}) + '</wald-canopy>')}`
+    return `\${new SafeHtml(renderTemplate\`<wald-canopy data-src="${src}" data-strategy="${node.canopy.strategy}" data-props='\${JSON.stringify(${propsObj})}'>\${new SafeHtml(await ${node.name}.render(${propsObj}))}</wald-canopy>\`)}`
   }
 
   if (node.children.length > 0) {

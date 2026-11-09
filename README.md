@@ -5,6 +5,8 @@
 
 A content-first web framework for building fast, static-first websites. Write `.wald` files — part Markdown frontmatter, part HTML template — and WaldJS compiles them into a static site.
 
+Requires Node.js 20.9 or newer. For repository development, use Node.js 22 as in CI.
+
 <img width="1954" height="1254" alt="Scherm­afbeelding 2026-07-08 om 07 40 00" src="https://github.com/user-attachments/assets/eb33ec5d-85ef-469e-85c4-ba08326f30b2" />
 
 ---
@@ -79,7 +81,7 @@ content/
     └── second-post.md
 ```
 
-Each Markdown file has YAML frontmatter:
+Each Markdown file has YAML frontmatter (JSON is also supported; executable JavaScript frontmatter is rejected):
 
 ```md
 ---

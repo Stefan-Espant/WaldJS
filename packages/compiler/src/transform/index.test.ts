@@ -107,7 +107,7 @@ describe('transform', () => {
     expect(output).toContain('<wald-canopy data-src="wald:canopy:Counter"')
     expect(output).toContain('data-strategy="visible"')
     expect(output).toContain('JSON.stringify({ initial: (3) })')
-    expect(output).toContain("await Counter.render({ initial: (3) }) + '</wald-canopy>'")
+    expect(output).toContain("await Counter.render({ initial: (3) }))}</wald-canopy>")
   })
 
   it('hoists export function to module level before export default', () => {
