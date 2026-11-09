@@ -49,6 +49,13 @@ describe('formatFile', () => {
     expect(await formatFile(result, 'page.wald')).toBe(result)
   })
 
+  it('accepts TypeScript in canopy scripts without a lang attribute', async () => {
+    const result = await formatFile('<button>Go</button><script>export default function(root:HTMLElement){const count:number=1;root.textContent=String(count);}</script>', 'Counter.wald')
+    expect(result).toContain('export default function (root: HTMLElement) {')
+    expect(result).toContain('  const count: number = 1')
+    expect(await formatFile(result, 'Counter.wald')).toBe(result)
+  })
+
   it.each([
     ['page.html', '<main><section><p>Hello</p></section></main>', '\n  <section>'],
     ['site.css', '.card{color:red;padding:0  1rem}', '  color: red;'],

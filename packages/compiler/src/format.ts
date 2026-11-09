@@ -324,7 +324,6 @@ function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
-
 /** File types supported by the asynchronous, language-aware formatter. */
 export const FORMAT_EXTENSIONS = ['.wald', '.html', '.htm', '.css', '.js', '.mjs', '.cjs', '.jsx', '.ts', '.mts', '.cts', '.tsx'] as const
 
@@ -382,9 +381,10 @@ export async function formatFile(source: string, filename: string, options: Form
       } else {
         if (!['', 'module', 'text/javascript', 'application/javascript', 'text/ecmascript', 'application/ecmascript', 'text/typescript'].includes(type)) continue
         if (lang && !['js', 'javascript', 'ts', 'typescript'].includes(lang)) continue
-        const typescript = lang === 'ts' || lang === 'typescript' || type === 'text/typescript'
-        parser = typescript ? 'typescript' : 'babel'
-        safeOpening = typescript ? '<script lang="ts">' : '<script type="module">'
+        // Match the canopy builder's TypeScript loader, including scripts
+        // without an explicit lang attribute. JavaScript is accepted too.
+        parser = 'typescript'
+        safeOpening = '<script lang="ts">'
       }
       const code = await prettier.format(content, { ...settings, parser })
       // Let Prettier indent embedded code in its HTML context. Prefixing each
