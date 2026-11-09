@@ -130,6 +130,21 @@ describe('vite-plugin-wald-content', () => {
     expect(code).toContain('export const getTranslations = (collection, slug) => _rt(collection, slug, contentDir)')
   })
 
+  it('enables production filtering only for builds, including custom Vite modes', async () => {
+    for (const command of ['serve', 'build']) {
+      const plugin = waldPlugin().find(p => p.name === 'vite-plugin-wald-content')!
+      await (plugin.configResolved as Function).call({}, { command, mode: 'staging' })
+      const code = await (plugin.load as Function).call({}, '\0wald:content')
+      if (command === 'build') {
+        expect(code).toContain('_rc(name, contentDir, { ...options, production: true })')
+        expect(code).toContain('_re(collection, slug, contentDir, { ...options, production: true })')
+        expect(code).toContain('_rt(collection, slug, contentDir, { production: true })')
+      } else {
+        expect(code).not.toContain('production: true')
+      }
+    }
+  })
+
   it('returns undefined for other virtual ids in load', async () => {
     const code = await callHook('vite-plugin-wald-content', 'load', '\0other:module')
     expect(code).toBeUndefined()

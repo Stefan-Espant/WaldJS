@@ -84,7 +84,7 @@ export async function bundleSsrWithEsbuild(
         })
         b.onResolve({ filter: /^wald:(content|image)$/ }, args => ({ path: args.path, namespace: 'wald-virtual' }))
         b.onLoad({ filter: /.*/, namespace: 'wald-virtual' }, args => ({
-          contents: args.path === 'wald:content' ? contentModuleSource(cwd) : imageModuleSource(cwd, image),
+          contents: args.path === 'wald:content' ? contentModuleSource(cwd, true) : imageModuleSource(cwd, image),
           loader: 'js',
           resolveDir: cwd,
         }))

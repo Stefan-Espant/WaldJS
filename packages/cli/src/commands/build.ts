@@ -1,10 +1,10 @@
-import { mkdirSync, writeFileSync, existsSync, cpSync, rmSync } from 'node:fs'
+import { mkdirSync, writeFileSync, existsSync, cpSync, rmSync, readdirSync, unlinkSync, rmdirSync } from 'node:fs'
 import { join, relative, dirname, resolve, isAbsolute } from 'node:path'
 import { defineCommand } from 'citty'
 import { buildCanopyClient, type CanopyAssetMap } from '../canopy-build.js'
 import { collectCanopyScriptContents, scanCanopyEntries } from '../canopy-scan.js'
 import { loadWaldConfig, type WaldConfig } from '../config.js'
-import { scanRoutes } from '../router/index.js'
+import { scanRoutes, type Route } from '../router/index.js'
 import { maybeWrap, hoistScripts } from '../shell.js'
 import { injectPrefetchRuntime } from '../prefetch-runtime.js'
 import { withGrowingTree } from '../growing-tree.js'
@@ -76,6 +76,34 @@ export function resolveOutPath(distDir: string, pattern: string, params: Record<
   return outPath
 }
 
+// A post that becomes a draft must also disappear from an existing build.
+// Remove only stale index.html files belonging to current routes; public files
+// are copied again afterward, and output outside those routes stays untouched.
+function removeStaleRoutePages(distDir: string, routes: Route[], generated: Set<string>): void {
+  if (!existsSync(distDir)) return
+  const patterns = routes.map(route => new RegExp('^' + route.pattern.split('/').map(segment =>
+    segment.startsWith(':') ? '.+' : segment.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
+  ).join('/') + '$'))
+  const visit = (dir: string): boolean => {
+    let removed = false
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      const file = join(dir, entry.name)
+      if (entry.isDirectory()) {
+        removed = visit(file) || removed
+      } else if (entry.isFile() && entry.name === 'index.html' && !generated.has(file)) {
+        const routePath = '/' + relative(distDir, dir).replace(/\\/g, '/')
+        if (patterns.some(pattern => pattern.test(routePath))) {
+          unlinkSync(file)
+          removed = true
+        }
+      }
+    }
+    if (removed && dir !== distDir && readdirSync(dir).length === 0) rmdirSync(dir)
+    return removed
+  }
+  visit(distDir)
+}
+
 function formatSize(bytes: number): string {
   return bytes < 1024 ? `${bytes} B` : `${(bytes / 1024).toFixed(1)} kB`
 }
@@ -129,6 +157,7 @@ export async function buildPages(
   const padTo = Math.max(...routes.map(r => r.pattern.length), 0)
   const warnings: string[] = []
   let dynamicPages = 0
+  const generatedPages = new Set<string>()
 
   const ssrDir = join(dirname(distDir), '.wald-ssr')
 
@@ -235,6 +264,7 @@ export async function buildPages(
       const outPath = resolveOutPath(distDir, route.pattern)
       mkdirSync(dirname(outPath), { recursive: true })
       writeFileSync(outPath, html)
+      generatedPages.add(outPath)
       logRoute(route.pattern, formatSize(Buffer.byteLength(html)), padTo)
     }
 
@@ -264,6 +294,7 @@ export async function buildPages(
         const outPath = resolveOutPath(distDir, route.pattern, params)
         mkdirSync(dirname(outPath), { recursive: true })
         writeFileSync(outPath, html)
+        generatedPages.add(outPath)
         patternBytes += Buffer.byteLength(html)
       }
       const pathWord = paths.length === 1 ? 'path' : 'paths'
@@ -272,6 +303,8 @@ export async function buildPages(
   } finally {
     rmSync(ssrDir, { recursive: true, force: true })
   }
+
+  removeStaleRoutePages(distDir, routes, generatedPages)
 
   let copiedPublic = false
   if (publicDir && existsSync(publicDir)) {

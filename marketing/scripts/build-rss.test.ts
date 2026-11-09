@@ -24,6 +24,10 @@ describe('build-rss.mjs', () => {
       join(root, 'content/blog/en/new.md'),
       '---\ntitle: "New"\ndescription: "Second"\ndate: 2026-09-01\nauthor: "A"\n---\nx',
     )
+    writeFileSync(join(root, 'content/blog/nl/concept.md'),
+      '---\ntitle: Concept\ndate: 2026-01-01\ndraft: true\n---\nSecret')
+    writeFileSync(join(root, 'content/blog/en/scheduled.md'),
+      '---\ntitle: Scheduled\ndate: 2026-01-01\npublishDate: "9999-01-01T00:00:00Z"\n---\nLater')
     execFileSync(process.execPath, [join(__dirname, 'build-rss.mjs'), root, 'https://example.com'], { stdio: 'pipe' })
   })
 
@@ -40,6 +44,15 @@ describe('build-rss.mjs', () => {
     expect(nl).toContain('<atom:link href="https://example.com/blog/rss.xml" rel="self" type="application/rss+xml"/>')
     expect(en).toContain('<language>en</language>')
     expect(en).toContain('<link>https://example.com/en/blog/new</link>')
+  })
+
+  it('excludes drafts and scheduled entries from feeds', () => {
+    const nl = readFileSync(join(root, 'dist/blog/rss.xml'), 'utf8')
+    const en = readFileSync(join(root, 'dist/en/blog/rss.xml'), 'utf8')
+    expect(nl).not.toContain('/blog/concept')
+    expect(en).not.toContain('/blog/scheduled')
+    expect(nl.match(/<item>/g)).toHaveLength(2)
+    expect(en.match(/<item>/g)).toHaveLength(1)
   })
 
   it('orders items newest first and escapes XML', () => {

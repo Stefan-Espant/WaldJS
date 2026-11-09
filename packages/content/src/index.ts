@@ -14,6 +14,33 @@ export type LocaleOptions = {
   locale?: string
 }
 
+/** Low-level readers preview all content unless production is explicitly enabled. */
+export type ContentOptions = LocaleOptions & { production?: boolean }
+
+function isPublished(entry: Entry): boolean {
+  if (entry.data.draft === true) return false
+  const value = entry.data.publishDate
+  if (value === undefined) return true
+  const timestamp = value instanceof Date ? value.getTime()
+    : typeof value === 'string' ? Date.parse(value) : NaN
+  if (!Number.isFinite(timestamp)) {
+    throw new Error(`${entry.locale ? entry.locale + '/' : ''}${entry.slug}.md: invalid publishDate — expected an ISO date or timestamp`)
+  }
+  return timestamp <= Date.now()
+}
+
+function visibleEntries(entries: Entry[], options: ContentOptions): Entry[] {
+  return options.production ? entries.filter(isPublished) : entries
+}
+
+async function visibleEntry(file: string, locale: string | undefined, options: ContentOptions): Promise<Entry> {
+  const entry = await parseEntry(file, locale)
+  if (options.production && !isPublished(entry)) {
+    throw new Error(`Entry "${entry.slug}" is not published (${file})`)
+  }
+  return entry
+}
+
 // A collection subdirectory with a name like `nl`, `en` or `en-GB` holds that
 // locale's entries. Anything else stays ignored, as before locales existed.
 const LOCALE_PATTERN = /^[a-z]{2}(-[A-Z]{2})?$/
@@ -66,7 +93,7 @@ async function listMarkdown(dir: string): Promise<string[]> {
 export async function readCollection(
   name: string,
   contentDir: string,
-  options: LocaleOptions = {},
+  options: ContentOptions = {},
 ): Promise<Entry[]> {
   const dir = join(contentDir, name)
 
@@ -76,22 +103,22 @@ export async function readCollection(
     const localeDir = join(dir, locale)
     if (!existsSync(localeDir)) return []
     const files = await listMarkdown(localeDir)
-    return Promise.all(files.map(file => parseEntry(join(localeDir, file), locale)))
+    return visibleEntries(await Promise.all(files.map(file => parseEntry(join(localeDir, file), locale))), options)
   }
 
   const files = await listMarkdown(dir)
   const entries = await Promise.all(files.map(file => parseEntry(join(dir, file))))
   for (const locale of await listLocales(name, contentDir)) {
-    entries.push(...(await readCollection(name, contentDir, { locale })))
+    entries.push(...(await readCollection(name, contentDir, { ...options, locale })))
   }
-  return entries
+  return visibleEntries(entries, options)
 }
 
 export async function readEntry(
   collection: string,
   slug: string,
   contentDir: string,
-  options: LocaleOptions = {},
+  options: ContentOptions = {},
 ): Promise<Entry> {
   assertSlug(slug)
   const dir = join(contentDir, collection)
@@ -107,11 +134,11 @@ export async function readEntry(
         `Entry "${slug}" not found in collection "${collection}" for locale "${locale}" (available locales: ${available})`,
       )
     }
-    return parseEntry(file, locale)
+    return visibleEntry(file, locale, options)
   }
 
   const file = join(dir, `${slug}.md`)
-  if (existsSync(file)) return parseEntry(file)
+  if (existsSync(file)) return visibleEntry(file, undefined, options)
   if (locales.length > 0) {
     throw new Error(
       `Collection "${collection}" has locales (${locales.join(', ')}) — pass { locale } to getEntry("${collection}", "${slug}")`,
@@ -124,12 +151,16 @@ export async function readTranslations(
   collection: string,
   slug: string,
   contentDir: string,
+  options: ContentOptions = {},
 ): Promise<Record<string, Entry>> {
   assertSlug(slug)
   const translations: Record<string, Entry> = {}
   for (const locale of await listLocales(collection, contentDir)) {
     const file = join(contentDir, collection, locale, `${slug}.md`)
-    if (existsSync(file)) translations[locale] = await parseEntry(file, locale)
+    if (existsSync(file)) {
+      const entry = await parseEntry(file, locale)
+      if (!options.production || isPublished(entry)) translations[locale] = entry
+    }
   }
   return translations
 }

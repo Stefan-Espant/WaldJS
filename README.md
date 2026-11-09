@@ -115,6 +115,32 @@ type Entry = {
 }
 ```
 
+### Drafts and scheduled publishing
+
+Set `draft: true` to keep an article unpublished, or use `publishDate` to schedule it:
+
+```yaml
+---
+title: Coming soon
+draft: false
+publishDate: "2026-12-05T18:00:00+01:00"
+---
+```
+
+`wald grow` previews all entries. `wald build` excludes drafts and entries with a future `publishDate` from `getCollection()` and `getTranslations()`. Calling `getEntry()` directly for an unpublished entry fails with a clear error. Invalid publication dates fail the production build instead of accidentally publishing the entry. Use ISO dates or timestamps with an explicit timezone; date-only YAML values represent midnight UTC.
+
+Generate dynamic routes from `getCollection()` so unpublished entries never produce pages or sitemap URLs. Rebuilding removes stale pages for existing routes, including articles that have become drafts since the previous build. Publication is evaluated at build time: schedule a rebuild to publish an article when its date arrives. A future article does not become public automatically on an already-deployed static site.
+
+Scripts that call the low-level `@waldjs/content` readers directly (for example, RSS generation) must opt into the same filtering:
+
+```ts
+import { readCollection } from '@waldjs/content'
+
+const entries = await readCollection('blog', contentDir, { locale: 'nl', production: true })
+```
+
+The low-level readers preview all entries by default. Filtering is applied after reading the cached content, so the same process correctly sees a scheduled entry become publishable when its date arrives.
+
 ### Locales
 
 A collection can hold one subdirectory per language. Any subdirectory named like a locale code (`nl`, `en`, `en-GB`) is a locale; entries with the same file name in different locale directories are translations of each other:
@@ -299,6 +325,8 @@ export default defineConfig({
 All options are optional. Without a config file WaldJS uses the defaults above.
 
 **`generator`** — `wald build` adds `<meta name="generator" content="WaldJS v…">` to every page that doesn't already have a generator tag, so sites built with WaldJS can be recognised. A tag in your own layout always wins. Set `generator: false` to leave it out.
+
+**Development assets and `base`:** with `base: '/my-forest/'`, `wald grow` serves both `public/` files and `src/assets/` files only under `/my-forest/`. Unprefixed requests return 404, as do paths that only share a text prefix such as `/my-forest-extra/`. With the default `/` base, assets remain available at their normal root paths.
 
 **`vite`** — when `wald build` doesn't need Vite (no `vite` options other than `ssr.external`, and no `import.meta.env`, `import.meta.glob` or `?raw`/`?url` imports in `src/`), it bundles pages and canopy islands with esbuild directly, which is much faster to start. As soon as you use Vite options or Vite-only features, the build uses Vite automatically. To force Vite, set `WALD_SSR_BUNDLER=vite`.
 
