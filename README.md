@@ -57,7 +57,9 @@ wald format --check src
 
 Language formatting uses Prettier with two-space indentation, single quotes and no unnecessary JavaScript semicolons. It uses these built-in defaults without loading external Prettier configurations or plugins.
 
-The asynchronous API supports the same file types and accepts `indentWidth` and `useTabs`:
+Long Wald HTML tags put attributes on separate lines, and long inline groups wrap at existing spaces. Adjacent inline elements stay joined. The preferred line length is 80 characters; indivisible attribute values and whitespace-sensitive content may be longer.
+
+The asynchronous API supports the same file types and accepts `indentWidth`, `useTabs` and `printWidth`:
 
 ```ts
 import { formatFile } from '@waldjs/compiler'

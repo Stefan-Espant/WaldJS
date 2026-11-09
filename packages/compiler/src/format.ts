@@ -7,6 +7,8 @@ export type FormatOptions = {
   indentWidth?: number
   /** Indent with tabs instead of spaces. */
   useTabs?: boolean
+  /** Preferred line length. Unbreakable values may exceed it. Defaults to 80. */
+  printWidth?: number
 }
 
 type Token = {
@@ -15,6 +17,8 @@ type Token = {
   name?: string
   formatted?: boolean
 }
+
+type RenderSettings = { indentUnit: string; printWidth: number }
 
 type FormatNode =
   | { kind: 'element'; open: Token; close?: Token; children: FormatNode[] }
@@ -39,7 +43,7 @@ export function format(source: string, options: FormatOptions = {}): string {
 
 function renderDocument(frontmatter: ReturnType<typeof splitFrontmatter>, nodes: FormatNode[], options: FormatOptions): string {
   const indentUnit = options.useTabs ? '\t' : ' '.repeat(options.indentWidth ?? 2)
-  const template = renderChildren(nodes, 0, indentUnit)
+  const template = renderChildren(nodes, 0, { indentUnit, printWidth: options.printWidth ?? 80 })
 
   const parts: string[] = []
   if (frontmatter.present) {
@@ -238,53 +242,117 @@ function buildTree(tokens: Token[]): FormatNode[] {
   return root
 }
 
-function renderChildren(nodes: FormatNode[], level: number, indentUnit: string): string {
-  const meaningful = prepareChildren(nodes)
+function renderChildren(nodes: FormatNode[], level: number, settings: RenderSettings): string {
   const lines: string[] = []
-  let inline = ''
-
+  let inline: FormatNode[] = []
   const flushInline = () => {
-    const value = inline.trim()
-    if (value) lines.push(indentUnit.repeat(level) + value)
-    inline = ''
+    if (inline.length) lines.push(renderInline(inline, level, settings))
+    inline = []
   }
-
-  for (const node of meaningful) {
-    if (isInline(node)) {
-      inline += renderCompact(node)
-    } else {
+  for (const node of prepareChildren(nodes)) {
+    if (isInline(node)) inline.push(node)
+    else {
       flushInline()
-      lines.push(renderBlock(node, level, indentUnit))
+      lines.push(renderBlock(node, level, settings))
     }
   }
   flushInline()
-  return lines.join('\n')
+  return lines.filter(Boolean).join('\n')
 }
 
-function renderBlock(node: FormatNode, level: number, indentUnit: string): string {
-  const indent = indentUnit.repeat(level)
+// A newline can replace an existing text-space, but must never be inserted
+// between adjacent inline elements: <span>one</span><span>two</span> stays joined.
+function renderInline(nodes: FormatNode[], level: number, settings: RenderSettings, initial?: string): string {
+  const indent = settings.indentUnit.repeat(level)
+  let result = initial ?? ''
+  let gap = ''
+  const append = (value: string) => {
+    if (!value) return
+    if (!result) result = indent + value
+    else {
+      const line = result.slice(result.lastIndexOf('\n') + 1)
+      const firstLine = value.split('\n', 1)[0]
+      result += gap && (value.includes('\n') || line.length + gap.length + firstLine.length > settings.printWidth)
+        ? '\n' + indent + value : gap + value
+    }
+    gap = ''
+  }
+  for (const node of nodes) {
+    if (node.kind === 'leaf' && node.token.kind === 'text') {
+      for (const part of normalizeText(node.token.value).split(/(\s+)/)) {
+        if (/^\s+$/.test(part)) gap += part
+        else append(part)
+      }
+    } else append(renderCompact(node, level, settings))
+  }
+  return initial === undefined ? result.trimEnd() : result + gap
+}
+
+function renderBlock(node: FormatNode, level: number, settings: RenderSettings): string {
+  const indent = settings.indentUnit.repeat(level)
   if (node.kind === 'leaf') {
     if (node.token.kind === 'raw') return node.token.formatted ? node.token.value : indent + node.token.value
+    if (node.token.kind === 'self') return indent + renderTag(node.token.value, level, settings)
     return indent + normalizeText(node.token.value).trim()
   }
 
+  const opening = renderTag(node.open.value, level, settings)
   const children = prepareChildren(node.children)
-  if (!node.close || children.length === 0) return indent + node.open.value + (node.close?.value ?? '')
-  if (children.every(isInline)) return indent + node.open.value + children.map(renderCompact).join('') + node.close.value
+  if (!node.close || children.length === 0) return indent + opening + (node.close?.value ?? '')
+  if (children.every(isInline)) {
+    const compact = indent + opening + children.map(child => renderCompact(child, level + 1, settings)).join('') + node.close.value
+    if (!compact.includes('\n') && compact.length <= settings.printWidth) return compact
+  }
 
   return [
-    indent + node.open.value,
-    renderChildren(children, level + 1, indentUnit),
+    indent + opening,
+    renderChildren(children, level + 1, settings),
     indent + node.close.value,
   ].filter(Boolean).join('\n')
 }
 
-function renderCompact(node: FormatNode): string {
+function renderCompact(node: FormatNode, level: number, settings: RenderSettings): string {
   if (node.kind === 'leaf') {
     if (node.token.kind === 'text') return normalizeText(node.token.value)
+    if (node.token.kind === 'self') return renderTag(node.token.value, level, settings)
     return node.token.formatted ? node.token.value.trimStart() : node.token.value
   }
-  return node.open.value + node.children.map(renderCompact).join('') + (node.close?.value ?? '')
+  const opening = renderTag(node.open.value, level, settings)
+  const body = node.open.name?.toLowerCase() === 'code'
+    ? opening + node.children.map(child => renderCompact(child, level + 1, settings)).join('')
+    : renderInline(node.children, level + 1, settings, opening)
+  return body + (node.close?.value ?? '')
+}
+
+function renderTag(value: string, level: number, settings: RenderSettings): string {
+  const indent = settings.indentUnit.repeat(level)
+  if (indent.length + value.length <= settings.printWidth && !value.includes('\n')) return value
+  const name = value.match(/^<[^\s/>]+/)?.[0]
+  if (!name) return value
+  const ending = value.endsWith('/>') ? '/>' : '>'
+  const body = value.slice(name.length, -ending.length).trim()
+  const attrs: string[] = []
+  let start = 0
+  let quote = ''
+  let depth = 0
+  for (let pos = 0; pos <= body.length; pos++) {
+    const char = body[pos]
+    if (quote) {
+      if (char === '\\') pos++
+      else if (char === quote) quote = ''
+      continue
+    }
+    if (char === '"' || char === "'" || char === '`') quote = char
+    else if (char === '{') depth++
+    else if (char === '}') depth--
+    else if (depth === 0 && (pos === body.length || /\s/.test(char))) {
+      const attr = body.slice(start, pos).trim()
+      if (attr) attrs.push(attr)
+      start = pos + 1
+    }
+  }
+  if (attrs.length === 0) return value
+  return [name, ...attrs.map(attr => indent + settings.indentUnit + attr), indent + ending].join('\n')
 }
 
 function isInline(node: FormatNode): boolean {
@@ -340,6 +408,7 @@ export async function formatFile(source: string, filename: string, options: Form
     singleQuote: true,
     semi: false,
     endOfLine: 'lf',
+    printWidth: options.printWidth ?? 80,
   }
   if (extension !== '.wald') {
     return prettier.format(source, { ...settings, filepath: filename })
