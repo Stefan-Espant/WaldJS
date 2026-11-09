@@ -26,13 +26,14 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
-          registry-url: 'https://registry.npmjs.org'
 
       # Trusted Publishing needs npm CLI >= 11.5.1 (Node 22 ships npm 10).
       - run: npm install -g npm@latest
 
       - run: pnpm install --frozen-lockfile
 
+      # Publish using the workflow OIDC identity. An explicit registry token
+      # can select token authentication instead of Trusted Publishing.
       - name: Create Version PR or publish to npm
         uses: changesets/action@v1
         with:
@@ -42,7 +43,3 @@ jobs:
           title: 'chore: version packages'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # Fallback only: npm uses Trusted Publishing (OIDC) first for every
-          # package that has it configured on npmjs.com. Remove this line once
-          # all packages are set up.
-          NODE_AUTH_TOKEN: ${{ secrets.WALDJS_KEY_3 }}
