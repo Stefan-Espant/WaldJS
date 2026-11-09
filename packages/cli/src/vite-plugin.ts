@@ -35,6 +35,7 @@ export type WaldPluginOptions = {
 }
 
 export function waldPlugin(options: WaldPluginOptions = {}): Plugin[] {
+  let production = false
   return [
     {
       name: 'vite-plugin-wald',
@@ -71,13 +72,17 @@ export function waldPlugin(options: WaldPluginOptions = {}): Plugin[] {
     {
       name: 'vite-plugin-wald-content',
 
+      configResolved(config) {
+        production = config.command === 'build'
+      },
+
       resolveId(id) {
         if (id === 'wald:content') return VIRTUAL_CONTENT_ID
       },
 
       load(id) {
         if (id !== VIRTUAL_CONTENT_ID) return
-        return contentModuleSource(process.cwd())
+        return contentModuleSource(process.cwd(), production)
       },
     },
     {

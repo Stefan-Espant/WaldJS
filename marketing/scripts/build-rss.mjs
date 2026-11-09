@@ -29,7 +29,7 @@ function toDate(value) {
 }
 
 for (const [locale, feed] of Object.entries(FEEDS)) {
-  const entries = (await readCollection('blog', contentDir, { locale })).sort(
+  const entries = (await readCollection('blog', contentDir, { locale, production: true })).sort(
     (a, b) => toDate(b.data.date).getTime() - toDate(a.data.date).getTime(),
   )
   const items = entries

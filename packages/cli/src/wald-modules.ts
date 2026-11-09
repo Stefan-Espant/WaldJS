@@ -32,14 +32,15 @@ export function resolveWaldPackage(pkgId: string): string | undefined {
 
 // Source of the `wald:content` and `wald:image` virtual modules. Shared with
 // the esbuild SSR path (ssr-esbuild.ts) so both bundlers emit the same code.
-export function contentModuleSource(cwd: string): string {
+export function contentModuleSource(cwd: string, production = false): string {
   const contentDir = JSON.stringify(join(cwd, 'content'))
+  const options = production ? '{ ...options, production: true }' : 'options'
   return [
     `import { readCollection as _rc, readEntry as _re, readTranslations as _rt } from '@waldjs/content'`,
     `const contentDir = ${contentDir}`,
-    `export const getCollection = (name, options) => _rc(name, contentDir, options)`,
-    `export const getEntry = (collection, slug, options) => _re(collection, slug, contentDir, options)`,
-    `export const getTranslations = (collection, slug) => _rt(collection, slug, contentDir)`,
+    `export const getCollection = (name, options) => _rc(name, contentDir, ${options})`,
+    `export const getEntry = (collection, slug, options) => _re(collection, slug, contentDir, ${options})`,
+    `export const getTranslations = (collection, slug) => _rt(collection, slug, contentDir${production ? ', { production: true }' : ''})`,
   ].join('\n')
 }
 
