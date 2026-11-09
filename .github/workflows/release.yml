@@ -32,6 +32,37 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      - name: Verify npm Trusted Publisher access
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          const identityUrl = new URL(process.env.ACTIONS_ID_TOKEN_REQUEST_URL)
+          identityUrl.searchParams.set('audience', 'npm:registry.npmjs.org')
+          const identityResponse = await fetch(identityUrl, {
+            headers: { Authorization: `Bearer ${process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN}` },
+          })
+          if (!identityResponse.ok) throw new Error(`GitHub OIDC request failed: ${identityResponse.status}`)
+          const { value: identity } = await identityResponse.json()
+          if (!identity) throw new Error('GitHub did not return an OIDC identity')
+          let denied = false
+          for (const name of ['@waldjs/cli', '@waldjs/compiler', '@waldjs/content', 'create-wald']) {
+            const response = await fetch(`https://registry.npmjs.org/-/npm/v1/oidc/token/exchange/package/${encodeURIComponent(name)}`, {
+              method: 'POST',
+              headers: { Authorization: `Bearer ${identity}`, 'Content-Type': 'application/json' },
+              body: '{}',
+            })
+            if (response.ok) {
+              console.log(`${name}: Trusted Publisher access granted`)
+            } else {
+              denied = true
+              const result = await response.json().catch(() => ({}))
+              // Never print successful response bodies: they contain publish tokens.
+              console.error(`${name}: token exchange denied (${response.status}); ${result.message ?? result.error ?? 'check npm Trusted Publisher settings'}`)
+            }
+          }
+          if (denied) throw new Error('npm Trusted Publisher authorization failed before publishing')
+          NODE
+
       # Publish using the workflow OIDC identity. An explicit registry token
       # can select token authentication instead of Trusted Publishing.
       - name: Create Version PR or publish to npm
