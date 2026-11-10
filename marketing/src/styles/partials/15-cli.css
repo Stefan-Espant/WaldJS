@@ -5,32 +5,36 @@
   grid-template-columns: repeat(12, 1fr);
   gap: var(--byz-space-4);
   max-width: 51.25rem;
-  margin: 0 auto
+  margin: 0 auto;
 }
 
 .cli-card {
   grid-column: span 6;
-  background: linear-gradient(180deg, rgba(7, 54, 43, .96), rgba(1, 39, 29, .98));
-  border: 0.0625rem solid rgba(255, 255, 255, .12);
+  background: linear-gradient(
+    180deg,
+    rgba(7, 54, 43, 0.96),
+    rgba(1, 39, 29, 0.98)
+  );
+  border: 0.0625rem solid rgba(255, 255, 255, 0.12);
   border-radius: 1rem;
   padding: var(--byz-space-5);
   box-shadow:
-    inset 0 0.0625rem 0 rgba(255, 255, 255, .08),
-    0 0.3125rem 0 rgba(0, 0, 0, .18),
-    0 0.75rem 1.5rem rgba(0, 0, 0, .18);
+    inset 0 0.0625rem 0 rgba(255, 255, 255, 0.08),
+    0 0.3125rem 0 rgba(0, 0, 0, 0.18),
+    0 0.75rem 1.5rem rgba(0, 0, 0, 0.18);
 }
 
 .cli-card:hover {
   transform: translateY(-0.1875rem);
   box-shadow:
-    inset 0 0.0625rem 0 rgba(255, 255, 255, .1),
-    0 0.4375rem 0 rgba(90, 16, 28, .16),
-    0 1rem 1.75rem rgba(0, 0, 0, .22);
+    inset 0 0.0625rem 0 rgba(255, 255, 255, 0.1),
+    0 0.4375rem 0 rgba(90, 16, 28, 0.16),
+    0 1rem 1.75rem rgba(0, 0, 0, 0.22);
 }
 
-@media(max-width:35rem) {
+@media (max-width: 35rem) {
   .cli-card {
-    grid-column: span 12
+    grid-column: span 12;
   }
 }
 
@@ -38,11 +42,11 @@
   font-family: var(--mono);
   color: var(--rood);
   font-weight: 600;
-  font-size: .95rem
+  font-size: 0.95rem;
 }
 
 .cli-card p {
   color: var(--wit-zacht);
-  font-size: .88rem;
-  margin-top: 0.5rem
+  font-size: 0.88rem;
+  margin-top: 0.5rem;
 }

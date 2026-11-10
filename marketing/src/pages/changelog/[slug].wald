@@ -5,7 +5,7 @@ import { ui } from '../../lib/strings'
 
 export async function getStaticPaths() {
   const entries = await getCollection('changelog')
-  return entries.map(e => ({ params: { slug: e.slug } }))
+  return entries.map((e) => ({ params: { slug: e.slug } }))
 }
 
 const entry = await getEntry('changelog', $$props.slug)
@@ -21,9 +21,7 @@ const entry = await getEntry('changelog', $$props.slug)
       <h1>{entry.data.title}</h1>
       <span class="date">{entry.data.dateLabel}</span>
     </div>
-    <div class="log-card">
-      {new SafeHtml(entry.body)}
-    </div>
+    <div class="log-card">{new SafeHtml(entry.body)}</div>
     <p><a href="/changelog">← {ui.changelogPost.back}</a></p>
   </section>
 </Layout>

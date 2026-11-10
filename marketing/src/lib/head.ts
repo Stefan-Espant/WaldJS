@@ -39,14 +39,23 @@ export function jsonLdTag(data: unknown): string {
   return `<script type="application/ld+json">${json}</script>`
 }
 
-export function alternateLinksHtml(alternates: LocalePaths | undefined): string {
-  const entries = Object.entries(alternates ?? {}).filter(([, path]) => path) as [Locale, string][]
+export function alternateLinksHtml(
+  alternates: LocalePaths | undefined,
+): string {
+  const entries = Object.entries(alternates ?? {}).filter(
+    ([, path]) => path,
+  ) as [Locale, string][]
   if (entries.length < 2) return ''
   const links = entries
     .sort(([a], [b]) => a.localeCompare(b))
-    .map(([locale, path]) => `<link rel="alternate" hreflang="${locale}" href="${escapeHtml(SITE_URL + path)}">`)
+    .map(
+      ([locale, path]) =>
+        `<link rel="alternate" hreflang="${locale}" href="${escapeHtml(SITE_URL + path)}">`,
+    )
   const fallback = alternates?.nl ?? entries[0][1]
-  links.push(`<link rel="alternate" hreflang="x-default" href="${escapeHtml(SITE_URL + fallback)}">`)
+  links.push(
+    `<link rel="alternate" hreflang="x-default" href="${escapeHtml(SITE_URL + fallback)}">`,
+  )
   return links.join('\n')
 }
 
@@ -55,8 +64,12 @@ export function rssLinkHtml(path: string | undefined): string {
   return `<link rel="alternate" type="application/rss+xml" title="WaldJS Blog" href="${escapeHtml(path)}">`
 }
 
-export function langSwitchHtml(lang: Locale | undefined, links: LocalePaths | undefined): string {
-  const open = '<div class="lang-switch" role="group" aria-label="Taal / Language">'
+export function langSwitchHtml(
+  lang: Locale | undefined,
+  links: LocalePaths | undefined,
+): string {
+  const open =
+    '<div class="lang-switch" role="group" aria-label="Taal / Language">'
   if (!lang || !links) {
     return `${open}<button id="btn-nl" onclick="setLanguage('nl')">NL</button><button id="btn-en" class="active" onclick="setLanguage('en')">EN</button></div>`
   }

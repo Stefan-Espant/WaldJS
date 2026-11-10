@@ -2,5 +2,5 @@
 .qs-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
-  gap: var(--byz-space-6)
+  gap: var(--byz-space-6);
 }

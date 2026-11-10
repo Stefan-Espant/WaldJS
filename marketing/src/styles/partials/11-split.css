@@ -4,11 +4,11 @@
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   gap: var(--byz-space-12);
-  align-items: center
+  align-items: center;
 }
 
-.split>* {
-  grid-column: span 6
+.split > * {
+  grid-column: span 6;
 }
 
 .split .text h2 {
@@ -16,7 +16,7 @@
   font-weight: 800;
   margin-bottom: 0.875rem;
   text-transform: uppercase;
-  letter-spacing: .03em
+  letter-spacing: 0.03em;
 }
 
 .split .text h2 .tag {
@@ -27,20 +27,20 @@
   font-size: 1.2rem;
   letter-spacing: normal;
   text-transform: none;
-  margin-bottom: 0.5rem
+  margin-bottom: 0.5rem;
 }
 
 .split .text p {
   color: var(--wit-zacht);
-  margin-bottom: 0.75rem
+  margin-bottom: 0.75rem;
 }
 
-@media(max-width:51.25rem) {
+@media (max-width: 51.25rem) {
   .split {
-    grid-template-columns: minmax(0, 1fr)
+    grid-template-columns: minmax(0, 1fr);
   }
 
-  .split>* {
-    grid-column: auto
+  .split > * {
+    grid-column: auto;
   }
 }

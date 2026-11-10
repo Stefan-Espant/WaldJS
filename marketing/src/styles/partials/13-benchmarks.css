@@ -1,6 +1,6 @@
 /* ---------- benchmarks ---------- */
 .bench {
-  background: rgba(1, 48, 36, .72);
+  background: rgba(1, 48, 36, 0.72);
   backdrop-filter: blur(0.625rem);
   -webkit-backdrop-filter: blur(0.625rem);
   border: 0.0625rem solid var(--rand);
@@ -8,87 +8,87 @@
   padding: var(--byz-space-16) 6vw;
   max-width: 71.875rem;
   margin: 0 auto;
-  box-shadow: var(--byz-shadow-lg)
+  box-shadow: var(--byz-shadow-lg);
 }
 
 .bench-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(17.5rem, 1fr));
   gap: var(--byz-space-8);
-  margin-top: var(--byz-space-10)
+  margin-top: var(--byz-space-10);
 }
 
 .stat-group h3 {
   font-size: 1rem;
-  margin-bottom: 0.25rem
+  margin-bottom: 0.25rem;
 }
 
 .stat-group .metric {
   color: var(--wit-zacht);
-  font-size: .82rem;
+  font-size: 0.82rem;
   margin-bottom: 1rem;
-  display: block
+  display: block;
 }
 
 .stat {
-  margin-bottom: 0.875rem
+  margin-bottom: 0.875rem;
 }
 
 .stat .label {
   display: flex;
   justify-content: space-between;
-  font-size: .85rem;
-  margin-bottom: 0.3125rem
+  font-size: 0.85rem;
+  margin-bottom: 0.3125rem;
 }
 
 .stat .label b {
-  font-weight: 700
+  font-weight: 700;
 }
 
 .stat .label .value {
   font-family: var(--mono);
-  color: var(--wit-zacht)
+  color: var(--wit-zacht);
 }
 
 .bar {
   height: 0.75rem;
-  background: rgba(255, 255, 255, .08);
+  background: rgba(255, 255, 255, 0.08);
   border-radius: 999rem;
-  overflow: hidden
+  overflow: hidden;
 }
 
 .bar i {
   display: block;
   height: 100%;
   border-radius: 999rem;
-  background: rgba(255, 255, 255, .35)
+  background: rgba(255, 255, 255, 0.35);
 }
 
 .stat.wald .bar i {
-  background: var(--rood)
+  background: var(--rood);
 }
 
 .stat.wald .label b {
   /* lichtere rood-tint dan --rood: die haalt geen 4.5:1 contrast op deze
      donkere kaart-achtergrond */
-  color: #FF6676
+  color: #ff6676;
 }
 
-@media(prefers-contrast:more) {
+@media (prefers-contrast: more) {
   .stat.wald .label b {
-    color: var(--wit)
+    color: var(--wit);
   }
 }
 
 .bench .disclaimer {
   margin-top: 2rem;
-  font-size: .78rem;
-  color: rgba(255, 255, 255, .45);
-  text-align: center
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.45);
+  text-align: center;
 }
 
-@media(prefers-contrast:more) {
+@media (prefers-contrast: more) {
   .bench .disclaimer {
-    color: var(--wit-zacht)
+    color: var(--wit-zacht);
   }
 }

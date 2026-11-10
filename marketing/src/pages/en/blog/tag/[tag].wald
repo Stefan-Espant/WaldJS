@@ -5,7 +5,7 @@ import { collectTags, toPostMeta } from '../../../../lib/blog'
 
 export async function getStaticPaths() {
   const posts = (await getCollection('blog', { locale: 'en' })).map(toPostMeta)
-  return collectTags(posts).map(tag => ({ params: { tag } }))
+  return collectTags(posts).map((tag) => ({ params: { tag } }))
 }
 ---
 <BlogTagPage locale="en" tag={$$props.tag} />

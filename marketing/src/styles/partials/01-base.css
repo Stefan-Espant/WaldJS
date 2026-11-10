@@ -1,12 +1,12 @@
 * {
   margin: 0;
   padding: 0;
-  box-sizing: border-box
+  box-sizing: border-box;
 }
 
 html {
   scroll-behavior: smooth;
-  overflow-x: clip
+  overflow-x: clip;
 }
 
 body {
@@ -14,23 +14,23 @@ body {
   background-color: var(--groen);
   color: var(--wit);
   line-height: 1.6;
-  overflow-x: hidden
+  overflow-x: hidden;
 }
 
 ::selection {
   background: var(--rood);
-  color: var(--wit)
+  color: var(--wit);
 }
 
 p a:not(.btn) {
   color: var(--rood);
   text-decoration: underline;
-  text-underline-offset: 0.15em
+  text-underline-offset: 0.15em;
 }
 
 p a:not(.btn):hover,
 p a:not(.btn):focus-visible {
-  color: var(--wit)
+  color: var(--wit);
 }
 
 .skip-link {
@@ -44,11 +44,11 @@ p a:not(.btn):focus-visible {
   border-radius: 0.5rem;
   text-decoration: none;
   font-weight: 700;
-  transition: top .2s
+  transition: top 0.2s;
 }
 
 .skip-link:focus {
-  top: 1rem
+  top: 1rem;
 }
 
 h1,
@@ -57,16 +57,16 @@ h3,
 h4,
 header p.sub,
 .section-heading p {
-  text-wrap: balance
+  text-wrap: balance;
 }
 
-@media(prefers-reduced-motion:reduce) {
+@media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important
+    scroll-behavior: auto !important;
   }
 }

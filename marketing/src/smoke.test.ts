@@ -6,15 +6,21 @@ import { join } from 'node:path'
 const ROOT = join(__dirname, '..')
 
 function checkHeadingOrder(html: string, label: string): void {
-  const levels = [...html.matchAll(/<h([1-6])[ >]/g)].map(m => Number(m[1]))
+  const levels = [...html.matchAll(/<h([1-6])[ >]/g)].map((m) => Number(m[1]))
   for (let i = 1; i < levels.length; i++) {
-    expect(levels[i] - levels[i - 1], `${label}: heading jumps from h${levels[i - 1]} to h${levels[i]} (position ${i})`).toBeLessThanOrEqual(1)
+    expect(
+      levels[i] - levels[i - 1],
+      `${label}: heading jumps from h${levels[i - 1]} to h${levels[i]} (position ${i})`,
+    ).toBeLessThanOrEqual(1)
   }
 }
 
 describe('marketing site build', () => {
   beforeAll(() => {
-    execSync('node ../packages/cli/bin/wald.js build', { cwd: ROOT, stdio: 'pipe' })
+    execSync('node ../packages/cli/bin/wald.js build', {
+      cwd: ROOT,
+      stdio: 'pipe',
+    })
   }, 180_000)
 
   it('produceert dist/index.html', () => {
@@ -24,7 +30,21 @@ describe('marketing site build', () => {
   it('begint met een doctype en bevat de secties', () => {
     const html = readFileSync(join(ROOT, 'dist/index.html'), 'utf-8')
     expect(html.trimStart().startsWith('<!DOCTYPE html>')).toBe(true)
-    for (const id of ['quickstart', 'format', 'playground', 'metaphor', 'features', 'comparison', 'benchmarks', 'cli', 'structure', 'packages', 'roadmap', 'faq', 'changelog']) {
+    for (const id of [
+      'quickstart',
+      'format',
+      'playground',
+      'metaphor',
+      'features',
+      'comparison',
+      'benchmarks',
+      'cli',
+      'structure',
+      'packages',
+      'roadmap',
+      'faq',
+      'changelog',
+    ]) {
       expect(html).toContain(`id="${id}"`)
     }
   })
@@ -38,9 +58,12 @@ describe('marketing site build', () => {
 
   it('bevat geen inline script-blokken meer behalve CDN, asset- en bekende bootstrap-scripts', () => {
     const html = readFileSync(join(ROOT, 'dist/index.html'), 'utf-8')
-    const inlineScripts = html.match(/<script(?![^>]*src=)[^>]*>[\s\S]*?<\/script>/g) ?? []
+    const inlineScripts =
+      html.match(/<script(?![^>]*src=)[^>]*>[\s\S]*?<\/script>/g) ?? []
     const isSanctioned = (script: string) =>
-      script.includes('data-wald-no-hoist') || script.includes('dataLayer') || /^<script[^>]*\btype="application\/ld\+json"/.test(script)
+      script.includes('data-wald-no-hoist') ||
+      script.includes('dataLayer') ||
+      /^<script[^>]*\btype="application\/ld\+json"/.test(script)
     const unsanctioned = inlineScripts.filter((script) => !isSanctioned(script))
     expect(unsanctioned).toEqual([])
   })
@@ -59,7 +82,9 @@ describe('marketing site build', () => {
     expect(html).toContain('property="og:image"')
     expect(html).toContain('name="twitter:image"')
 
-    const match = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)
+    const match = html.match(
+      /<script type="application\/ld\+json">([\s\S]*?)<\/script>/,
+    )
     expect(match).not.toBeNull()
     const data = JSON.parse(match![1])
     expect(data['@type']).toBe('SoftwareApplication')
@@ -84,7 +109,11 @@ describe('marketing site build', () => {
       '/assets/js/forest.js',
       '/assets/js/animations.js',
     ]) {
-      const match = html.match(new RegExp(`<script[^>]*src="[^"]*${src.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"[^>]*>`))
+      const match = html.match(
+        new RegExp(
+          `<script[^>]*src="[^"]*${src.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"[^>]*>`,
+        ),
+      )
       expect(match, `script tag for ${src} not found`).not.toBeNull()
       expect(match![0], `${src} should have defer`).toContain('defer')
     }
@@ -94,11 +123,26 @@ describe('marketing site build', () => {
     expect(inlineLangScript![0]).not.toContain('defer')
   })
 
-  it('genereert changelog-overzicht en 8 losse changelog-detailpagina\'s', () => {
+  it("genereert changelog-overzicht en 8 losse changelog-detailpagina's", () => {
     expect(existsSync(join(ROOT, 'dist/changelog/index.html'))).toBe(true)
-    const overzicht = readFileSync(join(ROOT, 'dist/changelog/index.html'), 'utf-8')
-    for (const slug of ['roots', 'seed', 'sapling', 'branches', 'forest-vite-pipeline', 'canopy', 'forest-polish', 'forest-deployment-adapters']) {
-      expect(existsSync(join(ROOT, `dist/changelog/${slug}/index.html`)), `missing dist/changelog/${slug}/index.html`).toBe(true)
+    const overzicht = readFileSync(
+      join(ROOT, 'dist/changelog/index.html'),
+      'utf-8',
+    )
+    for (const slug of [
+      'roots',
+      'seed',
+      'sapling',
+      'branches',
+      'forest-vite-pipeline',
+      'canopy',
+      'forest-polish',
+      'forest-deployment-adapters',
+    ]) {
+      expect(
+        existsSync(join(ROOT, `dist/changelog/${slug}/index.html`)),
+        `missing dist/changelog/${slug}/index.html`,
+      ).toBe(true)
       expect(overzicht).toContain(`/changelog/${slug}`)
     }
 
@@ -115,12 +159,15 @@ describe('marketing site build', () => {
   })
 
   it('rendert changelog-body als echte HTML, niet ge-escaped', () => {
-    const detail = readFileSync(join(ROOT, 'dist/changelog/canopy/index.html'), 'utf-8')
+    const detail = readFileSync(
+      join(ROOT, 'dist/changelog/canopy/index.html'),
+      'utf-8',
+    )
     expect(detail).toContain('<span class="nl">')
     expect(detail).not.toContain('&lt;span')
   })
 
-  it('produceert vergelijkingspagina\'s met eigen titel en canonical', () => {
+  it("produceert vergelijkingspagina's met eigen titel en canonical", () => {
     for (const [slug, title] of [
       ['astro', 'WaldJS vs Astro'],
       ['eleventy', 'WaldJS vs Eleventy'],
@@ -129,7 +176,9 @@ describe('marketing site build', () => {
       expect(existsSync(path), `missing dist/vs/${slug}/index.html`).toBe(true)
       const html = readFileSync(path, 'utf-8')
       expect(html).toContain(`<title>${title}`)
-      expect(html).toContain(`<link rel="canonical" href="https://waldjs.eu/vs/${slug}">`)
+      expect(html).toContain(
+        `<link rel="canonical" href="https://waldjs.eu/vs/${slug}">`,
+      )
     }
 
     const sitemap = readFileSync(join(ROOT, 'dist/sitemap.xml'), 'utf-8')
@@ -137,8 +186,11 @@ describe('marketing site build', () => {
     expect(sitemap).toContain('<loc>https://waldjs.eu/vs/eleventy</loc>')
   })
 
-  it('gebruikt absolute homepage-anchors in nav/footer zodat ze ook werken op andere pagina\'s', () => {
-    const changelog = readFileSync(join(ROOT, 'dist/changelog/index.html'), 'utf-8')
+  it("gebruikt absolute homepage-anchors in nav/footer zodat ze ook werken op andere pagina's", () => {
+    const changelog = readFileSync(
+      join(ROOT, 'dist/changelog/index.html'),
+      'utf-8',
+    )
     expect(changelog).toContain('href="/#quickstart"')
     expect(changelog).not.toContain('href="#quickstart"')
   })
@@ -147,7 +199,9 @@ describe('marketing site build', () => {
     const path = join(ROOT, 'dist/waarom/index.html')
     expect(existsSync(path)).toBe(true)
     const html = readFileSync(path, 'utf-8')
-    expect(html).toContain('<link rel="canonical" href="https://waldjs.eu/waarom">')
+    expect(html).toContain(
+      '<link rel="canonical" href="https://waldjs.eu/waarom">',
+    )
     expect(html.toLowerCase()).not.toContain('astro')
     expect(html.toLowerCase()).not.toContain('eleventy')
 
@@ -159,7 +213,9 @@ describe('marketing site build', () => {
     const path = join(ROOT, 'dist/voorwaarden/index.html')
     expect(existsSync(path)).toBe(true)
     const html = readFileSync(path, 'utf-8')
-    expect(html).toContain('<link rel="canonical" href="https://waldjs.eu/voorwaarden">')
+    expect(html).toContain(
+      '<link rel="canonical" href="https://waldjs.eu/voorwaarden">',
+    )
     expect(html).toContain('opzet of bewuste roekeloosheid')
     expect(html).not.toContain('href="/voorwaarden"')
 
@@ -171,10 +227,18 @@ describe('marketing site build', () => {
   })
 
   it('noemt WaldJS als generator, met de CLI-versie', () => {
-    const cliVersion = JSON.parse(readFileSync(join(ROOT, '../packages/cli/package.json'), 'utf-8')).version
-    for (const page of ['dist/index.html', 'dist/waarom/index.html', 'dist/blog/index.html']) {
+    const cliVersion = JSON.parse(
+      readFileSync(join(ROOT, '../packages/cli/package.json'), 'utf-8'),
+    ).version
+    for (const page of [
+      'dist/index.html',
+      'dist/waarom/index.html',
+      'dist/blog/index.html',
+    ]) {
       const html = readFileSync(join(ROOT, page), 'utf-8')
-      expect(html, page).toContain(`<meta name="generator" content="WaldJS v${cliVersion}">`)
+      expect(html, page).toContain(
+        `<meta name="generator" content="WaldJS v${cliVersion}">`,
+      )
     }
   })
 
@@ -194,22 +258,41 @@ describe('marketing site build', () => {
     expect(vercel.cleanUrls).toBe(true)
     expect(vercel.trailingSlash).toBe(false)
 
-    const canonicals = readFileSync(join(ROOT, 'dist/waarom/index.html'), 'utf-8').match(/<link rel="canonical" href="([^"]+)">/)
+    const canonicals = readFileSync(
+      join(ROOT, 'dist/waarom/index.html'),
+      'utf-8',
+    ).match(/<link rel="canonical" href="([^"]+)">/)
     expect(canonicals?.[1]).toBe('https://waldjs.eu/waarom')
   })
 
-  it('geeft zoekmachines Engelse titels en beschrijvingen op de tweetalige pagina\'s', () => {
-    for (const page of ['dist/index.html', 'dist/waarom/index.html', 'dist/vs/astro/index.html', 'dist/vs/eleventy/index.html', 'dist/changelog/index.html', 'dist/voorwaarden/index.html']) {
+  it("geeft zoekmachines Engelse titels en beschrijvingen op de tweetalige pagina's", () => {
+    for (const page of [
+      'dist/index.html',
+      'dist/waarom/index.html',
+      'dist/vs/astro/index.html',
+      'dist/vs/eleventy/index.html',
+      'dist/changelog/index.html',
+      'dist/voorwaarden/index.html',
+    ]) {
       const html = readFileSync(join(ROOT, page), 'utf-8')
       expect(html, page).toContain('<html lang="en"')
       const title = html.match(/<title>([^<]*)<\/title>/)?.[1] ?? ''
-      const description = html.match(/<meta name="description" content="([^"]*)"/)?.[1] ?? ''
-      expect(title, page).not.toMatch(/\b(je|jouw|het|een|voor|welke|Waarom|voorwaarden)\b/)
-      expect(description, page).not.toMatch(/\b(je|jouw|het|een|voor|welke|wanneer)\b/)
+      const description =
+        html.match(/<meta name="description" content="([^"]*)"/)?.[1] ?? ''
+      expect(title, page).not.toMatch(
+        /\b(je|jouw|het|een|voor|welke|Waarom|voorwaarden)\b/,
+      )
+      expect(description, page).not.toMatch(
+        /\b(je|jouw|het|een|voor|welke|wanneer)\b/,
+      )
     }
-    expect(readFileSync(join(ROOT, 'dist/index.html'), 'utf-8')).toMatch(/<title>[^<]*static site/i)
+    expect(readFileSync(join(ROOT, 'dist/index.html'), 'utf-8')).toMatch(
+      /<title>[^<]*static site/i,
+    )
     // De NL-blog houdt zijn vaste Nederlandse taal
-    expect(readFileSync(join(ROOT, 'dist/blog/index.html'), 'utf-8')).toContain('<html lang="nl" data-lang="nl" data-lang-fixed="nl">')
+    expect(readFileSync(join(ROOT, 'dist/blog/index.html'), 'utf-8')).toContain(
+      '<html lang="nl" data-lang="nl" data-lang-fixed="nl">',
+    )
   })
 
   it('bevat een prefers-reduced-motion regel die transitions/animaties uitzet', () => {
@@ -228,8 +311,17 @@ describe('marketing site build', () => {
 
   it('boost ook de losse, niet-getokeniseerde gedempte teksten onder prefers-contrast:more', () => {
     const css = readFileSync(join(ROOT, 'dist/assets/css/site.css'), 'utf-8')
-    for (const selector of ['.log-header .date', '.footer-bottom', '.c-c', '.compare .no', '.bench .disclaimer']) {
-      expect(css, `${selector} mist een prefers-contrast:more override`).toContain(`${selector}{color:var(--wit-zacht)}`)
+    for (const selector of [
+      '.log-header .date',
+      '.footer-bottom',
+      '.c-c',
+      '.compare .no',
+      '.bench .disclaimer',
+    ]) {
+      expect(
+        css,
+        `${selector} mist een prefers-contrast:more override`,
+      ).toContain(`${selector}{color:var(--wit-zacht)}`)
     }
   })
 
@@ -253,30 +345,48 @@ describe('marketing site build', () => {
   })
 
   it('gebruikt h2 voor changelog-kaarttitels en footer-kolomtitels, geen h3/h4', () => {
-    const changelog = readFileSync(join(ROOT, 'dist/changelog/index.html'), 'utf-8')
+    const changelog = readFileSync(
+      join(ROOT, 'dist/changelog/index.html'),
+      'utf-8',
+    )
     expect(changelog).toContain('<h2><a href="/changelog/roots">')
     expect(changelog).not.toContain('<h3><a href="/changelog/')
 
     const html = readFileSync(join(ROOT, 'dist/index.html'), 'utf-8')
-    expect((html.match(/class="footer-grid"[\s\S]*?<h2>/g) ?? []).length).toBeGreaterThan(0)
+    expect(
+      (html.match(/class="footer-grid"[\s\S]*?<h2>/g) ?? []).length,
+    ).toBeGreaterThan(0)
   })
 
   it('heeft precies een <main id="main"> landmark en een skip-link ernaartoe', () => {
     for (const page of ['dist/index.html', 'dist/waarom/index.html']) {
       const html = readFileSync(join(ROOT, page), 'utf-8')
-      expect((html.match(/<main id="main"[^>]*>/g) ?? []).length, `${page} main count`).toBe(1)
+      expect(
+        (html.match(/<main id="main"[^>]*>/g) ?? []).length,
+        `${page} main count`,
+      ).toBe(1)
       expect(html).toContain('<main id="main" tabindex="-1">')
       expect(html).toContain('<a class="skip-link" href="#main">')
     }
   })
 
   it('zet aria-current="page" alleen op de nav-link van de huidige pagina, in desktop en mobiel menu', () => {
-    const changelog = readFileSync(join(ROOT, 'dist/changelog/index.html'), 'utf-8')
-    expect((changelog.match(/href="\/changelog"[^>]*aria-current="page"/g) ?? []).length, 'changelog links met aria-current=page').toBe(2)
+    const changelog = readFileSync(
+      join(ROOT, 'dist/changelog/index.html'),
+      'utf-8',
+    )
+    expect(
+      (changelog.match(/href="\/changelog"[^>]*aria-current="page"/g) ?? [])
+        .length,
+      'changelog links met aria-current=page',
+    ).toBe(2)
     expect(changelog).not.toMatch(/href="\/waarom"[^>]*aria-current="page"/)
 
     const waarom = readFileSync(join(ROOT, 'dist/waarom/index.html'), 'utf-8')
-    expect((waarom.match(/href="\/waarom"[^>]*aria-current="page"/g) ?? []).length, 'waarom links met aria-current=page').toBe(2)
+    expect(
+      (waarom.match(/href="\/waarom"[^>]*aria-current="page"/g) ?? []).length,
+      'waarom links met aria-current=page',
+    ).toBe(2)
     expect(waarom).not.toMatch(/href="\/changelog"[^>]*aria-current="page"/)
 
     const home = readFileSync(join(ROOT, 'dist/index.html'), 'utf-8')
@@ -305,7 +415,8 @@ describe('marketing site build', () => {
 
   it('sluit ook het mobiele menu als je op de GitHub-link erin klikt', () => {
     const html = readFileSync(join(ROOT, 'dist/index.html'), 'utf-8')
-    const mobileMenu = html.match(/<div id="mobile-menu"[\s\S]*?<\/div>/)?.[0] ?? ''
+    const mobileMenu =
+      html.match(/<div id="mobile-menu"[\s\S]*?<\/div>/)?.[0] ?? ''
     const githubLink = mobileMenu.match(/<a[^>]*github\.com[^>]*>/i)?.[0] ?? ''
     expect(githubLink, mobileMenu).toContain('onclick="toggleMenu(false)"')
   })
@@ -318,12 +429,17 @@ describe('marketing site build', () => {
     expect(h1).toContain('<span class="en">')
   })
 
-  it('houdt de taal-bootstrap op pagina\'s zonder vaste taal en linkt naar de blog', () => {
+  it("houdt de taal-bootstrap op pagina's zonder vaste taal en linkt naar de blog", () => {
     const html = readFileSync(join(ROOT, 'dist/index.html'), 'utf-8')
     expect(html).toContain('<html lang="en" data-lang="en" data-lang-fixed="">')
     expect(html).toContain(`localStorage.getItem('wald-taal')`)
-    expect(html).toContain(`<button id="btn-en" class="active" onclick="setLanguage('en')">EN</button>`)
-    expect((html.match(/<a href="\/blog"/g) ?? []).length, 'blog links in desktop + mobile nav').toBe(2)
+    expect(html).toContain(
+      `<button id="btn-en" class="active" onclick="setLanguage('en')">EN</button>`,
+    )
+    expect(
+      (html.match(/<a href="\/blog"/g) ?? []).length,
+      'blog links in desktop + mobile nav',
+    ).toBe(2)
   })
 
   it('genereert de blog in NL en EN: index, post en tagpagina', () => {
@@ -343,30 +459,56 @@ describe('marketing site build', () => {
     expect(enIndex).toContain('<h2><a href="/en/blog/content-locales">')
   })
 
-  it('zet de taal vast in de HTML van blogpagina\'s, zonder taal-bootstrap', () => {
-    const en = readFileSync(join(ROOT, 'dist/en/blog/content-locales/index.html'), 'utf-8')
+  it("zet de taal vast in de HTML van blogpagina's, zonder taal-bootstrap", () => {
+    const en = readFileSync(
+      join(ROOT, 'dist/en/blog/content-locales/index.html'),
+      'utf-8',
+    )
     expect(en).toContain('<html lang="en" data-lang="en" data-lang-fixed="en">')
     expect(en).not.toContain(`localStorage.getItem('wald-taal')`)
-    const nl = readFileSync(join(ROOT, 'dist/blog/content-locales/index.html'), 'utf-8')
+    const nl = readFileSync(
+      join(ROOT, 'dist/blog/content-locales/index.html'),
+      'utf-8',
+    )
     expect(nl).toContain('<html lang="nl" data-lang="nl" data-lang-fixed="nl">')
   })
 
   it('koppelt NL- en EN-versies via hreflang en de taalschakelaar', () => {
-    const nl = readFileSync(join(ROOT, 'dist/blog/content-locales/index.html'), 'utf-8')
-    expect(nl).toContain('<link rel="alternate" hreflang="en" href="https://waldjs.eu/en/blog/content-locales">')
-    expect(nl).toContain('<link rel="alternate" hreflang="x-default" href="https://waldjs.eu/blog/content-locales">')
-    expect(nl).toContain('<a id="btn-en" href="/en/blog/content-locales" hreflang="en"')
-    expect(nl).toContain('<link rel="alternate" type="application/rss+xml" title="WaldJS Blog" href="/blog/rss.xml">')
+    const nl = readFileSync(
+      join(ROOT, 'dist/blog/content-locales/index.html'),
+      'utf-8',
+    )
+    expect(nl).toContain(
+      '<link rel="alternate" hreflang="en" href="https://waldjs.eu/en/blog/content-locales">',
+    )
+    expect(nl).toContain(
+      '<link rel="alternate" hreflang="x-default" href="https://waldjs.eu/blog/content-locales">',
+    )
+    expect(nl).toContain(
+      '<a id="btn-en" href="/en/blog/content-locales" hreflang="en"',
+    )
+    expect(nl).toContain(
+      '<link rel="alternate" type="application/rss+xml" title="WaldJS Blog" href="/blog/rss.xml">',
+    )
   })
 
   it('geeft een blogpost een cover, og:image en BlogPosting JSON-LD', () => {
-    const en = readFileSync(join(ROOT, 'dist/en/blog/content-locales/index.html'), 'utf-8')
+    const en = readFileSync(
+      join(ROOT, 'dist/en/blog/content-locales/index.html'),
+      'utf-8',
+    )
     expect(en).toContain('<meta property="og:type" content="article">')
-    expect(en).toContain('content="https://waldjs.eu/assets/blog/content-locales.jpg"')
+    expect(en).toContain(
+      'content="https://waldjs.eu/assets/blog/content-locales.jpg"',
+    )
     expect(en).toMatch(/<img[^>]*srcset="[^"]*\.webp/)
-    const ld = en.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)
+    const ld = en.match(
+      /<script type="application\/ld\+json">([\s\S]*?)<\/script>/,
+    )
     expect(JSON.parse(ld![1])['@type']).toBe('BlogPosting')
-    expect(existsSync(join(ROOT, 'dist/assets/blog/content-locales.jpg'))).toBe(true)
+    expect(existsSync(join(ROOT, 'dist/assets/blog/content-locales.jpg'))).toBe(
+      true,
+    )
   })
 
   it('stijlt de taalschakelaar voor knoppen en links (minifier breekt `.x :is()`)', () => {
@@ -377,6 +519,8 @@ describe('marketing site build', () => {
 
   it('zet aria-current op de Blog-link van de blog-index', () => {
     const html = readFileSync(join(ROOT, 'dist/en/blog/index.html'), 'utf-8')
-    expect((html.match(/href="\/en\/blog"[^>]*aria-current="page"/g) ?? []).length).toBe(2)
+    expect(
+      (html.match(/href="\/en\/blog"[^>]*aria-current="page"/g) ?? []).length,
+    ).toBe(2)
   })
 })

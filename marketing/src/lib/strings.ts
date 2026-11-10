@@ -267,7 +267,7 @@ export const STRINGS = {
       en: 'The compiler that transforms <code style="font-family:var(--mono)">.wald</code> files.',
     },
     trees: {
-      nl: "Pagina's — <code style=\"font-family:var(--mono)\">.wald</code>-bestanden in <code style=\"font-family:var(--mono)\">src/pages/</code>.",
+      nl: 'Pagina\'s — <code style="font-family:var(--mono)">.wald</code>-bestanden in <code style="font-family:var(--mono)">src/pages/</code>.',
       en: 'Pages — <code style="font-family:var(--mono)">.wald</code> files in <code style="font-family:var(--mono)">src/pages/</code>.',
     },
     branches: {
@@ -535,7 +535,7 @@ export const STRINGS = {
       en: 'One format, nothing else to install',
     },
     formatBody: {
-      nl: "Een <code style=\"font-family:var(--mono);font-size:.85em\">.wald</code>-bestand is frontmatter en template in één geheel. De formatter (<code style=\"font-family:var(--mono);font-size:.85em\">wald format</code>) en leesbare foutpagina's in de dev-server zitten er al in — geen Prettier-config, geen losse plugin te zoeken.",
+      nl: 'Een <code style="font-family:var(--mono);font-size:.85em">.wald</code>-bestand is frontmatter en template in één geheel. De formatter (<code style="font-family:var(--mono);font-size:.85em">wald format</code>) en leesbare foutpagina\'s in de dev-server zitten er al in — geen Prettier-config, geen losse plugin te zoeken.',
       en: 'A <code style="font-family:var(--mono);font-size:.85em">.wald</code> file is frontmatter and template as one whole. The formatter (<code style="font-family:var(--mono);font-size:.85em">wald format</code>) and readable dev-server error pages are already built in — no Prettier config, no separate plugin to hunt down.',
     },
     namesTitle: {
@@ -543,7 +543,7 @@ export const STRINGS = {
       en: 'Names that mean something',
     },
     namesBody: {
-      nl: "Roots is de compiler, trees zijn je pagina's, branches je componenten, canopies de interactieve laag. Zodra je het bos-verhaal snapt, kun je <code style=\"font-family:var(--mono);font-size:.85em\">wald grow</code> raden zonder de docs te openen.",
+      nl: 'Roots is de compiler, trees zijn je pagina\'s, branches je componenten, canopies de interactieve laag. Zodra je het bos-verhaal snapt, kun je <code style="font-family:var(--mono);font-size:.85em">wald grow</code> raden zonder de docs te openen.',
       en: 'Roots is the compiler, trees are your pages, branches your components, canopies the interactive layer. Once you get the forest story, you can guess what <code style="font-family:var(--mono);font-size:.85em">wald grow</code> does without opening the docs.',
     },
     cta: {
@@ -655,6 +655,11 @@ type Strings = typeof STRINGS
 export const ui = Object.fromEntries(
   Object.entries(STRINGS).map(([group, entries]) => [
     group,
-    Object.fromEntries(Object.entries(entries).map(([key, pair]) => [key, new SafeHtml(bilingualHtml(pair))])),
+    Object.fromEntries(
+      Object.entries(entries).map(([key, pair]) => [
+        key,
+        new SafeHtml(bilingualHtml(pair)),
+      ]),
+    ),
   ]),
 ) as { [G in keyof Strings]: { [K in keyof Strings[G]]: SafeHtml } }

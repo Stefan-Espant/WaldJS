@@ -3,7 +3,11 @@ import Layout from '../../layouts/Layout.wald'
 import { getCollection } from 'wald:content'
 import { ui } from '../../lib/strings'
 const entries = await getCollection('changelog')
-const sorted = entries.slice().sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())
+const sorted = entries
+  .slice()
+  .sort(
+    (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime(),
+  )
 ---
 <Layout
   title="Changelog — WaldJS"

@@ -7,16 +7,60 @@ import { ui } from '../lib/strings'
     <h2>{ui.comparison.title}</h2>
   </div>
   <table class="compare">
-    <tr><th scope="col">Feature</th><th scope="col">WaldJS</th><th scope="col">Astro</th><th scope="col">Eleventy</th></tr>
-    <tr><td>{ui.comparison.singleFile}</td><td class="yes">✓ .wald</td><td class="yes">✓ .astro</td><td class="no">—</td></tr>
-    <tr><td>File-based routing</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
-    <tr><td>Content collections</td><td class="yes">✓</td><td class="yes">✓</td><td class="partial">{ui.comparison.partly}</td></tr>
-    <tr><td>{ui.comparison.zeroJs}</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
-    <tr><td>getStaticPaths()</td><td class="yes">✓</td><td class="yes">✓</td><td class="partial">pagination</td></tr>
-    <tr><td>{ui.comparison.vite}</td><td class="yes">✓</td><td class="yes">✓</td><td class="no">—</td></tr>
-    <tr><td>Partial hydration</td><td class="yes">✓ {ui.comparison.canopies}</td><td class="yes">✓</td><td class="no">—</td></tr>
-    <tr><td>{ui.comparison.terminology}</td><td class="yes">🌲</td><td class="no">—</td><td class="no">—</td></tr>
+    <tr>
+      <th scope="col">Feature</th>
+      <th scope="col">WaldJS</th>
+      <th scope="col">Astro</th>
+      <th scope="col">Eleventy</th>
+    </tr>
+    <tr>
+      <td>{ui.comparison.singleFile}</td>
+      <td class="yes">✓ .wald</td>
+      <td class="yes">✓ .astro</td>
+      <td class="no">—</td>
+    </tr>
+    <tr>
+      <td>File-based routing</td>
+      <td class="yes">✓</td>
+      <td class="yes">✓</td>
+      <td class="yes">✓</td>
+    </tr>
+    <tr>
+      <td>Content collections</td>
+      <td class="yes">✓</td>
+      <td class="yes">✓</td>
+      <td class="partial">{ui.comparison.partly}</td>
+    </tr>
+    <tr>
+      <td>{ui.comparison.zeroJs}</td>
+      <td class="yes">✓</td>
+      <td class="yes">✓</td>
+      <td class="yes">✓</td>
+    </tr>
+    <tr>
+      <td>getStaticPaths()</td>
+      <td class="yes">✓</td>
+      <td class="yes">✓</td>
+      <td class="partial">pagination</td>
+    </tr>
+    <tr>
+      <td>{ui.comparison.vite}</td>
+      <td class="yes">✓</td>
+      <td class="yes">✓</td>
+      <td class="no">—</td>
+    </tr>
+    <tr>
+      <td>Partial hydration</td>
+      <td class="yes">✓ {ui.comparison.canopies}</td>
+      <td class="yes">✓</td>
+      <td class="no">—</td>
+    </tr>
+    <tr>
+      <td>{ui.comparison.terminology}</td>
+      <td class="yes">🌲</td>
+      <td class="no">—</td>
+      <td class="no">—</td>
+    </tr>
   </table>
 </section>
-
 <!-- BENCHMARKS -->

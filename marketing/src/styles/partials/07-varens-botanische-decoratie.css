@@ -3,25 +3,25 @@ svg.fern {
   position: absolute;
   width: 13.125rem;
   height: 18.75rem;
-  opacity: .15;
+  opacity: 0.15;
   pointer-events: none;
   z-index: 1;
-  overflow: visible
+  overflow: visible;
 }
 
 svg.fern.left {
   left: 1.5vw;
-  bottom: -0.625rem
+  bottom: -0.625rem;
 }
 
 svg.fern.right {
   right: 1.5vw;
   bottom: -0.625rem;
-  transform: scaleX(-1)
+  transform: scaleX(-1);
 }
 
-@media(max-width:56.25rem) {
+@media (max-width: 56.25rem) {
   svg.fern {
-    display: none
+    display: none;
   }
 }

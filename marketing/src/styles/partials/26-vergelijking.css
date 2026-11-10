@@ -1,26 +1,26 @@
 /* ---------- vergelijking ---------- */
-.compare td:nth-child(n+2),
-.compare th:nth-child(n+2) {
-  text-align: center
+.compare td:nth-child(n + 2),
+.compare th:nth-child(n + 2) {
+  text-align: center;
 }
 
 .compare .yes {
-  color: #7FD8BE;
-  font-weight: 800
+  color: #7fd8be;
+  font-weight: 800;
 }
 
 .compare .no {
-  color: rgba(255, 255, 255, .35)
+  color: rgba(255, 255, 255, 0.35);
 }
 
-@media(prefers-contrast:more) {
+@media (prefers-contrast: more) {
   .compare .no {
-    color: var(--wit-zacht)
+    color: var(--wit-zacht);
   }
 }
 
 .compare .partial {
   color: var(--rood);
   font-weight: 700;
-  font-size: .8rem
+  font-size: 0.8rem;
 }
