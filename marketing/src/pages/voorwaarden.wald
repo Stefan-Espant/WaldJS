@@ -2,7 +2,11 @@
 import Layout from '../layouts/Layout.wald'
 import { ui } from '../lib/strings'
 ---
-<Layout title="Terms & disclaimer — WaldJS" description="Terms of use for waldjs.eu and the WaldJS software: provided as is under the MIT license, with no liability for the actions of others." canonicalPath="/voorwaarden">
+<Layout
+  title="Terms & disclaimer — WaldJS"
+  description="Terms of use for waldjs.eu and the WaldJS software: provided as is under the MIT license, with no liability for the actions of others."
+  canonicalPath="/voorwaarden"
+>
   <section id="terms-intro" class="page-intro legal-intro">
     <div class="section-heading">
       <span class="tag">{ui.terms.tag}</span>

@@ -14,35 +14,30 @@ import { ui } from '../lib/strings'
       <p>{ui.why.intro}</p>
     </div>
   </section>
-
   <section id="why-speed">
     <div class="section-heading">
       <h2>{ui.why.buildTitle}</h2>
       <p>{ui.why.buildBody}</p>
     </div>
   </section>
-
   <section id="why-lockin">
     <div class="section-heading">
       <h2>{ui.why.frameworkTitle}</h2>
       <p>{ui.why.frameworkBody}</p>
     </div>
   </section>
-
   <section id="why-format">
     <div class="section-heading">
       <h2>{ui.why.formatTitle}</h2>
       <p>{ui.why.formatBody}</p>
     </div>
   </section>
-
   <section id="why-names">
     <div class="section-heading">
       <h2>{ui.why.namesTitle}</h2>
       <p>{ui.why.namesBody}</p>
     </div>
   </section>
-
   <section id="why-cta">
     <p style="margin-top:1.5rem">
       <a class="btn" href="/#quickstart">{ui.why.cta}</a>

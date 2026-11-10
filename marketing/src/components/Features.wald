@@ -6,25 +6,41 @@ import { ui } from '../lib/strings'
     <span class="tag">Features</span>
     <h2>{ui.features.title}</h2>
   </div>
-
   <div class="split" style="margin-bottom:70px">
     <div class="text">
-      <h2><span class="tag">{ui.features.pagesTag}</span>
-        {ui.features.pagesTitle}</h2>
+      <h2>
+        <span class="tag">{ui.features.pagesTag}</span> {ui.features.pagesTitle}
+      </h2>
       <p>{ui.features.pagesBody}</p>
     </div>
     <table>
-      <tr><th scope="col">{ui.features.contentTag}</th><th scope="col">Route</th></tr>
-      <tr><td><code>src/pages/index.wald</code></td><td><code>/</code></td></tr>
-      <tr><td><code>src/pages/about.wald</code></td><td><code>/about</code></td></tr>
-      <tr><td><code>src/pages/blog/index.wald</code></td><td><code>/blog</code></td></tr>
-      <tr><td><code>src/pages/blog/[slug].wald</code></td><td><code>/blog/:slug</code></td></tr>
+      <tr>
+        <th scope="col">{ui.features.contentTag}</th>
+        <th scope="col">Route</th>
+      </tr>
+      <tr>
+        <td><code>src/pages/index.wald</code></td>
+        <td><code>/</code></td>
+      </tr>
+      <tr>
+        <td><code>src/pages/about.wald</code></td>
+        <td><code>/about</code></td>
+      </tr>
+      <tr>
+        <td><code>src/pages/blog/index.wald</code></td>
+        <td><code>/blog</code></td>
+      </tr>
+      <tr>
+        <td><code>src/pages/blog/[slug].wald</code></td>
+        <td><code>/blog/:slug</code></td>
+      </tr>
     </table>
   </div>
-
   <div class="split" style="margin-bottom:70px">
     <div class="code-block">
-      <div class="title"><span class="dot"></span>src/pages/blog/index.wald</div>
+      <div class="title">
+        <span class="dot"></span>src/pages/blog/index.wald
+      </div>
       <pre><span class="c-c">---</span>
 <span class="c-k">import</span> &#123; getCollection &#125; <span class="c-k">from</span> <span class="c-s">'wald:content'</span>
 <span class="c-k">const</span> posts = <span class="c-k">await</span> getCollection(<span class="c-s">'blog'</span>)
@@ -34,20 +50,24 @@ import { ui } from '../lib/strings'
 <span class="c-t">&lt;/ul&gt;</span></pre>
     </div>
     <div class="text">
-      <h2><span class="tag">Content collections</span>
-        {ui.features.contentTitle}</h2>
+      <h2>
+        <span class="tag">Content collections</span> {ui.features.contentTitle}
+      </h2>
       <p>{ui.features.contentBody}</p>
     </div>
   </div>
-
   <div class="split">
     <div class="text">
-      <h2><span class="tag">{ui.features.dynamicTag}</span>
-        {ui.features.dynamicTitle}</h2>
+      <h2>
+        <span class="tag">{ui.features.dynamicTag}</span>
+        {ui.features.dynamicTitle}
+      </h2>
       <p>{ui.features.dynamicBody}</p>
     </div>
     <div class="code-block">
-      <div class="title"><span class="dot"></span>src/pages/blog/[slug].wald</div>
+      <div class="title">
+        <span class="dot"></span>src/pages/blog/[slug].wald
+      </div>
       <pre><span class="c-c">---</span>
 <span class="c-k">import</span> &#123; getCollection, getEntry &#125; <span class="c-k">from</span> <span class="c-s">'wald:content'</span>
 
@@ -63,5 +83,4 @@ import { ui } from '../lib/strings'
     </div>
   </div>
 </section>
-
 <!-- VERGELIJKING -->

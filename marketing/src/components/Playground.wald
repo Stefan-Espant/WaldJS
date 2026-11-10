@@ -15,5 +15,4 @@ import { ui } from '../lib/strings'
     <div class="pg-preview" id="pg-preview" aria-live="polite"></div>
   </div>
 </section>
-
 <!-- BOS METAFOOR -->

@@ -4,9 +4,7 @@ import { ui } from '../lib/strings'
 <section id="format">
   <div class="split">
     <div class="text">
-      <h2><span class="tag">{ui.format.tag}</span>
-        {ui.format.title}
-      </h2>
+      <h2><span class="tag">{ui.format.tag}</span> {ui.format.title}</h2>
       <p>{ui.format.frontmatter}</p>
       <p>{ui.format.escaping}</p>
     </div>
@@ -20,5 +18,4 @@ import { ui } from '../lib/strings'
     </div>
   </div>
 </section>
-
 <!-- PLAYGROUND -->

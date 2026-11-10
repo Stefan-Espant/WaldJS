@@ -3,19 +3,34 @@ import Layout from '../layouts/Layout.wald'
 import { Image } from 'wald:image'
 import { getEntry, getTranslations } from 'wald:content'
 import { SITE_URL } from '../lib/head'
-import { toPostMeta, blogPath, otherLocale, postMetaHtml, rssPath, t, blogPostingJsonLd } from '../lib/blog'
+import {
+  toPostMeta,
+  blogPath,
+  otherLocale,
+  postMetaHtml,
+  rssPath,
+  t,
+  blogPostingJsonLd,
+} from '../lib/blog'
 const { locale, slug } = $$props
 const entry = await getEntry('blog', slug, { locale })
 const post = toPostMeta(entry)
 const translations = await getTranslations('blog', slug)
 const other = otherLocale(locale)
-const alternates = Object.fromEntries(Object.keys(translations).map(l => [l, blogPath(l, slug)]))
+const alternates = Object.fromEntries(
+  Object.keys(translations).map((l) => [l, blogPath(l, slug)]),
+)
 const langLinks = {
   [locale]: blogPath(locale, slug),
   [other]: translations[other] ? blogPath(other, slug) : blogPath(other),
 }
 const cover = post.cover
-  ? await Image.render({ src: post.cover, alt: post.coverAlt, widths: [800, 1200], sizes: '(max-width: 47.5rem) 100vw, 47.5rem' })
+  ? await Image.render({
+      src: post.cover,
+      alt: post.coverAlt,
+      widths: [800, 1200],
+      sizes: '(max-width: 47.5rem) 100vw, 47.5rem',
+    })
   : ''
 const ogImage = post.cover ? SITE_URL + post.cover : undefined
 const meta = new SafeHtml(postMetaHtml(post, locale))
@@ -40,9 +55,7 @@ const meta = new SafeHtml(postMetaHtml(post, locale))
         {meta}
       </div>
       <div class="blog-cover">{new SafeHtml(cover)}</div>
-      <div class="log-card blog-body">
-        {new SafeHtml(entry.body)}
-      </div>
+      <div class="log-card blog-body">{new SafeHtml(entry.body)}</div>
       <p><a href={blogPath(locale)}>← {t(locale, 'back')}</a></p>
     </article>
   </section>

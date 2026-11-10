@@ -10,15 +10,15 @@ header {
   align-items: center;
 }
 
-header>* {
+header > * {
   position: relative;
-  z-index: 2
+  z-index: 2;
 }
 
 header .logo svg {
   width: min(18.75rem, 60vw);
   height: auto;
-  filter: drop-shadow(0 0.75rem 2.5rem rgba(0, 0, 0, .35))
+  filter: drop-shadow(0 0.75rem 2.5rem rgba(0, 0, 0, 0.35));
 }
 
 header h1 {
@@ -28,11 +28,11 @@ header h1 {
   margin: 5rem auto 1rem;
   max-width: 50rem;
   text-transform: uppercase;
-  letter-spacing: .02em
+  letter-spacing: 0.02em;
 }
 
 header h1 em {
-font-style: normal;
+  font-style: normal;
   color: var(--rood);
   font-family: var(--script);
   font-weight: 400;
@@ -46,12 +46,12 @@ header p.sub {
   font-size: clamp(1.05rem, 2vw, 1.3rem);
   color: var(--wit-zacht);
   max-width: 40rem;
-  margin: 0 auto 2.125rem
+  margin: 0 auto 2.125rem;
 }
 
 header .cta {
   display: flex;
   gap: 0.875rem;
   justify-content: center;
-  flex-wrap: wrap
+  flex-wrap: wrap;
 }

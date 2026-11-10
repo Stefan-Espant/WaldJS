@@ -34,10 +34,12 @@ export function toPostMeta(entry: BlogEntry): PostMeta {
   }
   const date = d.date instanceof Date ? d.date : new Date(String(d.date))
   if (Number.isNaN(date.getTime())) throw new Error(`${file}: invalid "date"`)
-  if (d.cover && !d.coverAlt) throw new Error(`${file}: "cover" requires "coverAlt"`)
+  if (d.cover && !d.coverAlt)
+    throw new Error(`${file}: "cover" requires "coverAlt"`)
   const tags = Array.isArray(d.tags) ? d.tags.map(String) : []
   for (const tag of tags) {
-    if (!KEBAB.test(tag)) throw new Error(`${file}: tag "${tag}" must be kebab-case`)
+    if (!KEBAB.test(tag))
+      throw new Error(`${file}: tag "${tag}" must be kebab-case`)
   }
   return {
     slug: entry.slug,
@@ -57,11 +59,14 @@ export function sortByDate<T extends { date: Date }>(posts: T[]): T[] {
 }
 
 export function collectTags(posts: PostMeta[]): string[] {
-  return [...new Set(posts.flatMap(post => post.tags))].sort()
+  return [...new Set(posts.flatMap((post) => post.tags))].sort()
 }
 
 export function formatDate(date: Date, locale: Locale): string {
-  return new Intl.DateTimeFormat(locale === 'nl' ? 'nl-NL' : 'en-US', { dateStyle: 'long', timeZone: 'UTC' }).format(date)
+  return new Intl.DateTimeFormat(locale === 'nl' ? 'nl-NL' : 'en-US', {
+    dateStyle: 'long',
+    timeZone: 'UTC',
+  }).format(date)
 }
 
 export function otherLocale(locale: Locale): Locale {
@@ -86,7 +91,8 @@ const STRINGS = {
   nl: {
     tag: 'Blog',
     title: 'Blog',
-    intro: 'Verhalen uit het bos: releases, ontwerpkeuzes en hoe WaldJS groeit.',
+    intro:
+      'Verhalen uit het bos: releases, ontwerpkeuzes en hoe WaldJS groeit.',
     back: 'Terug naar alle posts',
     tagged: 'Posts met tag',
     by: 'door',
@@ -94,7 +100,8 @@ const STRINGS = {
   en: {
     tag: 'Blog',
     title: 'Blog',
-    intro: 'Stories from the forest: releases, design decisions and how WaldJS grows.',
+    intro:
+      'Stories from the forest: releases, design decisions and how WaldJS grows.',
     back: 'Back to all posts',
     tagged: 'Posts tagged',
     by: 'by',
@@ -113,18 +120,28 @@ export function postMetaHtml(post: PostMeta, locale: Locale): string {
     : ''
   const tags = post.tags.length
     ? `<ul class="blog-tags" aria-label="Tags">${post.tags
-        .map(tag => `<li><a href="${tagPath(locale, tag)}">#${escapeHtml(tag)}</a></li>`)
+        .map(
+          (tag) =>
+            `<li><a href="${tagPath(locale, tag)}">#${escapeHtml(tag)}</a></li>`,
+        )
         .join('')}</ul>`
     : ''
   return `<div class="blog-meta">${avatar}<span>${t(locale, 'by')} ${escapeHtml(post.author)}</span> · <time datetime="${isoDate(post.date)}">${formatDate(post.date, locale)}</time>${tags}</div>`
 }
 
-export function postCardHtml(post: PostMeta, locale: Locale, coverHtml: string): string {
+export function postCardHtml(
+  post: PostMeta,
+  locale: Locale,
+  coverHtml: string,
+): string {
   const cover = coverHtml ? `<div class="blog-cover">${coverHtml}</div>` : ''
   return `<article class="log-card blog-card">${cover}<h2><a href="${blogPath(locale, post.slug)}">${escapeHtml(post.title)}</a></h2>${postMetaHtml(post, locale)}<p>${escapeHtml(post.description)}</p></article>`
 }
 
-export function blogPostingJsonLd(post: PostMeta, locale: Locale): Record<string, unknown> {
+export function blogPostingJsonLd(
+  post: PostMeta,
+  locale: Locale,
+): Record<string, unknown> {
   return {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',

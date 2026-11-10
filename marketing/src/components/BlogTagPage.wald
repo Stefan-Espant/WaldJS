@@ -2,13 +2,29 @@
 import Layout from '../layouts/Layout.wald'
 import BlogList from './BlogList.wald'
 import { getCollection } from 'wald:content'
-import { toPostMeta, blogPath, tagPath, otherLocale, rssPath, t } from '../lib/blog'
+import {
+  toPostMeta,
+  blogPath,
+  tagPath,
+  otherLocale,
+  rssPath,
+  t,
+} from '../lib/blog'
 const { locale, tag } = $$props
 const other = otherLocale(locale)
-const posts = (await getCollection('blog', { locale })).map(toPostMeta).filter(p => p.tags.includes(tag))
-const otherHasTag = (await getCollection('blog', { locale: other })).map(toPostMeta).some(p => p.tags.includes(tag))
-const alternates = otherHasTag ? { [locale]: tagPath(locale, tag), [other]: tagPath(other, tag) } : undefined
-const langLinks = { [locale]: tagPath(locale, tag), [other]: otherHasTag ? tagPath(other, tag) : blogPath(other) }
+const posts = (await getCollection('blog', { locale }))
+  .map(toPostMeta)
+  .filter((p) => p.tags.includes(tag))
+const otherHasTag = (await getCollection('blog', { locale: other }))
+  .map(toPostMeta)
+  .some((p) => p.tags.includes(tag))
+const alternates = otherHasTag
+  ? { [locale]: tagPath(locale, tag), [other]: tagPath(other, tag) }
+  : undefined
+const langLinks = {
+  [locale]: tagPath(locale, tag),
+  [other]: otherHasTag ? tagPath(other, tag) : blogPath(other),
+}
 ---
 <Layout
   title={`#${tag} — WaldJS Blog`}

@@ -1,56 +1,60 @@
 /* ---------- mobiel (<=430px) ---------- */
-@media(max-width:26.875rem) {
+@media (max-width: 26.875rem) {
   nav {
     grid-template-columns: auto 1fr auto auto;
     gap: 0.5rem;
     padding: 0.625rem 0.875rem;
-      background-image: linear-gradient(180deg, rgba(2, 59, 45, .78), rgba(2, 59, 45, 0));
+    background-image: linear-gradient(
+      180deg,
+      rgba(2, 59, 45, 0.78),
+      rgba(2, 59, 45, 0)
+    );
   }
 
   nav .brand {
-    justify-self: start
+    justify-self: start;
   }
 
   nav .brand svg {
     width: 4.125rem;
-    height: 4.125rem
+    height: 4.125rem;
   }
 
   nav ul {
-    gap: 0.5rem
+    gap: 0.5rem;
   }
 
   nav ul.left-side {
-    display: none
+    display: none;
   }
 
   nav ul.right-side {
-    justify-content: flex-end
+    justify-content: flex-end;
   }
 
   nav ul.right-side li:nth-child(1),
   nav ul.right-side li:nth-child(2),
   nav ul.right-side li:last-child {
-    display: none
+    display: none;
   }
 
   .hamburger {
     display: block;
     justify-self: end;
     padding: 0.25rem 0.5rem;
-    font-size: 1.45rem
+    font-size: 1.45rem;
   }
 
   .day-night {
     width: 2rem;
     height: 2rem;
-    font-size: .92rem
+    font-size: 0.92rem;
   }
 
   .lang-switch button,
   .lang-switch a {
-    font-size: .72rem;
-    padding: 0.25rem 0.5rem
+    font-size: 0.72rem;
+    padding: 0.25rem 0.5rem;
   }
 
   header {
@@ -60,7 +64,7 @@
   }
 
   header .logo svg {
-    width: min(13.75rem, 68vw)
+    width: min(13.75rem, 68vw);
   }
 
   header h1 {
@@ -70,89 +74,89 @@
   }
 
   header h1 em {
-    font-size: clamp(2.6rem, 12vw, 3.4rem)
+    font-size: clamp(2.6rem, 12vw, 3.4rem);
   }
 
   header p.sub {
     font-size: 1rem;
-    margin-bottom: 1.5rem
+    margin-bottom: 1.5rem;
   }
 
   header .cta {
-    gap: 0.625rem
+    gap: 0.625rem;
   }
 
   .gh-stats {
     margin-top: 2.75rem;
-    gap: .85rem .75rem
+    gap: 0.85rem 0.75rem;
   }
 
   .gh-stats span {
-    width: auto
+    width: auto;
   }
 
   .btn {
     width: 100%;
     max-width: 17.5rem;
     text-align: center;
-    padding: 0.625rem 1.125rem
+    padding: 0.625rem 1.125rem;
   }
 
   .terminal {
     width: 100%;
-    margin-top: 2.625rem
+    margin-top: 2.625rem;
   }
 
   section {
-    padding: 4.5rem 1.125rem
+    padding: 4.5rem 1.125rem;
   }
 
   section.full {
     padding-left: 1.125rem;
-    padding-right: 1.125rem
+    padding-right: 1.125rem;
   }
 
   .section-heading {
-    margin-bottom: 2.625rem
+    margin-bottom: 2.625rem;
   }
 
   .section-heading h2 {
     font-size: 1.55rem;
-    line-height: 1.14
+    line-height: 1.14;
   }
 
   .section-heading p {
-    font-size: .95rem
+    font-size: 0.95rem;
   }
 
   .section-heading .tag,
   .split .text h2 .tag {
-    font-size: 1.05rem
+    font-size: 1.05rem;
   }
 
   .qs-grid,
   .bench-grid {
-    grid-template-columns: minmax(0, 1fr)
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .split {
-    gap: 2rem
+    gap: 2rem;
   }
 
   .card,
   .cli-card,
   .log-card,
   .faq details {
-    padding: 1.25rem
+    padding: 1.25rem;
   }
 
   .code-block pre {
     padding: 0.875rem 1rem;
-    font-size: .78rem
+    font-size: 0.78rem;
   }
 
   .code-block .title {
-    padding: 0.5rem 0.75rem
+    padding: 0.5rem 0.75rem;
   }
 
   table {
@@ -165,16 +169,16 @@
   table th,
   table td {
     padding: 0.625rem 0.75rem;
-    font-size: .78rem;
+    font-size: 0.78rem;
   }
 
   .bench {
     padding: 3rem 1.125rem;
-    border-radius: 1.125rem
+    border-radius: 1.125rem;
   }
 
   .pkg {
-    justify-content: stretch
+    justify-content: stretch;
   }
 
   .pkg span {
@@ -192,24 +196,24 @@
 
   .pg-editor {
     min-height: 17.5rem;
-    font-size: .78rem;
-    padding: 0.875rem 1rem
+    font-size: 0.78rem;
+    padding: 0.875rem 1rem;
   }
 
   .pg-preview {
-    padding: 1.25rem
+    padding: 1.25rem;
   }
 
   .log-header .date {
     margin-left: 0;
-    width: 100%
+    width: 100%;
   }
 
   .footer-forest {
-    margin-top: 2.5rem
+    margin-top: 2.5rem;
   }
 
   footer {
-    padding: 3rem 1.125rem 2rem
+    padding: 3rem 1.125rem 2rem;
   }
 }

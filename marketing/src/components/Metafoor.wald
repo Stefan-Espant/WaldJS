@@ -10,17 +10,31 @@ import { ui } from '../lib/strings'
     <p>{ui.metaphor.intro}</p>
   </div>
   <div class="cards">
-    <div class="card"><span class="icon">🌲</span><h3><span class="term">Wald</span></h3>
-      <p>{ui.metaphor.forest}</p></div>
-    <div class="card"><span class="icon">🫚</span><h3><span class="term">Roots</span></h3>
-      <p>{ui.metaphor.roots}</p></div>
-    <div class="card"><span class="icon">🌳</span><h3><span class="term">Trees</span></h3>
-      <p>{ui.metaphor.trees}</p></div>
-    <div class="card"><span class="icon">🌿</span><h3><span class="term">Branches</span></h3>
-      <p>{ui.metaphor.branches}</p></div>
-    <div class="card"><span class="icon">🍃</span><h3><span class="term">Canopies</span></h3>
-      <p>{ui.metaphor.canopy}</p></div>
+    <div class="card">
+      <span class="icon">🌲</span>
+      <h3><span class="term">Wald</span></h3>
+      <p>{ui.metaphor.forest}</p>
+    </div>
+    <div class="card">
+      <span class="icon">🫚</span>
+      <h3><span class="term">Roots</span></h3>
+      <p>{ui.metaphor.roots}</p>
+    </div>
+    <div class="card">
+      <span class="icon">🌳</span>
+      <h3><span class="term">Trees</span></h3>
+      <p>{ui.metaphor.trees}</p>
+    </div>
+    <div class="card">
+      <span class="icon">🌿</span>
+      <h3><span class="term">Branches</span></h3>
+      <p>{ui.metaphor.branches}</p>
+    </div>
+    <div class="card">
+      <span class="icon">🍃</span>
+      <h3><span class="term">Canopies</span></h3>
+      <p>{ui.metaphor.canopy}</p>
+    </div>
   </div>
 </section>
-
 <!-- FEATURES: PAGES / COLLECTIONS / DYNAMIC ROUTES -->

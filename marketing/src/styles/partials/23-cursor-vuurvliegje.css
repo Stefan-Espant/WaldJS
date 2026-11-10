@@ -10,6 +10,11 @@
   z-index: var(--byz-z-tooltip);
   opacity: 0;
   transition: opacity var(--byz-duration-slower) var(--byz-ease-default);
-  background: radial-gradient(circle, #FFE9C0 0%, rgba(255, 205, 135, .55) 45%, rgba(255, 205, 135, 0) 70%);
-  box-shadow: 0 0 0.875rem 0.3125rem rgba(255, 215, 150, .45)
+  background: radial-gradient(
+    circle,
+    #ffe9c0 0%,
+    rgba(255, 205, 135, 0.55) 45%,
+    rgba(255, 205, 135, 0) 70%
+  );
+  box-shadow: 0 0 0.875rem 0.3125rem rgba(255, 215, 150, 0.45);
 }

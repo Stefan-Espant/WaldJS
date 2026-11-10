@@ -24,8 +24,7 @@ import { ui } from '../lib/strings'
 └── package.json</pre>
     </div>
     <div class="text">
-      <h2><span class="tag">{ui.structure.tag}</span>
-        {ui.structure.title}</h2>
+      <h2><span class="tag">{ui.structure.tag}</span> {ui.structure.title}</h2>
       <p>{ui.structure.config}</p>
       <div class="code-block" style="margin-top:18px">
         <div class="title"><span class="dot"></span>wald.config.ts</div>
